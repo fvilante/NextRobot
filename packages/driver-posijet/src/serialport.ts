@@ -1,6 +1,4 @@
 import {Size, Bytes} from './common'
-import {IO} from 'monet'
-import * as R from 'ramda'
 
 export const test = "oi"
 
