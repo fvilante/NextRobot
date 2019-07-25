@@ -1,0 +1,55 @@
+{
+  "name": "@nextrobot/driver-posijet",
+  "version": "0.1.0",	
+  "main": "index.js",
+  "description": "> TODO: description",
+  "author": "Flavio Vilante <fvilante1@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/driver-posijet.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+	"lib"
+	],
+  "keywords": [
+    "protocolo",
+    "posijet1"
+  ],
+  "keywords": [
+    "posijet1",
+    "protocolo"
+  ],
+  "scripts": {
+    "tsc": "tsc",
+	"build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+    "start": "npm run build && node dist/index.js",
+    "test": "jest",
+    "watch": "jest --watch"
+  },
+  "jest": {
+    "watchPathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "clone-deep": "^4.0.1",
+    "monet": "^0.9.0",
+    "ramda": "^0.26.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.12",
+    "@types/ramda": "github:types/npm-ramda#dist",
+    "babel-cli": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "eslint": "^5.11.1",
+    "jest": "^23.6.0",
+    "lodash": "^4.17.11",
+    "rimraf": "^2.6.2",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.4"
+  }
+}
