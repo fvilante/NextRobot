@@ -1,22 +1,17 @@
 {
   "name": "@nextrobot/driver-posijet",
-  "version": "0.1.0",	
-  "main": "index.js",
+  "version": "0.0.1-alpha.0",
+  "main": "lib/driver-posijet.js",
   "description": "> TODO: description",
   "author": "Flavio Vilante <fvilante1@gmail.com>",
   "homepage": "",
   "license": "ISC",
-  "main": "lib/driver-posijet.js",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
   },
   "files": [
-	"lib"
-	],
-  "keywords": [
-    "protocolo",
-    "posijet1"
+    "lib"
   ],
   "keywords": [
     "posijet1",
@@ -24,7 +19,7 @@
   ],
   "scripts": {
     "tsc": "tsc",
-	"build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
+    "build": "rimraf dist/ && babel ./ --out-dir dist/ --ignore ./node_modules,./.babelrc,./package.json,./npm-debug.log --copy-files",
     "start": "npm run build && node dist/index.js",
     "test": "jest",
     "watch": "jest --watch"
