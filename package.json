@@ -1,6 +1,6 @@
 {
   "name": "NextRobot",
-  "private": true,
+  "private": false,
   "devDependencies": {
     "@types/node": "^12.6.8",
     "lerna": "^3.16.4",
