@@ -1,7 +1,9 @@
 {
-  "name": "root",
+  "name": "NextRobot",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.16.4"
+    "@types/node": "^12.6.8",
+    "lerna": "^3.16.4",
+    "typescript": "^3.5.3"
   }
 }
