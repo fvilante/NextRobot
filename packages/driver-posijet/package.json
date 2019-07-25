@@ -6,6 +6,10 @@
   "author": "Flavio Vilante <fvilante1@gmail.com>",
   "homepage": "",
   "license": "ISC",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
