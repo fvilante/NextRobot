@@ -11,11 +11,10 @@ This template is used to create new lerna package pre-configured with typescript
 
 - open terminal
 - change dir to your `packages/` directory inside your lerna project
-- copy the template from github:
+- copy the template from github repository at address bellow:
 
-```powershell
-npx degit https://github.com/fvilante/NextRobot/tree/develop/packages/template-lerna-typescript-package
-```
+`https://github.com/fvilante/NextRobot/tree/develop/packages/template-lerna-typescript-package`
+
 
 
 ## What is pre-configured
