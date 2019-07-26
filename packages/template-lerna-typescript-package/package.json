@@ -1,6 +1,6 @@
 {
   "name": "@nextrobot/template-lerna-typescript-package",
-  "version": "0.0.3-alpha.2",
+  "version": "0.0.3",
   "description": "todo: put a description here",
   "author": "Flavio <fvilante1@gmail.com>",
   "homepage": "https://github.com/fvilante/NextRobot#readme",
@@ -39,7 +39,7 @@
     "eslint": "^5.11.1",
     "jest": "^23.6.0",
     "ts-jest": "^23.10.5",
-	"tslint": "^5.12.1",
+    "tslint": "^5.12.1",
     "tslint-immutable": "^5.1.2",
     "typescript": "^3.2.4"
   }
