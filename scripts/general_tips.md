@@ -6,6 +6,31 @@
 Feel free to update information in this file as necessary.
 
 
+# how to create a new package
+
+- **Create package**: type `lerna create <your_package_name>`
+- **Create tsconfig.json**: into package dir create tsconfig file (see how bellow)
+
+
+# How to create tsconfig.json into the package directory
+
+You SHOULD extends the Lerna main dir tsconfig.json. 
+
+```
+{
+ "extends": "../../tsconfig.json",
+ "compilerOptions": {
+   "outDir": "./lib"
+ },
+ "include": [
+   "./src"
+ ]
+}
+```
+
+_Note: In appendix you can see the Lerna main dir tsconfig.json recomendation.
+
+
 ## `package.json` into each package/dir:
 
 Each package you put into "package/" directory SHOULD have a package.json file with at least 
@@ -64,4 +89,24 @@ lerna clean // deletes modules from each package
 
 Typescript is a compiler, each package has a tsconfig.json
 The main lerna directory has the main tsconfig.json that CAN be extended by each package like this:
+
+
+# Apendix
+
+
+## main tsconfig.json
+
+Do important take is that it is configured to all strict true:
+
+
+```
+// TODO: put it here
+
+```
+
+
+
+
+
+
 
