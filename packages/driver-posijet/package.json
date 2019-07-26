@@ -1,7 +1,6 @@
 {
   "name": "@nextrobot/driver-posijet",
-  "version": "0.0.2-alpha.0",
-  "main": "lib/driver-posijet.js",
+  "version": "0.0.2-alpha.2",
   "description": "> TODO: description",
   "author": "Flavio Vilante <fvilante1@gmail.com>",
   "homepage": "",
@@ -14,6 +13,8 @@
     "lib": "lib",
     "test": "__tests__"
   },
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
   "files": [
     "lib"
   ],
@@ -36,7 +37,8 @@
   },
   "dependencies": {
     "clone-deep": "^4.0.1",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+	"lodash": "^4.17.11"
   },
   "devDependencies": {
     "@types/jest": "^23.3.12",
