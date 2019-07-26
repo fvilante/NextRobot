@@ -13,7 +13,9 @@
 Define name and version for your package's package.json. Example:
 
 ```
-  "name": "template-lerna-typescript-package",
+  "name": "@nextbot/template-lerna-typescript-package",
   "version": "0.0.3-alpha.0",
 ```
+
+Note: Don't forget to put the organization name, in this case `@nextbot`
 
