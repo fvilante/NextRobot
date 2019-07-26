@@ -10,5 +10,10 @@
 
 ## How to set-up your pakage
 
-- update package.json with your package data
+Define name and version for your package's package.json. Example:
+
+```
+  "name": "template-lerna-typescript-package",
+  "version": "0.0.3-alpha.0",
+```
 

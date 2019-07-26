@@ -1,11 +1,14 @@
 {
-  "name": "core-utils",
+  "name": "template-lerna-typescript-package",
   "version": "0.0.3-alpha.0",
-  "description": "Core utils",
+  "description": "todo: put a description here",
   "author": "Flavio <fvilante1@gmail.com>",
   "homepage": "https://github.com/fvilante/NextRobot#readme",
   "license": "ISC",
-  "main": "lib/core-utils.js",
+  "main": "lib/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -18,9 +21,24 @@
     "url": "git+https://github.com/fvilante/NextRobot.git"
   },
   "scripts": {
-    "test": "echo \"Error: run tests from root\" && exit 1"
+    "tsc": "tsc",
+    "test": "jest",
+    "watch": "jest --watch"
+  },
+  "jest": {
+    "watchPathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "testEnvironment": "node"
   },
   "bugs": {
     "url": "https://github.com/fvilante/NextRobot/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.12",
+    "eslint": "^5.11.1",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "typescript": "^3.2.4"
   }
 }
