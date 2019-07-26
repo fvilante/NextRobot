@@ -1,33 +1,19 @@
 import { Bit8Value } from './common';
 import { FunctionLike } from 'typescript';
 
-
-// todo: how todo a static type check in this number ?
-// see: https://github.com/Microsoft/TypeScript/issues/15480
-// todo: Make all types and interface readonly and DeepReadOnlyArray<>
-export type Byte = number // must be an integer between 0 and 255
-export type Bytes = Byte[]
-export type Size = number
-export type Bit = number    
-export type Word = number //16 bits unsiged integer
-
-export type Func<T,R> = ((ft: T) => R)
-
-
+import { Byte, Word, getNthBit} from './byte'
 
 // ============================
+
+export { Byte, Bytes, Word, Bit, Size } from './byte'
+
+export type Func<A,B> = (_: A) => B
+
 
 // ===================
 
 
-//helper
-function getNthBit(bitIndex: number, value: number ): boolean {
-    const mask = 1 << bitIndex
-    if ((value & mask) != 0)
-        return true
-    else
-        return false
-}
+
 
 
 export interface Bit8Value {
