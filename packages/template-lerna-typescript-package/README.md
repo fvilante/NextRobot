@@ -15,7 +15,7 @@ This template is used to create new lerna package pre-configured with typescript
 
 `https://github.com/fvilante/NextRobot/tree/develop/packages/template-lerna-typescript-package`
 
-
+- don't forget to overwrite this readme file with your package info.
 
 ## What is pre-configured
 
