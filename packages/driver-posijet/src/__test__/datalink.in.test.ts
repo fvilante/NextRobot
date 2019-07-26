@@ -1,5 +1,5 @@
 import { checksum, dup_esc } from '../datalink.out'
-import { Byte, Bytes } from '../common'
+import { Bytes, BytesC } from '../byte'
 import { Obj, Frame, ESC, STX, ETX, ACK, NACK,
          frame2Bytes as frame2Bytes, createPerfectFrame } from '../datalink.common'
 import { isValidFrame, bytesToFrameReal } from '../datalink.in'
@@ -31,7 +31,7 @@ describe('Verificacao da validade do Frame', () => {
 
 describe('Parsing e interpretacao de frame', () => { 
 
-    const obj: Bytes = [1,2,3,4]
+    const obj: Bytes = BytesC([1,2,3,4])
     const frameRealPerfeito = createPerfectFrame(ACK,obj)
     const stream = frame2Bytes(frameRealPerfeito)
 

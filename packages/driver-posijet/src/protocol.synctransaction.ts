@@ -1,4 +1,4 @@
-import { Word, Byte, Bytes } from './common';
+import { Bytes } from './byte';
 import { PortName, SerialPort } from './serialport';
 import { PacoteDeTransmissao, PacoteDeRetorno, interpretacaoFrameDeRetorno, pacoteDeTransmissaoToBytes, pacoteDeRetorno_ComErro } from "./protocol.spec"
 import * as R from 'ramda'

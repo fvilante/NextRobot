@@ -2,16 +2,17 @@ import { cloneDeep } from 'lodash';
 import { Frame } from './datalink.common';
 import * as R from 'ramda'
 import { dup_esc, checksum } from './datalink.out';
-import { Byte, Bytes, Func, Word } from './common'
+import { Func, Word } from './common'
 
+import { Byte, Bytes, ByteC } from './byte'
 
 
 // Commom material
-export const ESC: Byte = 27
-export const STX: Byte = 2
-export const ACK: Byte = 6
-export const ETX: Byte = 3
-export const NACK: Byte = 21
+export const ESC: Byte = ByteC(27)
+export const STX: Byte = ByteC(2)
+export const ACK: Byte = ByteC(6)
+export const ETX: Byte = ByteC(3)
+export const NACK: Byte = ByteC(21)
 
 export type Obj = Bytes  // representa o objeto que é transportado pelo datalink
                     

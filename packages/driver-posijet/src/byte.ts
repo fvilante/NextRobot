@@ -18,4 +18,5 @@ export function getNthBit(bitIndex: number, value: number ): boolean {
 }
 
 
-const ByteP = (n: number): number => n
+export const ByteC = (n: number): number => n
+export const BytesC = (n: Array<number>): Array<number> => n

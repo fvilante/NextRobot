@@ -1,5 +1,5 @@
 import { checksum, dup_esc } from '../datalink.out'
-import { Byte, Bytes } from '../common'
+import { Byte, Bytes, BytesC } from '../byte'
 import { Frame, Obj, ESC, STX, ETX, ACK, NACK,
         createPerfectFrame, frame2Bytes, changeFrame } from '../datalink.common'
 import * as R from 'ramda'
@@ -18,7 +18,7 @@ describe('Modos de Falha', () => {
         
         //configure
         const probes = {
-            startBytes: [STX, ACK, NACK] ,
+            startBytes: BytesC([STX, ACK, NACK]) ,
             objs: [ [1,2,3,4], [0,0,0,0], [27,0,27,0], [77,88] ]
         }
 

@@ -1,6 +1,6 @@
 import { checksum, dup_esc } from '../datalink.out'
 import * as R from 'ramda'
-import { Byte, Bytes } from '../common'
+import { Byte, Bytes, BytesC } from '../byte'
 import { createPerfectFrame, frame2Bytes, Obj, ESC, STX, ETX, ACK, NACK } from '../datalink.common'
 
 
@@ -13,7 +13,7 @@ describe('Criação de Frame', () => {
 
     describe('a partir de um objeto simples', () => {
 
-            const obj = [1,2,3]
+            const obj = BytesC([1,2,3])
             
 
         it('existencia de uma funcao para o calculo de checksum que recebe parametros obj e start_byte', () => {
@@ -35,8 +35,8 @@ describe('Criação de Frame', () => {
 
     describe('Teste de construcao de frame comparando com frames reais', () => {    
         it('um unico frame', () => {
-            const sample = [0x1B, 0x02, 0xC1, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x87]    
-            const obj = [0xC1, 0x50, 0x61, 0x02]
+            const sample = BytesC([0x1B, 0x02, 0xC1, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x87])    
+            const obj = BytesC([0xC1, 0x50, 0x61, 0x02])
             const expected = sample
             expect(
                 createFrameBytes(STX)(obj)
@@ -45,14 +45,14 @@ describe('Criação de Frame', () => {
 
         it('alguns frames com STX', () => {
             const samples_stx = [
-                [0x1B, 0x02, 0xC1, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x87],
-                [0x1B, 0x02, 0x01, 0x99, 0x62, 0x63, 0x1B, 0x03, 0x9C],
-                [0x1B, 0x02, 0x01, 0xB5, 0x9A, 0x9B, 0x1B, 0x03, 0x10],
+                BytesC([0x1B, 0x02, 0xC1, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x87]),
+                BytesC([0x1B, 0x02, 0x01, 0x99, 0x62, 0x63, 0x1B, 0x03, 0x9C]),
+                BytesC([0x1B, 0x02, 0x01, 0xB5, 0x9A, 0x9B, 0x1B, 0x03, 0x10]),
             ] 
             const samples_ack = [
-                [0x1B, 0x06, 0x01, 0xB4, 0x00, 0x00, 0x1B, 0x03, 0x42,],
-                [0x1B, 0x06, 0x01, 0xA5, 0x78, 0x79, 0x1B, 0x03, 0x60,],
-                [0x1B, 0x06, 0xC1, 0x5F, 0x00, 0x00, 0x1B, 0x03, 0xD7,],
+                BytesC([0x1B, 0x06, 0x01, 0xB4, 0x00, 0x00, 0x1B, 0x03, 0x42,]),
+                BytesC([0x1B, 0x06, 0x01, 0xA5, 0x78, 0x79, 0x1B, 0x03, 0x60,]),
+                BytesC([0x1B, 0x06, 0xC1, 0x5F, 0x00, 0x00, 0x1B, 0x03, 0xD7,]),
             ]
             
             function createFrames(startByte, samples) {
@@ -77,7 +77,7 @@ describe('Criação de Frame', () => {
     describe('duplicacao de ESC', () => {
 
         it('duplicacao de ESC no objeto', () => {
-            const obj = [27]
+            const obj = BytesC([27])
             const expected =  R.flatten([ESC,STX,27,27,ESC,ETX,dup_esc([checksum(obj,STX)])])
             expect(
                 createFrameBytes(STX)(obj)
@@ -86,15 +86,15 @@ describe('Criação de Frame', () => {
 
 
         it('duplicacao de ESC no checksum', () => {
-            const obj = [0,251-27] //this obj will brings a checksums equals to ESC
-            const expected =  R.flatten([ESC,STX,obj,ESC,ETX,dup_esc([checksum(obj,STX)])])
+            const obj = BytesC([0,251-27]) //this obj will brings a checksums equals to ESC
+            const expected = BytesC(R.flatten([ESC,STX,obj,ESC,ETX,dup_esc([checksum(obj,STX)])]) )
             expect(
                 createFrameBytes(STX)(obj)
             ).toEqual(expected)
         })
 
         it('duplicacao de ESC em ambos, tanto no checksum quanto no objeto', () => {
-            const obj = [0,0,0,27,0,27,0,0,0,251-27] //this obj will brings a checksums equals to ESC
+            const obj = BytesC([0,0,0,27,0,27,0,0,0,251-27]) //this obj will brings a checksums equals to ESC
             const expected =  R.flatten([ESC,STX,dup_esc(obj),ESC,ETX,dup_esc([checksum(obj,STX)])])
             expect(
                 createFrameBytes(STX)(obj)

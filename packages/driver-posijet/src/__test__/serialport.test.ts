@@ -1,7 +1,7 @@
 import { test } from '../serialport'
 import * as R from 'ramda'
 import { defaultSerialPort, SerialPort, UnsafeIOEffect, PortName } from '../serialport'
-import { Byte, Bytes } from '../common'
+import { Bytes, BytesC } from '../byte'
 
 
 describe('Serial Port Effects', () => {    
@@ -10,7 +10,7 @@ describe('Serial Port Effects', () => {
     it('Testa porta basica com mockup de side-effects de escrita/leitura', () => {
         
         //arrange
-        let buffer: Bytes = []
+        let buffer: Bytes = BytesC([])
         const read = () => { const res = buffer; buffer =[]; return R.flatten(res) }
         const write = (data: Bytes) => buffer = R.concat(buffer, data)
         const effects: UnsafeIOEffect = { read, write }        

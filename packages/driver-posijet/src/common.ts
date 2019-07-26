@@ -5,7 +5,7 @@ import { Byte, Word, getNthBit} from './byte'
 
 // ============================
 
-export { Byte, Bytes, Word, Bit, Size } from './byte'
+
 
 export type Func<A,B> = (_: A) => B
 

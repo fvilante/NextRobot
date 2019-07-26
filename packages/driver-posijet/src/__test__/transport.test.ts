@@ -2,7 +2,7 @@ import { Frame, createPerfectFrame, ACK } from './../datalink.common';
 import {segment, Direcao, Segment, word2int, int2word, 
     Dado, DadoL, DadoH, frame2Segment, Canal, segment2Frame } from '../transport'
 import * as R from 'ramda'
-import { Byte } from '../common';
+import { Byte, ByteC } from '../byte';
 
 describe('transport layer', () => {    
     it('construtor do segmento', () => {
@@ -123,12 +123,12 @@ describe('transport layer', () => {
     it('consegue converter de Segment (protocolo posijet v1) para Frame', () => {
 
         // arrange
-        const start_byte: Byte = ACK
+        const start_byte: Byte = ByteC(ACK)
         const direcao: Direcao = Direcao.ENVIO
-        const canal: Byte = 7
-        const comando: Byte = 60
-        const dadoL: Byte = 5
-        const dadoH: Byte = 1
+        const canal: Byte = ByteC(7)
+        const comando: Byte = ByteC(60)
+        const dadoL: Byte = ByteC(5)
+        const dadoH: Byte = ByteC(1)
 
         const s:Segment = segment(direcao, canal, comando, dadoL, dadoH)
         

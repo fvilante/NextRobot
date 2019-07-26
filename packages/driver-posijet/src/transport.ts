@@ -1,5 +1,5 @@
 import { Frame, STX, createPerfectFrame, ACK, Obj } from './datalink.common';
-import { Byte, Bytes } from './common'
+import { Byte } from './byte'
 import * as R from 'ramda'
 
 

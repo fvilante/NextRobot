@@ -4,7 +4,7 @@ import * as R from 'ramda'
 import { PacoteDeRetorno } from '../protocol.spec';
 import { syncTransaction, ERR_FRAME_DE_RESPOSTA_AUSENTE_OU_INVALIDO } from '../protocol.synctransaction';
 import { SerialPort, defaultSerialPort } from '../serialport';
-import { Bytes } from '../common';
+import { Bytes } from '../byte';
 import { Direcao, segment, int2word } from '../transport';
 
 

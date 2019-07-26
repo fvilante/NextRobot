@@ -3,8 +3,8 @@ import { checksum, dup_esc } from './datalink.out'
 import { Frame, frame2Bytes, createPerfectFrame, Obj, ESC, STX, ETX, ACK, NACK } from './datalink.common'
 import * as R from 'ramda'
 import { flattenDeep } from 'lodash';
-import { Byte, Bytes } from './common'
 
+import { Bytes, BytesC } from './byte' 
 
 const INI_PACOTE_STX = [ESC, STX]
 const INI_PACOTE_ACK = [ESC, ACK]

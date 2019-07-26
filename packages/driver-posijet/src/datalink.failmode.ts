@@ -1,13 +1,12 @@
 import { CasoDeFalha} from './datalink.failmode';
 
-import { Byte, Bytes } from './common'
 import { Frame, Obj, ESC, STX, ETX, ACK, NACK, 
          frame2Bytes, createPerfectFrame, changeFrame, FrameKeys} 
          from './datalink.common'
 import * as R from 'ramda'
 import { cloneDeep } from 'lodash'
 
-
+import { Byte, Bytes, ByteC } from './byte' 
 
 // **********************************************
 //  GERADOR ARTIFICIAL DE FRAMES DEFEITUOSOS
@@ -286,7 +285,7 @@ export const introduceNoiseInStream = (noise_rate_per_clean_data:number, data: B
     for (let k=0; k < input.length; k+noise_rate) {
 
         //introduce noise
-        const noise: Byte = rand(0,255)
+        const noise: Byte = ByteC(rand(0,255))
         output.push(noise)
         //introduce clean data
         output = R.concat(output, R.slice(k,noise_rate)(input) )

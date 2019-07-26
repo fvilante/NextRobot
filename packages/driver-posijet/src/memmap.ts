@@ -1,4 +1,3 @@
-import { Byte } from "./common";
 
 enum Dimension {
     space = "space",

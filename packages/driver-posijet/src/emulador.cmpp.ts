@@ -1,6 +1,6 @@
 import { DadoH, DadoL, frame2Segment, Segment, Direcao } from './transport';
 import * as R from 'ramda'
-import { Bytes, Byte } from './common'
+import { Bytes, Byte, BytesC } from './byte'
 import { UnsafeIOEffect, defaultSerialPort } from './serialport'
 import { isValidFrame, bytesToFrameReal } from './datalink.in'
 import { } from './datalink.out'
@@ -111,10 +111,10 @@ function tx( d: [MemoryBlock[], State] ): Bytes {
 let theState: State = initialState
 
 
-
+//todo: refactor to immutable ?
 export function criaPortaSerialEmulada() {
 
-    let buffer: Bytes = []
+    let buffer: Bytes = BytesC([])
 
     const read = () => { 
         const buf = buffer; 

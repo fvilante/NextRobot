@@ -1,4 +1,4 @@
-import {Size, Bytes} from './common'
+import { Bytes } from './byte'
 
 export const test = "oi"
 
