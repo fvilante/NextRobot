@@ -12,9 +12,9 @@ import {
     MilimeterPerSquareSecond,
 } from './application-types'
 
+import { CmppProgram } from './application-program-base'
 
-
-export interface CmppClassicProgram {
+export interface CmppClassicProgram extends CmppProgram {
 
     readonly PosicaoInicial: Space
     readonly PosicaoFinal: Space
