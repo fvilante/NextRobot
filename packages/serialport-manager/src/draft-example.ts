@@ -1,15 +1,12 @@
 // tslint:disable
 
 import * as Stream from 'stream'
-
-
 const a = Stream.Readable
-
-
-import {detectSerialPorts} from './detectSerialPorts'
 
 import * as serial_port  from 'serialport';
 const SerialPort = serial_port.default
+
+
 
 const main = async () => {
 
