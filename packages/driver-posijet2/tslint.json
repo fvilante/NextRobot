@@ -1,0 +1,41 @@
+{
+    "defaultSeverity": "error",
+    "extends": "tslint-immutable",  
+    "jsRules": {},
+    "rules": {
+        "no-null-keyword": true, 
+   
+   
+        "no-var-keyword": true,
+        "no-parameter-reassignment": true,
+        "typedef": [true, "call-signature"],
+    
+        "readonly-keyword": true,
+        "readonly-array": [true, "ignore-local"],
+        "no-let": true,
+        "no-object-mutation": true,
+        "no-delete": true,
+        "no-method-signature": true,
+    
+        "no-this": true,
+        "no-class": true,
+        "no-mixed-interface": true,
+        "no-expression-statement": [
+            true,
+            {
+                "ignore-prefix": [
+                    "describe",
+                    "it",
+                    "test",
+                    "expect",
+                    "console"
+                ]
+            }
+        ],
+        "no-if-statement": true
+   
+   
+   
+    }
+ 
+} 
