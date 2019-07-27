@@ -4,10 +4,10 @@ import { CmppClassicProgram } from './application-program-classic'
 
 type GetParameter<T> = Record<keyof T, ParamMemmap> 
 
-interface Cmpp00LGMemMap extends GetParameter<CmppClassicProgram> { }
+export interface Cmpp00LGMemMap extends GetParameter<CmppClassicProgram> { }
 
 
-const Cmpp00LGMemMap: Cmpp00LGMemMap = {
+export const Cmpp00LGMemMap: Cmpp00LGMemMap = {
     PosicaoInicial: { caption: 'Posicao Inicial', helpMsg: '', startWord: 0x60, startBit: 0, bitSize: 16, },
     PosicaoFinal: { caption: 'Posicao Final', helpMsg: '', startWord: 0x60, startBit: 0, bitSize: 16, },
     VelocidadeDeAvanco: { caption: 'Velocidade de Avanco', helpMsg: '', startWord: 0x60, startBit: 0, bitSize: 16, },
