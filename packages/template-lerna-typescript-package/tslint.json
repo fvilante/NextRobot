@@ -28,7 +28,9 @@
                     "it",
                     "test",
                     "expect",
-                    "console"
+                    "console",
+					"resolve",
+					"reject"
                 ]
             }
         ],
