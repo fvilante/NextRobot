@@ -1,4 +1,7 @@
-import { addOne } from '../index'
+//import { addOne } from '../index'
+
+//example
+const addOne = (_: number):number => _+1
 
 // just a example how to write a test: arrange / assert / act (TDD)
 describe('addOne function test', () => { 
