@@ -1,9 +1,11 @@
 
 import { PhysicalLinearAxis } from './physical-arm'
 import { Channel } from './transport-types'
-import { Memmap, AnySetup } from './driver-core'
+import { Memmap, AnyDrive } from './driver-core'
 
-export interface LinearCmppDevice<T extends AnySetup> {
+
+
+export interface LinearDevice<T extends AnyDrive> {
     readonly mechanics: PhysicalLinearAxis,
     readonly serialPortName: string,
     readonly channel: Channel,

@@ -4,7 +4,7 @@
 
 
 // resume
-export type CmppParamType = 
+export type AnyParamType = 
     | Space 
     | Time 
     | Speed 

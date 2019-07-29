@@ -1,7 +1,7 @@
 // tslint:disable: no-if-statement
 
-import { AnySetup, UserProgram } from './driver-core'
-import { LinearCmppDevice } from './application-device-cmpp'
+import { AnyDrive, UserProgram } from './driver-core'
+import { LinearDevice } from './device-core'
 import { mapObjectIndexed } from '@nextrobot/core-utils'
 
 type SendCmppResult = {
@@ -12,7 +12,7 @@ type SendCmppResult = {
 
 
 
-const SendCmppProgram = <T extends AnySetup>(program: UserProgram<T>, device: LinearCmppDevice<T>): void => {
+const SendCmppProgram = <T extends AnyDrive>(program: UserProgram<T>, device: LinearDevice<T>): void => {
 
 
 } 
