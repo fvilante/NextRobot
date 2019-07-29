@@ -8,4 +8,5 @@ const main = () => {
 
 }
 
+// tslint:disable-next-line: no-expression-statement
 main()
