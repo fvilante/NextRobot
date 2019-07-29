@@ -2,8 +2,8 @@ import { AnyParamType } from "./application-types";
 import { Device } from "./device-core";
 import { AnyDriver, GetParameterType, GetParameters } from "./driver-core";
 
-// waved is a data that is agnostic to any device, programming language, operational system, etc.
-// normaly a binary data 
+//waved is a number that represents the content of a parameter inside cmpp memory
+//Note that in MUST to assure that waved number can fits into size reserved to it in the cmpp memory
 export type Wave = { readonly waved: number}
 
 
