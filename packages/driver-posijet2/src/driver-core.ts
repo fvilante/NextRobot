@@ -1,4 +1,5 @@
 import { AnyParamType } from './application-types'
+import { Waver } from './wave-core'
 
 // ==============
 //  Core 
@@ -12,23 +13,21 @@ type AnyEntry = { readonly type: AnyParamType }
 export type AnyDrive = { readonly [ParameterName in string]: AnyEntry }
 
 // helpers
-type GetParameters<T extends AnyDrive> = Extract<keyof T, string>
-type GetEntry<T extends AnyDrive, K extends GetParameters<T>> = T[K]
-type GetParameterType<T extends AnyDrive, K extends GetParameters<T>> = GetEntry<T, K>['type']
-type GetAllParameterType<T extends AnyDrive> = GetParameterType<T, GetParameters<T>>
+export type GetParameters<Drive extends AnyDrive> = Extract<keyof Drive, string>
+type GetEntry<Drive extends AnyDrive, Parameter extends GetParameters<Drive>> = Drive[Parameter]
+export type GetParameterType<Drive extends AnyDrive, Parameter extends GetParameters<Drive>> = GetEntry<Drive, Parameter>['type']
+type GetAllParameterType<Drive extends AnyDrive> = GetParameterType<Drive, GetParameters<Drive>>
 
 
 // User-program derived from core
-export type UserProgram<T extends AnyDrive> = {
-    [K in GetParameters<T>]: GetParameterType<T, K>
+export type UserProgram<Drive extends AnyDrive> = {
+    [Parameter in GetParameters<Drive>]: GetParameterType<Drive, Parameter>
 }
 
-// Wave is the agnostic stream type format (normally `Binary`)
-export type Wave = { readonly wave: number }
 
 // Memory map derived from core
 export type Memmap<Drive extends AnyDrive> = {
-    [Parameter in GetParameters<Drive>]: {
+    [ParameterName in GetParameters<Drive>]: {
 
         // memory region
         readonly startWord: number // word onde o parametro começa
@@ -39,8 +38,7 @@ export type Memmap<Drive extends AnyDrive> = {
         readonly helpMsg?: string //texto descritivo do parametro
 
         // conversor
-        readonly toWave: (value: GetParameterType<Drive, Parameter>) => Wave
-        readonly fromWave: (value: Wave) => GetParameterType<Drive, Parameter>
+        readonly waver: Waver<Drive, ParameterName> | 'Todo!'
 
         // memory class
         // todo: implement bellow
