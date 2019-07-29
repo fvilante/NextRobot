@@ -5,9 +5,12 @@ import { Memmap, AnyDrive } from './driver-core'
 
 
 
-export interface LinearDevice<T extends AnyDrive> {
+interface LinearDevice<T extends AnyDrive> {
     readonly mechanics: PhysicalLinearAxis,
     readonly serialPortName: string,
     readonly channel: Channel,
     readonly memmap: Memmap<T>
 }
+
+
+export type Device<T extends AnyDrive> = LinearDevice<T>
