@@ -1,11 +1,11 @@
 
 import { PhysicalLinearAxis } from './physical-arm'
 import { Channel } from './transport-types'
-import { Memmap, AnyDrive } from './driver-core'
+import { Memmap, AnyDriver } from './driver-core'
 
 
 
-interface LinearDevice<T extends AnyDrive> {
+interface LinearDevice<T extends AnyDriver> {
     readonly mechanics: PhysicalLinearAxis,
     readonly serialPortName: string,
     readonly channel: Channel,
@@ -13,4 +13,4 @@ interface LinearDevice<T extends AnyDrive> {
 }
 
 
-export type Device<T extends AnyDrive> = LinearDevice<T>
+export type Device<T extends AnyDriver> = LinearDevice<T>

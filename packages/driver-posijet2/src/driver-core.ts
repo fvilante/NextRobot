@@ -10,23 +10,23 @@ import { Waver } from './wave-core'
 
 // core abstraction
 type AnyEntry = { readonly type: AnyParamType }
-export type AnyDrive = { readonly [ParameterName in string]: AnyEntry }
+export type AnyDriver = { readonly [ParameterName in string]: AnyEntry }
 
 // helpers
-export type GetParameters<Drive extends AnyDrive> = Extract<keyof Drive, string>
-type GetEntry<Drive extends AnyDrive, Parameter extends GetParameters<Drive>> = Drive[Parameter]
-export type GetParameterType<Drive extends AnyDrive, Parameter extends GetParameters<Drive>> = GetEntry<Drive, Parameter>['type']
-type GetAllParameterType<Drive extends AnyDrive> = GetParameterType<Drive, GetParameters<Drive>>
+export type GetParameters<Drive extends AnyDriver> = Extract<keyof Drive, string>
+type GetEntry<Drive extends AnyDriver, Parameter extends GetParameters<Drive>> = Drive[Parameter]
+export type GetParameterType<Drive extends AnyDriver, Parameter extends GetParameters<Drive>> = GetEntry<Drive, Parameter>['type']
+type GetAllParameterType<Drive extends AnyDriver> = GetParameterType<Drive, GetParameters<Drive>>
 
 
 // User-program derived from core
-export type UserProgram<Drive extends AnyDrive> = {
+export type UserProgram<Drive extends AnyDriver> = {
     [Parameter in GetParameters<Drive>]: GetParameterType<Drive, Parameter>
 }
 
 
 // Memory map derived from core
-export type Memmap<Drive extends AnyDrive> = {
+export type Memmap<Drive extends AnyDriver> = {
     [ParameterName in GetParameters<Drive>]: {
 
         // memory region
