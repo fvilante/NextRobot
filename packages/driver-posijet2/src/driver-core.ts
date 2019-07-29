@@ -38,7 +38,7 @@ export type Memmap<Drive extends AnyDriver> = {
         readonly helpMsg?: string //texto descritivo do parametro
 
         // conversor
-        readonly waver: Waver<Drive, ParameterName> | 'Todo!'
+        readonly waver: Waver<Drive, GetParameterType<Drive, ParameterName>>
 
         // memory class
         // todo: implement bellow

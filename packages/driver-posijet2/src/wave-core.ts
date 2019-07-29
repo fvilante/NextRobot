@@ -7,7 +7,7 @@ import { AnyDriver, GetParameterType, GetParameters } from "./driver-core";
 export type Wave = { readonly waved: unknown}
 
 
-export type Waver<Drive extends AnyDriver, Parameter extends GetParameters<Drive>> = {
-    readonly toWave:  (value: GetParameterType<Drive, Parameter>, device: Device<Drive>) => Wave
-    readonly fromWave: (value: Wave, device: Device<Drive>) => GetParameterType<Drive, Parameter>
+export type Waver<Drive extends AnyDriver, ParameterType> = {
+    readonly toWave:  (value: ParameterType, device: Device<Drive>) => Wave
+    readonly fromWave: (value: Wave, device: Device<Drive>) => ParameterType
 }
