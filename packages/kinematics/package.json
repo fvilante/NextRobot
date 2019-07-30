@@ -1,0 +1,46 @@
+{
+  "name": "@nextrobot/kinematics",
+  "version": "0.0.3",
+  "description": "Describes te motion of points and bodies without considering the forces that cause than to move",
+  "author": "Flavio <fvilante1@gmail.com>",
+  "homepage": "https://github.com/fvilante/NextRobot#readme",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fvilante/NextRobot.git"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "test": "jest",
+    "watch": "jest --watch"
+  },
+  "jest": {
+    "watchPathIgnorePatterns": [
+      "<rootDir>/node_modules/"
+    ],
+    "testEnvironment": "node"
+  },
+  "bugs": {
+    "url": "https://github.com/fvilante/NextRobot/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.12",
+    "eslint": "^5.11.1",
+    "jest": "^23.6.0",
+    "ts-jest": "^23.10.5",
+    "tslint": "^5.12.1",
+    "tslint-immutable": "^5.1.2",
+    "typescript": "^3.2.4"
+  }
+}
