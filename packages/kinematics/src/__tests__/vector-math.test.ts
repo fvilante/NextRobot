@@ -1,5 +1,6 @@
 import { add, subtract, multByScalar } from '../vector-math'
-import { Vector, Scalar } from '../vector'
+import { Vector } from '../vector'
+import { Scalar } from '../scalar'
 
 // // just a example how to write a test: arrange / act / assert (TDD)
 describe('vector math module doing math', () => { 

@@ -1,4 +1,5 @@
-import { Vector, Scalar } from './vector'
+import { Vector } from './vector'
+import { Scalar } from './scalar'
 import { mapObjectIndexed } from '@nextrobot/core-utils'
 import { HomeomorphicMap } from './utils';
 

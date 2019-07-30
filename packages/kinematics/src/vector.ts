@@ -1,7 +1,5 @@
 
-// alias
-export interface Scalar { readonly scalar: number }
-export const Scalar = (scalar: number) => ({ scalar })
+import { Scalar } from './scalar'
 
 export type Vector = {
     readonly x: Scalar
@@ -9,6 +7,6 @@ export type Vector = {
     readonly z: Scalar
 }
 
-export const Vector = (x:number,y:number,z:number): Vector => ({x: Scalar(x), y: Scalar(y), z: Scalar(z) }) 
+export const Vector = (x:number, y:number, z:number): Vector => ({x: Scalar(x), y: Scalar(y), z: Scalar(z) }) 
 
 
