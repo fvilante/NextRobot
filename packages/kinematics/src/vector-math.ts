@@ -1,10 +1,9 @@
 import { Vector, Scalar } from './vector'
 import { mapObjectIndexed } from '@nextrobot/core-utils'
+import { HomeomorphicMap } from './utils';
 
 
-type HomogenicMap<T> = (_:T, __:T) => T
-
-type ScalarOperation = HomogenicMap<Scalar>
+type ScalarOperation = HomeomorphicMap<Scalar>
 
 // Scalar operations primitives
 const addScalar: ScalarOperation = (a,b) => Scalar(a.scalar + b.scalar)
@@ -23,7 +22,7 @@ export const multByScalar = (vecA: Vector, B: Scalar): Vector =>
         multiplyScalar(scalar, B)
     )
 
-//Note: subtract vector B from vector A
+/** Note: subtract vector B from vector A */
 export const subtract = (vecA: Vector, vecB: Vector): Vector => 
 mapObjectIndexed(vecA, (eachScalarA, eachAxis) => {
     const eachScalarB = vecB[eachAxis]
