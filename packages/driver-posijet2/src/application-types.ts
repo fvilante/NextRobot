@@ -68,6 +68,7 @@ export interface Speed {
 
 const Speed__ = (space: Space, time: Time): Speed => ({kind: 'Speed', value: {space, time} })
 export const MilimeterPerSecond = (_: number): Speed => Speed__(Milimeter(_), Second(1))
+export const PulsesPerMicroControlerTick = (_: number): Speed => Speed__(Pulse(_), MicroControlerTick(1))
 
 
 
@@ -81,7 +82,7 @@ export interface Acceleration {
 
 const Acceleration__ = (speed: Speed, time: Time): Acceleration => ({ kind: 'Acceleration', value:  {speed, time} })
 export const MilimeterPerSquareSecond = (_: number): Acceleration => Acceleration__(MilimeterPerSecond(_), Second(1))
-
+export const PulsesPerSqueredMicroControlerTick = (_: number): Acceleration => Acceleration__(PulsesPerMicroControlerTick(_), MicroControlerTick(1))
 
 
 
