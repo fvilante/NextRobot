@@ -44,8 +44,10 @@ export class TypeScriptBuiltInTypes {
         //IMPORTANT: you SHOULD inform the type parameter T explicitly when you call this function
         <T>(array: unknown, typeGuard: TypeGuard): array is ReadonlyArray<T> => {
             const isArray = TypeScriptBuiltInTypes.isArray
+            // tslint:disable-next-line: no-if-statement
             if (isArray(array) === false) return false
             for (const item of (array as Array<unknown>)) {
+                // tslint:disable-next-line: no-if-statement
                 if (!(typeGuard(item))) {
                 return false;
                 }

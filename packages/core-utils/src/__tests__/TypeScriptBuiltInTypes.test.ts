@@ -3,6 +3,7 @@ import {
     TypeGuard
 } from '../TypeScriptBuiltInTypes'
 
+// tslint:disable: no-null-keyword
 
 // ==============================================
 //  Test Case Mechanism (each-test runner)
