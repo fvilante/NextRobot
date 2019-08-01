@@ -2,25 +2,20 @@
 import { FilterKeysByValue } from '@nextrobot/core-utils'
 
 
-
 // --------------
 //  Units
 // --------------
 
-interface UnitsCore  {
-    readonly [Unit: string]: string
-}
-
-const Units = {
+export const Units = {
     // Space Dimension
-    'milimeter': 'Space',
-    'meter': 'Space',
-    'inch': 'Space',
+    'Milimeter': 'Space',
+    'Meter': 'Space',
+    'Inch': 'Space',
 
     // Time Dimension
-    'second': 'Time',
-    'minute': 'Time',
-    'milisecond': 'Time',
+    'Second': 'Time',
+    'Minute': 'Time',
+    'Milisecond': 'Time',
 
 } as const
 
@@ -44,7 +39,7 @@ type GetUnitsFromUnit<T extends AnyUnit> = GetUnits<GetDimension<T>>
 // Dimension
 // ------------
 
-const getDimension = <T extends AnyUnit>(unit: T): GetDimension<T> => Units[unit]
+export const getDimension = <T extends AnyUnit>(unit: T): GetDimension<T> => Units[unit]
 
 
 // -------------------
@@ -59,12 +54,15 @@ type PhysicalQuantity<T extends AnyUnit> = {
 const PhysicalQuantity = <T extends AnyUnit>(quantity: number, unit: T): PhysicalQuantity<T> => 
     ({quantity, unit})
 
+export type PhysicalQuantityConstructor<T extends AnyUnit> = (quantity: number) => PhysicalQuantity<T>
 
 
 
 // -----------------------------------------
 //  Units Profile: Unit Conversions and Captions
 // -----------------------------------------
+
+// Conversions
 
 type Conversor = (_: number) => number
 
@@ -73,15 +71,22 @@ type UnitConversor = {
     readonly fromBase: Conversor
 }
 
-type PhysicalQuantityConstructor<T extends AnyUnit> = (_: number, unit: T) => PhysicalQuantity<T>
+// Unit Captions
+
+type UnitCaptions = {
+    readonly singular: string
+    readonly plural: string
+    readonly abreviated: string
+}
+
+
+type UnitProfile = {
+    readonly unitConversor: UnitConversor
+    readonly captions: UnitCaptions
+}
 
 type UnitsProfile = {
-
-        [Unit in AnyUnit]: {
-            readonly unitConversor: UnitConversor
-            readonly constructor: PhysicalQuantityConstructor<Unit>
-        }
-
+    [Unit in AnyUnit]: UnitProfile
 }
 
 
@@ -89,78 +94,121 @@ const UnitsProfile: UnitsProfile = {
 
     // Space
 
-        'milimeter': { // base
+        'Milimeter': { // base
             unitConversor: {
                 toBase: value => value,
                 fromBase: value => value,
             },
-
-            constructor: value => PhysicalQuantity(value, 'milimeter')
+            captions: {
+                singular: 'milimetro',
+                plural: 'milimetros',
+                abreviated: 'mm',
+            },
         },
 
-        'meter': {
+        'Meter': {
             unitConversor: {
                 toBase: value => value*1000,
                 fromBase: value => value/1000,
             },
-            
-            constructor: value => PhysicalQuantity(value, 'meter')
+            captions: {
+                singular: 'metro',
+                plural: 'metros',
+                abreviated: 'm',
+            },
+     
         },
 
-        'inch': { 
+        'Inch': { 
             unitConversor: {
                 toBase: value => value*25.4,
                 fromBase: value => value/25.4,
             },
-
-            constructor: value => PhysicalQuantity(value, 'inch')
+            captions: {
+                singular: 'polegada',
+                plural: 'polegadas',
+                abreviated: 'pol',
+            },
+           
         },
 
 
     // Time
         
-        'second': { // base
+        'Second': { // base
             unitConversor: {
                 toBase: value => value,
                 fromBase: value => value,
             },
-
-            constructor: value => PhysicalQuantity(value, 'second')
+            captions: {
+                singular: 'segundo',
+                plural: 'segundos',
+                abreviated: 's',
+            },
+           
         },
 
-        'minute': {
+        'Minute': {
             unitConversor: {
                 toBase: value => value*60,
                 fromBase: value => value/60,
             },
-
-            constructor: value => PhysicalQuantity(value, 'minute')
+            captions: {
+                singular: 'minuto',
+                plural: 'minutos',
+                abreviated: 'min',
+            },
         },
 
-        'milisecond': { 
+        'Milisecond': { 
             unitConversor: {
                 toBase: value => value/1000,
                 fromBase: value => value*1000,
             },
-
-            constructor: value => PhysicalQuantity(value, 'milisecond')
+            captions: {
+                singular: 'milisegundo',
+                plural: 'milisegundos',
+                abreviated: 'ms',
+            },
+           
         },
 
 }
 
 
 // helpers
-const getUnitConversor = (unit: AnyUnit): UnitConversor => UnitsProfile[unit]['unitConversor']
+const getUnitProfile = (unit: AnyUnit): UnitProfile => UnitsProfile[unit]
+const getUnitConversor = (unit: AnyUnit): UnitConversor => getUnitProfile(unit)['unitConversor']
 const getToBaseConversor = (unit: AnyUnit): Conversor => getUnitConversor(unit)['toBase']
 const getFromBaseConversor = (unit: AnyUnit): Conversor => getUnitConversor(unit)['fromBase']
+const getUnitCaption = (unit: AnyUnit): UnitCaptions => getUnitProfile(unit)['captions']
+export const getConstructor = <T extends AnyUnit>(unit: T):PhysicalQuantityConstructor<T> => 
+    (quantity: number) => PhysicalQuantity(quantity, unit)
 
 
+// constructors
 
 // --------------------------------
 // Physical Quantity Conversor
 // -------------------------------
 
-const PhysicalQuantityConversor = <
+/**
+ * 
+ * Type-safe conversor to any Physical Quantity 
+ * 
+ * Example of use:
+ * 
+ *  const tenMeters = PhysicalQuantity(10, 'meter')
+
+    const tenMinutes = PhysicalQuantity(10, 'minute')
+
+    const a = physicalQuantityConversor(tenMeters, 'milimeter')
+    const b = physicalQuantityConversor(tenMeters, 'inch')
+
+    console.log(tenMeters, a,b) 
+
+*/
+export const physicalQuantityConversor = <
     T extends PhysicalQuantity<AnyUnit>,
     U extends GetUnitsFromUnit<T['unit']>,
     >
@@ -184,17 +232,24 @@ const PhysicalQuantityConversor = <
 
 
 
-// example of use
-// fix: move bellow code to documentation 
+// API
 
-const tenMeters = PhysicalQuantity(10, 'meter')
+type UnitConstructorsUtility = {
+    [Dimension in GetDimension<AnyUnit>]: {
+        [Unit in GetUnits<Dimension>]: PhysicalQuantityConstructor<Unit>
+        
+    }   
+} 
 
-const tenMinutes = PhysicalQuantity(10, 'minute')
+type ConversorUnitility = { readonly Conversor: typeof physicalQuantityConversor }
 
-const a = PhysicalQuantityConversor(tenMeters, 'milimeter')
-const b = PhysicalQuantityConversor(tenMeters, 'inch')
 
-console.log(tenMeters, a,b)
+export type PhysicalQuantityUtility = UnitConstructorsUtility & ConversorUnitility
+
+
+
+
+
 
 
 
