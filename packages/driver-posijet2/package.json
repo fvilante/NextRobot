@@ -44,6 +44,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@nextrobot/core-utils": "^0.0.6-alpha.0"
+    "@nextrobot/core-utils": "^0.0.6-alpha.0",
+    "@nextrobot/kinematics": "0.0.6-alpha.0"
   }
 }
