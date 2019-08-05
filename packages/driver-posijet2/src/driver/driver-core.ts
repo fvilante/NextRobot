@@ -1,5 +1,5 @@
-import { AnyParamType } from './application-types'
-import { Waver } from './wave-core'
+import { AnyParamType } from '../application-types'
+import { Waver } from '../application-types/wave-core'
 
 // ==============
 //  Core 

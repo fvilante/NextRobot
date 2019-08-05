@@ -6,11 +6,11 @@ import {
     MilimeterPerSecond, 
     MilimeterPerSquareSecond, 
     Pulse 
-} from './application-types'
+} from '../application-types'
 
-import { spaceWaver } from './driver-waver-space'
-import { speedWaver } from './driver-waver-speed'
-import { accelerationWaver } from './driver-waver-acceleration'
+import { spaceWaver } from '../application-types/driver-waver-space'
+import { speedWaver } from '../application-types/driver-waver-speed'
+import { accelerationWaver } from '../application-types/driver-waver-acceleration'
 
 import { Memmap } from './driver-core'
 

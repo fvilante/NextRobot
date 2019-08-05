@@ -1,10 +1,10 @@
 import { Waver, ToWave, FromWave, wave } from './wave-core'
 import { exhaustiveSwitch } from '@nextrobot/core-utils'
-import { AnyDriver } from './driver-core'
+import { AnyDriver } from '../driver/driver-core'
 
-import { Time, MicroControlerTick, Second} from './application-types'
+import { Time, MicroControlerTick, Second} from '.'
 
-import { HomophorficMap } from './utils'
+import { HomophorficMap } from '../utils'
 
 type Conversor = HomophorficMap<number>
 

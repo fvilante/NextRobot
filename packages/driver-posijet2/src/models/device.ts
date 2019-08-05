@@ -1,7 +1,7 @@
 
 import { LinearAxisClassic } from './physical-arm'
-import { Channel } from './transport-types'
-import { Memmap, AnyDriver } from './driver-core'
+import { Channel } from './channel'
+import { Memmap, AnyDriver } from '../driver/driver-core'
 
 
 

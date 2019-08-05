@@ -1,15 +1,15 @@
 import { Waver, ToWave, FromWave, wave } from './wave-core'
-import { AnyDriver } from './driver-core'
+import { AnyDriver } from '../driver/driver-core'
 
 import { 
     Acceleration, 
     PulsesPerSqueredMicroControlerTick
-} from './application-types'
+} from '.'
 
 import { speedWaver } from './driver-waver-speed'
 import { timeWaver } from './driver-waver-time'
 
-import { HomophorficMap } from './utils'
+import { HomophorficMap } from '../utils'
 
 
 type Conversor = HomophorficMap<number>
