@@ -25,8 +25,9 @@ export type Driver = {
        
 }
 
-
-export const MyMemmap1 : Memmap<Driver> = {
+/** note:   This variable name is a Memmap<Driver> indeed. But 'Driver' variable name is overloaded with 
+ *          the Memmap to simplify namespace for client */
+export const Driver : Memmap<Driver> = {
     'Posicao Inicial': { startWord: 0x60, startBit: 0, bitSize: 16, waver: spaceWaver},
     'Posicao Final': { startWord: 0x60, startBit: 0, bitSize: 16, waver: spaceWaver},
     'Velocidade de Avanço': { startWord: 0x60, startBit: 0, bitSize: 16, waver: speedWaver},

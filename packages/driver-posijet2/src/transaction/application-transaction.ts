@@ -12,12 +12,14 @@ type SendCmppResult = {
 
 
 
-const SendCmppProgram = <T extends AnyDriver>(program: UserProgram<T>, device: Device<T>): void => {
+export const SendCmppProgram = <T extends AnyDriver>(program: UserProgram<T>, device: Device<T>): void => {
 
+    console.table(program)
+    console.log(device)
 
 } 
 
-const ReadCmppProgram = <T extends AnyDriver>(program: UserProgram<T>, device: Device<T>): void => {
+export const ReadCmppProgram = <T extends AnyDriver>(program: UserProgram<T>, device: Device<T>): void => {
 
 }
 
