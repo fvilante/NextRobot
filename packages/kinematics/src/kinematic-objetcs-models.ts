@@ -29,15 +29,15 @@ export const Position = <T extends AnySpace>(vector: Vector, unit: T): Position<
 
 // --------
 
-
 /** Note: 'Time' type is a reserved world, this is reason for initial underscore character */
-type _Time<T extends AnyTime> = {
+export type Time_<T extends AnyTime> = {
     readonly kind: 'Time'
     readonly scalar: number
     readonly unit: T
 }
 
-export const Time = <T extends AnyTime>(scalar: number, unit: T): _Time<T> => 
+/** Note: 'Time' type is a reserved world, this is reason for initial underscore character */
+export const Time_ = <T extends AnyTime>(scalar: number, unit: T): Time_<T> => 
     ({kind: 'Time', scalar, unit})
 
 
@@ -45,13 +45,13 @@ export const Time = <T extends AnyTime>(scalar: number, unit: T): _Time<T> =>
 // --------
 
 
-type Displacement<T extends AnySpace> = {
+export type Displacement<T extends AnySpace> = {
     readonly kind: 'Displacement'
     readonly initial: Position<T>
     readonly final: Position<T>
 }
 
-const Displacement = <
+export const Displacement = <
     T extends AnySpace
     >
     (initial: Position<T>, final: Position<T>): Displacement<T> =>
@@ -61,48 +61,48 @@ const Displacement = <
 
 // ----
 
-type Velocity<S extends AnySpace, T extends AnyTime> = {
+export type Velocity<S extends AnySpace, T extends AnyTime> = {
     readonly kind: 'Velocity'
     readonly value: {
         readonly displacement: Displacement<S>
-        readonly time: _Time<T> 
+        readonly time: Time_<T> 
     }
 }
 
 
-const Velocity = <
+export const Velocity = <
     S extends AnySpace, 
     T extends AnyTime, 
     >
-    (displacement: Displacement<S>, time: _Time<T> ): Velocity<S, T> => 
+    (displacement: Displacement<S>, time: Time_<T> ): Velocity<S, T> => 
         ({
             kind: 'Velocity',
             value: { displacement, time }
         })
 
 
+//helper
+type AnyVelocity = Velocity<AnySpace, AnyTime>
 
 
 
 // --------
 
-//helper
-type AnyVelocity = Velocity<AnySpace, AnyTime>
 
-type Acceleration<V extends AnyVelocity, T extends AnyTime> = {
+export type Acceleration<V extends AnyVelocity, T extends AnyTime> = {
     readonly kind: 'Acceleration'
     readonly value: {
         readonly velocity: V
-        readonly time: _Time<T>
+        readonly time: Time_<T>
     }
 }
 
 
-const Acceleration = <
+export const Acceleration = <
     V extends AnyVelocity, 
     T extends AnyTime,
     >
-    (velocity: V, time: _Time<T> ): Acceleration<V, T> => 
+    (velocity: V, time: Time_<T> ): Acceleration<V, T> => 
         ({
             kind: 'Acceleration',
             value: { 
