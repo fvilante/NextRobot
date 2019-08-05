@@ -1,5 +1,5 @@
 import { Waver, ToWave, FromWave, wave } from './wave-core'
-import { exhaustiveSwitch } from './utils'
+import { exhaustiveSwitch } from '@nextrobot/core-utils'
 import { AnyDriver } from './driver-core'
 
 import { Milimeter, Pulse, Space} from './application-types'
