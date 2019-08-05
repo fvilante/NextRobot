@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 import { Frame } from './datalink.common';
 import * as R from 'ramda'
 import { dup_esc, checksum } from './datalink.out';
-import { Func, Word } from './common'
+import { Func } from './common'
 
 import { Byte, Bytes, ByteC } from './byte'
 
