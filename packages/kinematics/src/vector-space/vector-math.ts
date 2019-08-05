@@ -1,7 +1,7 @@
 import { Vector } from './vector'
 import { Scalar } from './scalar'
 import { mapObjectIndexed } from '@nextrobot/core-utils'
-import { HomeomorphicMap } from './utils';
+import { HomeomorphicMap } from '../utils';
 
 
 type ScalarOperation = HomeomorphicMap<Scalar>

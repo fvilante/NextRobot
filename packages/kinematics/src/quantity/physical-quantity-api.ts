@@ -15,7 +15,7 @@ const Second = getConstructor('Second')
 const Minute = getConstructor('Minute')
 const Milisecond = getConstructor('Milisecond')
 
-
+// API
 export const PhysicalQuantityUtility: Utility = {
 
     Space: { 
@@ -34,6 +34,7 @@ export const PhysicalQuantityUtility: Utility = {
 
 }
 
+// informal test
 
 const units = PhysicalQuantityUtility
 
