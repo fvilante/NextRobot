@@ -1,3 +1,6 @@
+//todo: extract PhysicalQuantity from kinematics-package to a self contained package 
+import { PhysicalQuantity } from '@nextrobot/kinematics'
+
 // =========================================================
 //          Data Types
 // =========================================================
