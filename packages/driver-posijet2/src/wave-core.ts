@@ -3,7 +3,7 @@ import { Device } from "./device-core";
 import { AnyDriver, GetParameterType, GetParameters } from "./driver-core";
 
 //waved is a number that represents the content of a parameter inside cmpp memory
-//Note that in MUST to assure that waved number can fits into size reserved to it in the cmpp memory
+//Note that it MUST to assure that waved number can fits into size reserved to it in the cmpp memory
 export type Wave = { readonly waved: number}
 
 
