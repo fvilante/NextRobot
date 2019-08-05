@@ -46,12 +46,12 @@ export const getDimension = <T extends AnyUnit>(unit: T): GetDimension<T> => Uni
 //  Physical Quantity 
 // -------------------
 
-type PhysicalQuantity<T extends AnyUnit> = {
+export type PhysicalQuantity<T extends AnyUnit> = {
     readonly quantity: number
     readonly unit: T
 }
 
-const PhysicalQuantity = <T extends AnyUnit>(quantity: number, unit: T): PhysicalQuantity<T> => 
+export const PhysicalQuantity = <T extends AnyUnit>(quantity: number, unit: T): PhysicalQuantity<T> => 
     ({quantity, unit})
 
 export type PhysicalQuantityConstructor<T extends AnyUnit> = (quantity: number) => PhysicalQuantity<T>
