@@ -45,6 +45,7 @@
   },
   "dependencies": {
     "@nextrobot/core-utils": "^0.0.6-alpha.0",
+    "@nextrobot/driver-posijet": "0.0.6-alpha.0",
     "@nextrobot/kinematics": "0.0.6-alpha.0"
   }
 }

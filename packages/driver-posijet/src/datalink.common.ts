@@ -16,7 +16,7 @@ export const NACK: Byte = ByteC(21)
 
 export type Obj = Bytes  // representa o objeto que é transportado pelo datalink
                     
-export interface Frame {
+export type Frame = {
     readonly PRE_NOISE: Bytes,
     readonly INITIAL_ESC: Bytes,
     readonly START_BYTE: Bytes,

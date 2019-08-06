@@ -19,7 +19,7 @@ export type Dado = number // max = 16 bits number
 export type Canal = Byte // max = 6 bits number
 
 
-export interface Segment {
+export type Segment = {
     direcao: Direcao
     canal: Canal
     comando: Comando //ou endereço em word
