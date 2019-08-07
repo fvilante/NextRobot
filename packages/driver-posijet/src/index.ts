@@ -1,1 +1,1 @@
-export { DataLinkUtility, InvalidFrame, CmppPacket } from './api'
+export { DataLinkUtility, InvalidFrame, CmppPacket, Direction } from './api'

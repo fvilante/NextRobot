@@ -13,7 +13,7 @@ import { isValidFrame, bytesToFrameReal } from './datalink.in'
 // Outgoing
 // -----------------------------
 
-type Direction = 
+export type Direction = 
     | 'ENVIO'
     | 'SOLICITACAO'
     | 'MASCARA_PARA_SETAR_BITS'
@@ -30,21 +30,17 @@ const __mapDirection = (d: Direction): Direcao => {
 }
 
 export type CmppPacket = {
-    kind: 'CmppPacket'
     direction: Direction
     channel: number
     command: number
     data: number // Put the 'Word' here: DadoLow and DadaHigh are derived from 'Word' further on code
 } 
-
-//helper - just extract the 'kind' prop of the specified type
-type Unkinded<T> = {
-    [K in Exclude<keyof T, 'kind'>]: T[K]
-}
+export const CmppPacket = (direction: Direction, channel: number, command: number, data: number): CmppPacket => 
+    ({direction, channel, command, data})
 
 type Bytes = number[]
 
-const MakeCmppStream = (p: Unkinded<CmppPacket>): Bytes  => {
+const MakeCmppStream = (p: CmppPacket): Bytes  => {
     const direcao: Direcao = __mapDirection(p.direction)
     const [dadoH, dadoL] = int2word(p.data) 
     const s:Segment = segment(direcao, p.channel, p.command, dadoL, dadoH)
@@ -56,7 +52,7 @@ const MakeCmppStream = (p: Unkinded<CmppPacket>): Bytes  => {
 
 
 // -----------------------------
-// Ingoing
+//  Ingoing
 // -----------------------------
 
 const __mapDirecao = (d: Direcao): Direction => {
@@ -76,7 +72,6 @@ export type InvalidFrame = {
 
 
 const __mapSegment = (s: Segment): CmppPacket => ({
-    kind: 'CmppPacket',
     direction: __mapDirecao(s.direcao),
     channel: s.canal,
     command: s.comando,

@@ -24,28 +24,38 @@ export type UserProgram<Drive extends AnyDriver> = {
     [Parameter in GetParameters<Drive>]: GetParameterType<Drive, Parameter>
 }
 
+type uint16_t = number //fix create a safe constructor ?
+
+export type StartWord = uint16_t
+export type StartBit = uint16_t
+export type BitSize = uint16_t
+export type HelpMsg = string
+export type MemoryType = 'volatile' | 'stable'
+export type AccessType = 'read-only' | 'read-write' | 'write-only'  
 
 // Memory map derived from core
 export type Memmap<Drive extends AnyDriver> = {
     [ParameterName in GetParameters<Drive>]: {
 
         // memory region
-        readonly startWord: number // word onde o parametro começa
-        readonly startBit: number // bit onde o parametro começa a partir da startWord (0 é igual startWord)
-        readonly bitSize: number // tamanho do dado em bits
+        readonly StartWord: StartWord // word onde o parametro começa
+        readonly StartBit: StartBit // bit onde o parametro começa a partir da startWord (0 é igual startWord)
+        readonly BitSize: BitSize // tamanho do dado em bits
 
         // description
-        readonly helpMsg?: string //texto descritivo do parametro
+        readonly HelpMsg?: HelpMsg //texto descritivo do parametro
 
         // conversor
-        readonly waver: Waver<Drive, GetParameterType<Drive, ParameterName>>
+        readonly Waver: Waver<Drive, GetParameterType<Drive, ParameterName>>
 
         // memory class
         // todo: implement bellow
-        readonly memoryType?: 'volatile' | 'stable'
-        readonly accessType?: 'read-only' | 'read-write' | 'write-only'  
+        readonly MemoryType?: MemoryType
+        readonly AccessType?: AccessType
     }
 }
+
+export type MemmapEntry = Memmap<AnyDriver>[keyof AnyDriver]
 
 
 
