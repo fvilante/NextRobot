@@ -14,3 +14,6 @@ export { TKey } from './tkey'
 //pair
 export { objectToPairs } from './objectToPairs'
 export { Pair, Pairs } from './pair'
+
+//stats
+export { min, max, average } from './statistics'
