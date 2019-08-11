@@ -18,3 +18,5 @@ export const Device = <T extends AnyDriver>(
     channel: Channel,
     memmap: Memmap<T>
 ): Device<T> => ({mechanics, serialPortName, channel, memmap})
+
+export type AnyDevice = Device<AnyDriver>
