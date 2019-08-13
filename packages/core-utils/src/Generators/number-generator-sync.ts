@@ -1,4 +1,13 @@
 
+
+
+type GeneratorMapper<A,B> = (_:A) => B
+
+export const mapGenerator = function* <A,B>(generator: IterableIterator<A>, fn: GeneratorMapper<A,B>): IterableIterator<B> {
+    for (const each of generator)
+        yield fn(each)
+}
+
 /** generate a number from start to end (end not included) */
 type StartEnd  = readonly [number, number]
 type ZeroToEnd = readonly [number]
@@ -65,10 +74,4 @@ export const listToGenerator = function* <T>(list: readonly T[]): IterableIterat
 }
 
 
-type GeneratorMapper<A,B> = (_:A) => B
-
-export const mapGenerator = function* <A,B>(generator: IterableIterator<A>, fn: GeneratorMapper<A,B>): IterableIterator<B> {
-    for (const each of generator)
-        yield fn(each)
-}
 
