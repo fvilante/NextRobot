@@ -1,5 +1,5 @@
 
-import { generatorToList, range, mapGenerator} from './number-generator-sync'
+import { generatorToList, range, mapGenerator} from '../Generators/number-generator-sync'
 import { Interval, RangeInterval } from './interval'
 import { isArrayEqual } from '../isEqual';
 
