@@ -1,4 +1,4 @@
-import { Wave } from './wave'
+
 
 //tslint:disable: no-mixed-interface
 

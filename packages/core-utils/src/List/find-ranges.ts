@@ -1,11 +1,11 @@
 
 import { generatorToList, range, mapGenerator} from '../Generators/number-generator-sync'
-import { Interval, RangeInterval } from './interval'
+import { RangeInterval } from './interval'
 import { isArrayEqual } from '../isEqual';
 
 /** if size>max_length returns an empty array */
 export const FixedSizeSearchFromLeft = function* (max_length:number, size: number): IterableIterator<RangeInterval> {
-    yield* mapGenerator(range(0,max_length-size+1), ini => [ini, ini+size])
+    yield* mapGenerator(range(0,max_length-size+1), ini => RangeInterval(ini, ini+size))
 }
 
 

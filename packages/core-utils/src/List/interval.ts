@@ -1,16 +1,6 @@
 import { TypeScriptBuiltInTypes as Type} from '../TypeScriptBuiltInTypes'
 
-
-
-export type DiscreteInterval = readonly [number]
+// Note: I'm using tuple and not interface for efficience reason
 export type RangeInterval = readonly [number, number]
-export type Interval = DiscreteInterval | RangeInterval
 
-const isDiscreteInterval = (_: Interval): _ is DiscreteInterval => {
-    return _.length === 1
-}
-
-const isRangeInterval = (_: Interval): _ is RangeInterval => {
-    return _.length === 2
-}
-
+export const RangeInterval = (start: number, end: number): RangeInterval => [start, end]
