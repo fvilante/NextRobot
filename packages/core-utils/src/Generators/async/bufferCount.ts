@@ -1,6 +1,7 @@
 import { Observed } from "../core-types"
 
-export const bufferCount = async function* <T>(o: Observed<T>, count: number): Observed<readonly T[]> {
+
+export const bufferCount = async function* <T>(o: Observed<T>, count: number, step: number=0): Observed<readonly T[]> {
 
     // tslint:disable: no-let no-expression-statement no-if-statement no-expression-statement
     let r: T[] = []
@@ -11,7 +12,7 @@ export const bufferCount = async function* <T>(o: Observed<T>, count: number): O
         if(r.length >= count) {
             //console.log('b:',each, r)
             yield r              
-            r = []
+            r = r.slice(step)
         }
     }
 

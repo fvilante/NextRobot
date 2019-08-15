@@ -1,7 +1,5 @@
 import { StartEnd, StartEndStep, ZeroToEnd, Observed } from '../core-types'
 
-import { range as rangeSync} from '../number-generator-sync'
-
 /** Async range */
 export const range = async function* (...args: StartEnd | ZeroToEnd | StartEndStep ):Observed<number> {
     
