@@ -1,54 +1,39 @@
 import { Observed } from '../core-types'
-import { range as rangeSync } from '../number-generator-sync'
+
 
 /** todo: throw an error if count is negative number  */
-export const take = async function* <T>(o: Observed<T>, count: number ): Observed<readonly T[]> {
-
+export const take = async function* <T>(o: Observed<T>, count: number ): Observed<T> {
     // tslint:disable: no-let no-expression-statement
-    let r: T[] = []
+    let counter: number = 0
+        for await (const each of o) {
+            counter = counter+1
+            // tslint:disable-next-line: no-if-statement
+            if (counter > count) break
+            yield each
 
-    const read = async function(): Promise<readonly T[]> {
-        // sink to buffer asyncronously with no backpressure
-        for (const _ of rangeSync(count)) {
-            const each = (await o.next()).value
-            r = [...r, each]
         }
-            
-        return r
-    }
-   
-    yield read()
-
-
 }  
 
 
-const subscribe = async <T>(o: Observed<T>, fn: (_:T) => void): Promise<void> => {
-    while(true) {
-        const i = await o.next()
-        // tslint:disable-next-line: no-if-statement
-        if (i.done === true) 
-            break
-        else 
-            fn(i.value)
-    }
-}
 
 
 
 //informal test
 
+
 /*
 
-import { map } from './map'
-import { range } from './range'
+import { range as rangeAsync} from './range'
+import { subscribe } from './subscribe'
 
 console.log('sync zica')
-const a = range(1,20,5)
+const a = take(rangeAsync(0,3),5)
+const b = take(rangeAsync(0,10),5)
 
-const b = map(a, val => [0,val,0])
+subscribe(a, val => console.log("a;",val))
 
-subscribe(b, val => console.log(val))
+subscribe(b, val => console.log("b:",val))
+
 
 
 */
