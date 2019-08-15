@@ -23,7 +23,8 @@
   "scripts": {
     "tsc": "tsc",
     "test": "jest",
-    "watch": "jest --watch"
+    "watch": "jest --watch",
+    "link": "npm run tsc && lerna link"
   },
   "jest": {
     "watchPathIgnorePatterns": [
