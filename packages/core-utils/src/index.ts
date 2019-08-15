@@ -29,6 +29,8 @@ export { mapGenerator as mapSyncGenerator, range as rangeSync, generatorToList a
 // async
 export { range } from './Generators/async/range'
 export { map as mapObserved } from './Generators/async/map'
+export { take } from './Generators/async/take'
+export { subscribe } from './Generators/async/subscribe'
 
 
 
