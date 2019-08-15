@@ -1,6 +1,6 @@
 import { Observed } from "../core-types"
 
-const bufferCount = async function* <T>(o: Observed<T>, count: number): Observed<readonly T[]> {
+export const bufferCount = async function* <T>(o: Observed<T>, count: number): Observed<readonly T[]> {
 
     // tslint:disable: no-let no-expression-statement no-if-statement no-expression-statement
     let r: T[] = []

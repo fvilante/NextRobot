@@ -31,6 +31,7 @@ export { range } from './Generators/async/range'
 export { map as mapObserved } from './Generators/async/map'
 export { take } from './Generators/async/take'
 export { subscribe } from './Generators/async/subscribe'
+export { bufferCount } from './Generators/async/bufferCount'
 
 
 
