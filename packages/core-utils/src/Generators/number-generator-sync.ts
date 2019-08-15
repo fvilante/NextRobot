@@ -1,4 +1,4 @@
-
+import { StartEnd, StartEndStep, ZeroToEnd} from './core-types'
 
 
 type GeneratorMapper<A,B> = (_:A) => B
@@ -8,10 +8,7 @@ export const mapGenerator = function* <A,B>(generator: IterableIterator<A>, fn: 
         yield fn(each)
 }
 
-/** generate a number from start to end (end not included) */
-type StartEnd  = readonly [number, number]
-type ZeroToEnd = readonly [number]
-type StartEndStep = readonly [number, number, number]
+
 /**
  * 
  * @param args 
@@ -36,7 +33,6 @@ export const range = function* (...args: StartEnd | ZeroToEnd | StartEndStep ):I
     let step: number = 1
 
 
-    const length = args['length']
     
     //configure
     if (args[0]!==undefined && args[1]!==undefined && args[2]!==undefined) {
