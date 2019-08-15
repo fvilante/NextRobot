@@ -28,6 +28,7 @@ export { Observed, StartEnd, StartEndStep, ZeroToEnd } from './Generators/core-t
 export { mapGenerator as mapSyncGenerator, range as rangeSync, generatorToList as syncGeneratorToList, listToGenerator as listToSyncGenerator} from './Generators/number-generator-sync'
 // async
 export { range } from './Generators/async/range'
+export { map as mapObserved } from './Generators/async/map'
 
 
 
