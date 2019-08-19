@@ -42,4 +42,4 @@ export { isArrayEqual } from './isEqual'
 export { min, max, average } from './statistics'
 
 // Message
-export { Message, MessagesFactory } from './message'
+export { Message, MessagesFactory, MessageMorphism, AnyMessage } from './message'

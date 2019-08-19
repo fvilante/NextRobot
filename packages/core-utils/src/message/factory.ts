@@ -8,6 +8,6 @@ import { Message } from './message'
  */
 export type MessagesFactory<T> = {
     [Kind in keyof T]: T[Kind] extends undefined
-        ? (parameters?: undefined) => Message<Kind, undefined>
-        : (parameters: T[Kind]) => Message<Kind,T[Kind]>
+        ? (payload?: undefined) => Message<Kind, undefined>
+        : (payload: T[Kind]) => Message<Kind,T[Kind]>
 }
