@@ -1,15 +1,15 @@
 import { Waver, ToWave, FromWave, wave } from './wave-core'
-import { AnyDriver } from './driver-core'
+import { AnyDriver } from '../driver/driver-core'
 
 import { 
     Speed, 
     PulsesPerMicroControlerTick
-} from './application-types'
+} from '.'
 
 import { spaceWaver } from './driver-waver-space'
 import { timeWaver } from './driver-waver-time'
 
-import { HomophorficMap } from './utils'
+import { HomophorficMap } from '../utils'
 
 
 

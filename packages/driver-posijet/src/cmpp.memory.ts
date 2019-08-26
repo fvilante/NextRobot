@@ -1,5 +1,5 @@
 import { Dado } from './transport';
-import { Word } from './common';
+import { Word } from './byte';
 import { createContigousMemory } from './memory.contigous';
 import * as R from 'ramda'
 

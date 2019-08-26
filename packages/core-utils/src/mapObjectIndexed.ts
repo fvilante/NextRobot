@@ -3,9 +3,10 @@
 export type MapObjectIndexCallBack<T extends object, B> = 
     (value: T[keyof T], key: keyof T, obj: T) => B
 
-type MappedObject<T,B> = {
+export type MappedObject<T,B> = {
     [K in keyof T]: B
 }
+
 
 export const mapObjectIndexed = <T extends object, B>(o: T, callback: MapObjectIndexCallBack<T, B>): MappedObject<T,B> => {
     

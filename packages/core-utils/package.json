@@ -23,7 +23,8 @@
   "scripts": {
     "tsc": "tsc",
     "test": "jest",
-    "watch": "jest --watch"
+    "watch": "jest --watch",
+    "link": "npm run tsc && lerna link"
   },
   "jest": {
     "watchPathIgnorePatterns": [
@@ -42,5 +43,9 @@
     "tslint": "^5.12.1",
     "tslint-immutable": "^5.1.2",
     "typescript": "^3.2.4"
+  },
+  "dependencies": {
+    "@types/ramda": "^0.26.19",
+    "ramda": "^0.26.1"
   }
 }

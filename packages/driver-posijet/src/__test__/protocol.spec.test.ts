@@ -6,7 +6,8 @@ import { PacoteDeTransmissao, pacoteDeRetorno_ComErro, PacoteDeRetorno_ComErro,
     pacoteDeTransmissaoToBytes, PacoteDeRetorno, 
     interpretacaoFrameDeRetorno, 
     pacoteDeTransmissaoToSegment} from './../protocol.spec';
-import { bit16Value, bit8Value, Bytes } from './../common';
+import { bit16Value, bit8Value } from './../common';
+import { Bytes } from '../byte'
 import * as R from 'ramda'
 import { Reservado, statusL, StatusL, statusH, StatusH, mascaraDeErro, MascaraDeErro, 
     controleSerial, ControleSerial, ByteDeErro, byteDeErro, ByteDeErroDescricao, 

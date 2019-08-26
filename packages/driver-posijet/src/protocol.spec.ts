@@ -1,7 +1,8 @@
 import { PacoteDeTransmissao, PacoteDeRetorno } from './protocol.spec';
 import { Frame, createPerfectFrame, ACK, STX, frame2Bytes, Obj, NACK } from './datalink.common';
-import { Bytes, Byte, Bit, Word, Bit8Value, Bit8Description, Bit16Value, 
+import { Bit8Value, Bit8Description, Bit16Value, 
          Bit16Description, bit8Value, bit16Value } from './common';
+import { Bytes, Byte, Bit, Word } from './byte'
 import * as R from 'ramda'
 import { word2int, int2word, frame2Segment, Direcao, Segment, serializeSegment, DadoL } from './transport';
 import { bytesToFrameReal } from './datalink.in';

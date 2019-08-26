@@ -1,5 +1,12 @@
+// todo: Would be better if we can extend behavior of PhysicalQuantity adding a new unit of measurement
+//       using a more easy 'open-closed principle'.
 //todo: extract PhysicalQuantity from kinematics-package to a self contained package 
-import { PhysicalQuantity } from '@nextrobot/kinematics'
+import { 
+    PhysicalQuantity, 
+    PhysicalQuantityUtility,
+    GetUnitsByDimension
+} from '@nextrobot/kinematics'
+
 
 // =========================================================
 //          Data Types
@@ -15,8 +22,10 @@ export type AnyParamType =
     | Options<LigadoDesligado>
     | Options<ModoDetrabalhoDoEixo>
 
-
+// ----------
 // Space
+// ----------
+
 
 export interface Milimeter {
     readonly kind: 'Milimeter'

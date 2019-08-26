@@ -1,7 +1,7 @@
 // tslint:disable
 
 
-export { PhysicalQuantity, PhysicalQuantityUtility } from './quantity'
+export { PhysicalQuantity, PhysicalQuantityUtility, GetUnitsByDimension } from './quantity'
 
 export { VectorSpace } from './vector-space'
 
