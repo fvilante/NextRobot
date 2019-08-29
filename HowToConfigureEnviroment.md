@@ -10,8 +10,10 @@ Follow this link to do that and come back to this tutorial. (Link)[https://docs.
 - Install:
 -- NodeJS
 -- git
--- vscode
 
+
+-- vscode
+note: if you want to automatic configure all plugins install: "Settings Sync"
 
 
 - install chocolatey
@@ -41,6 +43,9 @@ Note: Maybe necessary to add installation dir of notepad++.exe manually into pat
 
 
 https://www.powershellgallery.com/packages/ZLocation/1.2.0
+
+
+- Instale o Firefox (ou navegador de sua preferencia)
 
 
 = Configurando repositorio local:
