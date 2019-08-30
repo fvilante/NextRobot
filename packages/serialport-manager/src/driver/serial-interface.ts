@@ -106,7 +106,7 @@ export const runPortTransaction: PortTransaction = async <T>(driver: SerialPortD
 
     /** Opens and returns the serial port */
     const getPort = async () => {
-        await delay(100) // fix: remove this delay. This delay is to give time to concrete port to close and open again (see serial driver implementation)
+        await delay(150) // fix: remove this delay. This delay is to give time to concrete port to close and open again (see serial driver implementation)
         const port = await driver(_port.portName, _port.portConfig)
         return port
     }

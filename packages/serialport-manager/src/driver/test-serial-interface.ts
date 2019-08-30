@@ -49,10 +49,15 @@ const Test2 = async () => {
 // tslint:disable-next-line: no-expression-statement
 //Test1()
 
+import { rangeSync } from '@nextrobot/core-utils'
 
 const runTest = async () => {
-    // tslint:disable-next-line: no-expression-statement
-    await Test2() ; await Test2() ; await Test2() ; await Test2() ; await Test2() ; await Test2() ; await Test2() ; await Test2() ; await Test2() ; await Test2() ; await Test2()
+    
+    for (const a of rangeSync(100)) {
+        // tslint:disable-next-line: no-expression-statement
+        await Test2()
+    }
+
 }
 
 console.log(`Iniciando Teste...`)
