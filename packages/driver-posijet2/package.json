@@ -1,6 +1,6 @@
 {
   "name": "@nextrobot/driver-posijet2",
-  "version": "0.0.6-alpha.0",
+  "version": "0.0.7-alpha.0",
   "description": "todo: put a description here",
   "author": "Flavio <fvilante1@gmail.com>",
   "homepage": "https://github.com/fvilante/NextRobot#readme",
@@ -41,11 +41,11 @@
     "ts-jest": "^23.10.5",
     "tslint": "^5.12.1",
     "tslint-immutable": "^5.1.2",
-     "typescript": "^3.5.3"
+    "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@nextrobot/core-utils": "^0.0.6-alpha.0",
-    "@nextrobot/driver-posijet": "0.0.6-alpha.0",
-    "@nextrobot/kinematics": "0.0.6-alpha.0"
+    "@nextrobot/core-utils": "^0.0.7-alpha.0",
+    "@nextrobot/driver-posijet": "^0.0.7-alpha.0",
+    "@nextrobot/kinematics": "^0.0.7-alpha.0"
   }
 }
