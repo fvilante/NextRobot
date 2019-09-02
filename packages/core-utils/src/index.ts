@@ -33,8 +33,6 @@ export { take } from './Generators/async/take'
 export { subscribe } from './Generators/async/subscribe'
 export { bufferCount } from './Generators/async/bufferCount'
 
-
-
 // equality
 export { isArrayEqual } from './isEqual'
 
@@ -43,3 +41,6 @@ export { min, max, average } from './statistics'
 
 // Message
 export { Message, MessagesFactory, MessageMorphism, AnyMessage } from './message'
+
+// delay
+export { delay } from './delay'
