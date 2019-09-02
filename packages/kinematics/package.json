@@ -1,6 +1,6 @@
 {
   "name": "@nextrobot/kinematics",
-  "version": "0.0.7-alpha.0",
+  "version": "0.0.7",
   "description": "Describes te motion of points and bodies without considering the forces that cause than to move",
   "author": "Flavio <fvilante1@gmail.com>",
   "homepage": "https://github.com/fvilante/NextRobot#readme",
@@ -44,6 +44,6 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@nextrobot/core-utils": "^0.0.7-alpha.0"
+    "@nextrobot/core-utils": "^0.0.7"
   }
 }
