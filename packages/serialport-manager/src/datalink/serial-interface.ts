@@ -1,10 +1,8 @@
 
 // tslint:disable: no-expression-statement no-if-statement no-let readonly-array
 
+import { delay } from '@nextrobot/core-utils' 
 
-// helper
-const delay = (ms:number):Promise<void> =>
-    new Promise( (resolve) => { setTimeout( () => resolve(), ms) })
 
 // primitives
 
