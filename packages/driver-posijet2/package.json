@@ -46,6 +46,7 @@
   "dependencies": {
     "@nextrobot/core-utils": "^0.0.8",
     "@nextrobot/driver-posijet": "^0.0.8",
-    "@nextrobot/kinematics": "^0.0.8"
+    "@nextrobot/kinematics": "^0.0.8",
+    "@nextrobot/serialport-manager": "0.0.8"
   }
 }
