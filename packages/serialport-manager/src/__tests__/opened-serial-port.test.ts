@@ -1,8 +1,8 @@
-import { serialPortOpenner as serialPortOpenner_Loopback  } from '../datalink/serial-opener-loopback'
-import { serialPortOpenner as serialPortOpenner_PC } from '../datalink/serial-opener-PC'
-import { PortReference } from '../datalink/port-reference'
+import { serialPortOpenner as serialPortOpenner_Loopback  } from '../serial-opener/serial-opener-loopback'
+import { serialPortOpenner as serialPortOpenner_PC } from '../serial-opener/serial-opener-PC'
+import { PortReference } from '../serial-opener/port-reference'
 import { delay } from '@nextrobot/core-utils'
-import { Bytes} from '../datalink/bytes'
+import { Bytes} from '../core/bytes'
 
 // tslint:disable: no-expression-statement no-let
 

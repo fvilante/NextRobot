@@ -2,10 +2,10 @@
 // tslint:disable: no-expression-statement no-if-statement no-let readonly-array
 
 import { delay } from '@nextrobot/core-utils' 
-import { OpendedSerialPort } from './opened-serial-port'
-import { SerialPortOpener } from './serial-opener-core'
-import { PortReference } from './port-reference'
-import { Datalinker } from './datalinker-core'
+import { OpendedSerialPort } from '../serial-opener/opened-serial-port'
+import { SerialPortOpener } from '../serial-opener/serial-opener-core'
+import { PortReference } from '../serial-opener/port-reference'
+import { Datalinker } from '../datalink/datalinker-core'
 
 
 // === Serial-port creator (Driver) ===

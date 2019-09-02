@@ -1,4 +1,4 @@
-import { Byte, Bytes } from './bytes'
+import { Byte, Bytes } from '../core/bytes'
 
 // === Result ===
 

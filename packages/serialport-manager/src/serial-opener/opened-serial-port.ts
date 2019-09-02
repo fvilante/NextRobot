@@ -1,4 +1,4 @@
-import { Bytes } from './bytes'
+import { Bytes } from '../core/bytes'
 
 
 // === Represents an already oppened serial port ===
