@@ -26,12 +26,12 @@ export type PortConfig = {
     readonly xon: boolean;
     readonly xoff: boolean;}
 
-export type PortAddress = {
+export type PortReference = {
     readonly portName: PortName
     readonly portConfig: PortConfig
 }
 
-export const PortAddress = (portName: PortName, portConfig: PortConfig):PortAddress => ({portName, portConfig})
+export const PortReference = (portName: PortName, portConfig: PortConfig):PortReference => ({portName, portConfig})
 
 
 // === Result ===
@@ -90,7 +90,7 @@ export type SerialPortDriver = (_: PortName, portConfig: PortConfig) => Promise<
 
 // === Effect Runner ===
 
-type PortTransaction = <T>(driver: SerialPortDriver, _port: PortAddress, m:SerialMessenger<T>) => Promise<T>
+type PortTransaction = <T>(driver: SerialPortDriver, _port: PortReference, m:SerialMessenger<T>) => Promise<T>
 
 
 // =======================================
@@ -100,7 +100,7 @@ type PortTransaction = <T>(driver: SerialPortDriver, _port: PortAddress, m:Seria
 /** Reception buffer */
 let receptionByteBuffer: number[] = []
 
-export const runPortTransaction: PortTransaction = async <T>(driver: SerialPortDriver, _port: PortAddress, m: SerialMessenger<T>): Promise<T> => {
+export const runPortTransaction: PortTransaction = async <T>(driver: SerialPortDriver, _port: PortReference, m: SerialMessenger<T>): Promise<T> => {
 
     /** Opens and returns the serial port */
     const getPort = async () => {

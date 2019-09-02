@@ -1,7 +1,7 @@
 import { 
     runPortTransaction,
     PortConfig, 
-    PortAddress,
+    PortReference,
     SerialMessenger,
 } from './serial-interface'
 
@@ -23,7 +23,7 @@ const portConfig: PortConfig = {
     xoff: false,
 }
 
-const portAddress: PortAddress = PortAddress('COM3', portConfig)
+const portReference: PortReference = PortReference('COM3', portConfig)
 
 
 
@@ -32,7 +32,7 @@ const Test1 = async () => {
         toWrite: () => [0x1B, 0x02, 0xC2, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x86],
         receptionHandler: byte => (byte === 0x03) ? {kind: 'Sucessful', data: 'A'} : { kind: 'Processing' }
     }
-    const a = await runPortTransaction(serialDriver, portAddress, messanger1)
+    const a = await runPortTransaction(serialDriver, portReference, messanger1)
     console.log(a)
 }
 
@@ -42,7 +42,7 @@ const Test2 = async () => {
     console.log(`Enviando pacote: ${msg.toWrite()}`)
     const x = [0x1B, 0x02, 0xC2, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x86]
     console.log(`Que deveria ser igual a: ${x}`)
-    const a = await runPortTransaction(serialDriver, portAddress, msg)
+    const a = await runPortTransaction(serialDriver, portReference, msg)
     console.log(`Resposta do pacote: ${a.data}`)
 }
 

@@ -39,10 +39,6 @@ const NodeBufferToBytes = (buffer: any): Bytes => {
 
 // === implementation ====
 
-// todo: extract all delays to core-utils
-const delay = (ms:number):Promise<void> =>
-    new Promise( (resolve) => { setTimeout( () => resolve(), ms) })
-
 
 /**
  * Fix: If a concrete port is already open, don't close and open it again (it takes about 100ms to perform this task)
