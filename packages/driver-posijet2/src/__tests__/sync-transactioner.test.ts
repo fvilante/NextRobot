@@ -1,8 +1,7 @@
-import { PortReference } from '../port-opener/port-reference'
-import { Datalinker } from '../sync-datalink-protocol/datalinker-core'
-import { serialPortOpenner } from '../port-opener/port-opener-PC'
-import { datalinker } from '../sync-datalink-protocol/datalinker-posijet1'
-import { syncTransactioner } from '../sync-transactioner/sync-transactioner' 
+import { PortReference } from  '@nextrobot/serialport-manager' 
+import { serialPortOpenner_PC } from '@nextrobot/serialport-manager' 
+import { datalinker } from '../datalink/datalinker-posijet1' 
+import { syncTransactioner } from '@nextrobot/serialport-manager' 
 
 import { rangeSync } from '@nextrobot/core-utils'
 
@@ -39,7 +38,7 @@ describe('Sync transaction using Posijet1 Datalinker', () => {
 
         const probe = [0xC2, 0x50, 0x61, 0x02]
         const msg = datalinker(probe)
-        const response = await syncTransactioner(serialPortOpenner, portReference, msg)
+        const response = await syncTransactioner(serialPortOpenner_PC, portReference, msg)
         //console.log(`Resposta do pacote: ${response.data}`)
 
         // ignore dadoh and dadol on response

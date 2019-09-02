@@ -5,7 +5,7 @@ import { delay } from '@nextrobot/core-utils'
 import { OpendedSerialPort } from '../port-opener/opened-serial-port'
 import { SerialPortOpener } from '../port-opener/port-opener-core'
 import { PortReference } from '../port-opener/port-reference'
-import { Datalinker } from '../sync-datalink-protocol/datalinker-core'
+import { Datalinker } from '../core/datalinker-sync'
 
 
 // === Serial-port creator (Driver) ===
