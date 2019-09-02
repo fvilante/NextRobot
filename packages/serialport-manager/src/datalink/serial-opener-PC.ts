@@ -1,16 +1,9 @@
 
-// === abstract imports ===
-
-import { 
-    SerialPortDriver,
-    SerialPort as __SerialPort,
-    PortConfig,
-    PortName,
-} from './serial-interface'
-
-import { Byte, Bytes } from './bytes'
-
 // tslint:disable: no-expression-statement no-if-statement no-let
+
+import { OpendedSerialPort } from './opened-serial-port'
+import { SerialPortOpener } from './serial-opener-core'
+import { Bytes } from './bytes'
 
 
 // === implementation imports ===
@@ -41,15 +34,22 @@ const NodeBufferToBytes = (buffer: any): Bytes => {
 
 
 /**
+ * 
+ * Opens serial ports on PC running windows or linux
+ * 
  * Fix: If a concrete port is already open, don't close and open it again (it takes about 100ms to perform this task)
  * 
  * @param portName 
  * @param portConfig 
  */
-export const serialDriver: SerialPortDriver = (portName, portConfig) => {
+export const serialPortOpenner: SerialPortOpener = (portReference) => {
+
+    const portName = portReference.portName
+    const portConfig = portReference.portConfig
 
     return new Promise( async (resolve, reject) => {
 
+        // error on openening port
         const openError = (err?: Error | null): void => {
             if (err === undefined || err === null)
                 reject(new Error(`Error: Cannot open serial port ${portName}`))
@@ -67,7 +67,7 @@ export const serialDriver: SerialPortDriver = (portName, portConfig) => {
             const onOpen = ():void => {
                 
                 // port interface
-                const iPort: __SerialPort = {
+                const openedPort: OpendedSerialPort = {
                     write: bytes => cPort.write([...bytes]),
                     close: () => {cPort.close()},
                     onClose: callback => {cPort.on('close', callback)},
@@ -75,7 +75,7 @@ export const serialDriver: SerialPortDriver = (portName, portConfig) => {
                     onError: callback => cPort.on('error', callback),
                     // todo: add onWrite 
                 }
-                resolve(iPort)
+                resolve(openedPort)
             }
 
             // set handlers and try to open

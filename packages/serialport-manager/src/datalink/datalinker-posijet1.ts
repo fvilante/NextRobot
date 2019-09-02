@@ -1,21 +1,8 @@
-import { 
-    SerialMessenger,
-
-    Bytes, Byte, 
-
-    ReceptionHandlerResult,
-    ResultProcessing,
-    ResultError,
-    ResultSucessful
-
-} from './serial-interface'
-
-import { flattenDeep } from '@nextrobot/core-utils'
-import { verify } from 'crypto';
-
-
 // tslint:disable: no-let no-expression-statement no-if-statement
 
+import { Datalinker, ResultError, ReceptionHandlerResult, ResultProcessing, ResultSucessful } from './datalinker-core'
+import { Byte, Bytes } from './bytes'
+import { flattenDeep } from '@nextrobot/core-utils'
 
 
 // === Constantes === 
@@ -51,7 +38,7 @@ type FinalResult = {
     readonly data: Bytes
 }
 
-const getReceptionHandler = (): SerialMessenger<FinalResult>['receptionHandler'] => {
+const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
 
     let rawFrame: Bytes = []
     let unDupedData: Bytes = []
@@ -162,10 +149,8 @@ const getReceptionHandler = (): SerialMessenger<FinalResult>['receptionHandler']
 
 }
 
-
-
     
-export const makeSerialMessenger = (data: Bytes): SerialMessenger<FinalResult> => {
+export const datalinker = (data: Bytes): Datalinker<FinalResult> => {
 
     return {
         toWrite: makeFrame(data),
