@@ -1,7 +1,7 @@
 // tslint:disable: no-if-statement
 
 import { AnyDriver, UserProgram } from '../driver/driver-core'
-import { Device } from '../models/device'
+import { Device } from '../core-models/device'
 import { mapObjectIndexed } from '@nextrobot/core-utils'
 
 

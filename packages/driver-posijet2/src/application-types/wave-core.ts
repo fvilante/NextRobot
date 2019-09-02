@@ -1,5 +1,5 @@
 import { AnyParamType } from ".";
-import { Device } from "../models/device";
+import { Device } from "../core-models/device";
 import { AnyDriver, GetParameterType, GetParameters } from "../driver/driver-core";
 
 //waved is a number that represents the content of a parameter inside cmpp memory

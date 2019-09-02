@@ -1,6 +1,6 @@
 import { PortReference } from  '@nextrobot/serialport-manager' 
 import { serialPortOpenner_PC } from '@nextrobot/serialport-manager' 
-import { datalinker } from '../datalink/datalinker-posijet1' 
+import { datalinker } from '../protocol/posijet1-datalink' 
 import { syncTransactioner } from '@nextrobot/serialport-manager' 
 
 import { rangeSync } from '@nextrobot/core-utils'
