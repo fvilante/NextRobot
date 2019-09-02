@@ -43,7 +43,7 @@ describe('Sync transaction using Posijet1 Datalinker', () => {
 
         // ignore dadoh and dadol on response
         const expected = [probe[0], probe[1]] 
-        const result = [response.data[0], response.data[1]]
+        const result = [response.payload[0], response.payload[1]]
         expect(result).toEqual(expected)
     })
 

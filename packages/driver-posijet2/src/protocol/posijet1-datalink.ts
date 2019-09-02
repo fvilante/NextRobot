@@ -34,11 +34,14 @@ const makeFrame = (data: Bytes) => ():Bytes => {
 
 // === Reception ===
 
-type FinalResult = {
-    readonly data: Bytes
+type DatalinkResult = {
+    readonly payload: Bytes
+    readonly startByte: Byte
+    readonly rawFrame: Bytes
+    readonly checksum: number
 }
 
-const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
+const getReceptionHandler = (): Datalinker<DatalinkResult>['receptionHandler'] => {
 
     let rawFrame: Bytes = []
     let unDupedData: Bytes = []
@@ -75,15 +78,18 @@ const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
         return ideal === real
     }
 
-    const makeSucessResult = (): ResultSucessful<FinalResult> => {
-        const result: FinalResult = {
-            data: unDupedData
+    const makeSucessResult = (): ResultSucessful<DatalinkResult> => {
+        const result: DatalinkResult = {
+            payload: unDupedData,
+            startByte,
+            rawFrame,
+            checksum
         }
         return ResultSucessful(result)
     }
 
 
-    const receptionHandler = (_: Byte): ReceptionHandlerResult<FinalResult> => {
+    const receptionHandler = (_: Byte): ReceptionHandlerResult<DatalinkResult> => {
 
         //save raw_frame
         rawFrame = [...rawFrame, _]
@@ -150,7 +156,7 @@ const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
 }
 
     
-export const datalinker = (data: Bytes): Datalinker<FinalResult> => {
+export const datalinker = (data: Bytes): Datalinker<DatalinkResult> => {
 
     return {
         toWrite: makeFrame(data),
