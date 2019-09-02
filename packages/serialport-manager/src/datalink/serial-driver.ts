@@ -4,12 +4,11 @@
 import { 
     SerialPortDriver,
     SerialPort as __SerialPort,
-    Bytes,
-    Byte,
     PortConfig,
     PortName,
 } from './serial-interface'
 
+import { Byte, Bytes } from './bytes'
 
 // tslint:disable: no-expression-statement no-if-statement no-let
 
