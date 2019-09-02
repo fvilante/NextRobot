@@ -24,10 +24,13 @@ export function flattenDeep<T,U>(array: ReadonlyArray<T>): ReadonlyArray<U> {
     return ret;
   }     
 
+// informal test
 
+const Test = () => {
+    // Some samples
+    console.log(flattenDeep([[1,2,[3]],4]));  // -> [ 1, 2, 3, 4]
+    console.log(flattenDeep([1,2,3,4]));  // -> [ 1, 2, 3, 4]
+    console.log(flattenDeep([[1,2,[3]],4, [[[[5]],6],[[7],8,9],10],[[11,12]]]));  // -> [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
+    console.log(flattenDeep([])); // -> []
+}
 
-// Some samples
-console.log(flattenDeep([[1,2,[3]],4]));  // -> [ 1, 2, 3, 4]
-console.log(flattenDeep([1,2,3,4]));  // -> [ 1, 2, 3, 4]
-console.log(flattenDeep([[1,2,[3]],4, [[[[5]],6],[[7],8,9],10],[[11,12]]]));  // -> [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 ]
-console.log(flattenDeep([])); // -> []

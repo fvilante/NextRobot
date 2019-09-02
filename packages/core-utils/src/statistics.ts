@@ -10,8 +10,9 @@ export const average =  (_: readonly number[]): number => _.reduce((acc,cur) => 
 
 // informal test
 
-console.log(max([1,2,3,4]))
+const Test = () => {
+    console.log(max([1,2,3,4]))
+    console.log(min([2,2,3,4]))
+    console.log(average([0,5,0,5]))
+}
 
-console.log(min([2,2,3,4]))
-
-console.log(average([0,5,0,5]))

@@ -129,12 +129,18 @@ export const Nothing = <A>(_: undefined = undefined) : Maybe<A> => Maybe.Nothing
 
 // informal test
 
-const a = Just(10)
-const b = Nothing<number>()
-const c = 0//a.fromMaybe(50)
-const c2 = 0//b.fromMaybe(1000)
+const Test = () => {
 
-console.log(a.isJust)
+    const a = Just(10)
+    const b = Nothing<number>()
+    const c = 0//a.fromMaybe(50)
+    const c2 = 0//b.fromMaybe(1000)
 
-console.log('funciona')
+    console.log(a.isJust)
+
+    console.log('funciona')
+
+}
+
+
 

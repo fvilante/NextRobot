@@ -18,12 +18,15 @@ export const objectToPairs = <T extends object>(o: T): Pairs<keyof T, T[keyof T]
 
 // informal test
 
-const input = {
-    juca: 'nego',
-    test: 2
-} 
+const Test = () => {
+    const input = {
+        juca: 'nego',
+        test: 2
+    } 
+    
+    const result = objectToPairs(input)
+    
+    console.log(input)
+    console.log(result)
+}
 
-const result = objectToPairs(input)
-
-console.log(input)
-console.log(result)
