@@ -1,3 +1,3 @@
 # NextRobot
 
-The next robot framework 
+The next robot library

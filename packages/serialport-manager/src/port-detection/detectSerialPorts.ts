@@ -19,11 +19,11 @@ export interface PortInfo {
 export const detectSerialPorts = async (): Promise<readonly PortInfo[]> => serialPort.list()
 
 
-// effect test
+// informal test 
 
-const main = async () => {
+const test = async () => {
     const a = await detectSerialPorts()
     console.log(a)
 }
 
-//main()
+//test()
