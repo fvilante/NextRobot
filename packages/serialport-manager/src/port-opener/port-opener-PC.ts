@@ -2,7 +2,7 @@
 // tslint:disable: no-expression-statement no-if-statement no-let
 
 import { OpendedSerialPort } from './opened-serial-port'
-import { SerialPortOpener } from './serial-opener-core'
+import { SerialPortOpener } from './port-opener-core'
 import { Bytes } from '../core/bytes'
 
 

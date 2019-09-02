@@ -2,10 +2,10 @@
 // tslint:disable: no-expression-statement no-if-statement no-let readonly-array
 
 import { delay } from '@nextrobot/core-utils' 
-import { OpendedSerialPort } from '../serial-opener/opened-serial-port'
-import { SerialPortOpener } from '../serial-opener/serial-opener-core'
-import { PortReference } from '../serial-opener/port-reference'
-import { Datalinker } from '../datalink/datalinker-core'
+import { OpendedSerialPort } from '../port-opener/opened-serial-port'
+import { SerialPortOpener } from '../port-opener/port-opener-core'
+import { PortReference } from '../port-opener/port-reference'
+import { Datalinker } from '../sync-datalink-protocol/datalinker-core'
 
 
 // === Serial-port creator (Driver) ===
@@ -13,7 +13,7 @@ import { Datalinker } from '../datalink/datalinker-core'
 
 // === Effect Runner ===
 
-type SyncTransactioner = <T>(portOpener: SerialPortOpener, _port: PortReference, datalinker:Datalinker<T>) => Promise<T>
+type SyncTransactioner = <T>(portOpener: SerialPortOpener, port: PortReference, datalinker:Datalinker<T>) => Promise<T>
 
 
 // =======================================

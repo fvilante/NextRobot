@@ -1,6 +1,6 @@
-import { serialPortOpenner as serialPortOpenner_Loopback  } from '../serial-opener/serial-opener-loopback'
-import { serialPortOpenner as serialPortOpenner_PC } from '../serial-opener/serial-opener-PC'
-import { PortReference } from '../serial-opener/port-reference'
+import { serialPortOpenner as serialPortOpenner_Loopback  } from '../port-opener/port-opener-loopback'
+import { serialPortOpenner as serialPortOpenner_PC } from '../port-opener/port-opener-PC'
+import { PortReference } from '../port-opener/port-reference'
 import { delay } from '@nextrobot/core-utils'
 import { Bytes} from '../core/bytes'
 

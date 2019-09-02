@@ -1,8 +1,8 @@
-import { PortReference } from '../serial-opener/port-reference'
-import { Datalinker } from '../datalink/datalinker-core'
-import { serialPortOpenner } from '../serial-opener/serial-opener-PC'
-import { datalinker } from '../datalink/datalinker-posijet1'
-import { syncTransactioner } from '../serial-sync-transaction/sync-transactioner' 
+import { PortReference } from '../port-opener/port-reference'
+import { Datalinker } from '../sync-datalink-protocol/datalinker-core'
+import { serialPortOpenner } from '../port-opener/port-opener-PC'
+import { datalinker } from '../sync-datalink-protocol/datalinker-posijet1'
+import { syncTransactioner } from '../sync-transactioner/sync-transactioner' 
 
 import { rangeSync } from '@nextrobot/core-utils'
 
