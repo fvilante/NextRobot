@@ -1,6 +1,6 @@
 {
   "name": "@nextrobot/serialport-manager",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "todo: put a description here",
   "author": "Flavio <fvilante1@gmail.com>",
   "homepage": "https://github.com/fvilante/NextRobot#readme",
@@ -44,7 +44,7 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
-    "@nextrobot/core-utils": "^0.0.7",
+    "@nextrobot/core-utils": "^0.0.8",
     "@types/serialport": "^7.0.4",
     "serialport": "^7.1.5"
   }
