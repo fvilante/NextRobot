@@ -2,7 +2,7 @@ import { serialPortOpenner as serialPortOpenner_Loopback  } from '../port-opener
 import { serialPortOpenner as serialPortOpenner_PC } from '../port-opener/port-opener-PC'
 import { PortReference } from '../port-opener/port-reference'
 import { delay } from '@nextrobot/core-utils'
-import { Bytes} from '../core/bytes'
+import { Bytes} from '../core-models/bytes'
 
 // tslint:disable: no-expression-statement no-let
 

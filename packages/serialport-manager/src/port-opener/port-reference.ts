@@ -1,5 +1,5 @@
-import { PortName } from '../core/port-name'
-import { PortConfig } from '../core/port-config'
+import { PortName } from '../core-models/port-name'
+import { PortConfig } from '../core-models/port-config'
 
 
 /** A wrapper to represent a port specification: portName + portConfig  */

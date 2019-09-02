@@ -1,5 +1,5 @@
 export { PortReference } from './port-opener/port-reference'
 export { serialPortOpenner as serialPortOpenner_PC } from './port-opener/port-opener-PC'
 export { syncTransactioner } from './sync-transactioner/sync-transactioner'
-export { Byte, Bytes } from './core/bytes'
-export { Datalinker, ResultError, ReceptionHandlerResult, ResultProcessing, ResultSucessful } from './core/datalinker-sync'
+export { Byte, Bytes } from './core-models/bytes'
+export { Datalinker, ResultError, ReceptionHandlerResult, ResultProcessing, ResultSucessful } from './core-models/datalinker-sync'
