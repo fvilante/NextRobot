@@ -44,3 +44,6 @@ export { Message, MessagesFactory, MessageMorphism, AnyMessage } from './message
 
 // delay
 export { delay } from './delay'
+
+// bitWise
+export { Bit, bitToBoolean, bolleanToBit, setBit, clearBit, updateBit } from './bitTools' 
