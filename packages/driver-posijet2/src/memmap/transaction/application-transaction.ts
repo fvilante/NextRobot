@@ -1,15 +1,62 @@
-// tslint:disable: no-if-statement
-
 import { AnyDriver, UserProgram } from '../driver/driver-core'
 import { Device } from '../core-models/device'
 import { mapObjectIndexed } from '@nextrobot/core-utils'
+import { transact } from '../../transport-layer/transaction/transact';
+import { Direcao } from '../../transport-layer/other-types/Direcao';
+import { serialPortOpenner_PC } from '@nextrobot/serialport-manager';
+import { PacoteDeTransmissaoPadrao } from '../../transport-layer/pacotes/PacoteDeTransmissao';
+import { Word } from '../../transport-layer/other-types/Word';
+import { ByteToWord } from '../../transport-layer/other-types/byteAndWordConversors';
+
+// tslint:disable: no-let no-if-statement no-new
 
 
 
-export const SendCmppProgram = <T extends AnyDriver>(program: UserProgram<T>, device: Device<T>): /*Promise<void>*/ void => {
+export const SendCmppProgram = async <T extends AnyDriver>(program: UserProgram<T>, device: Device<T>): Promise<void> => {
+    
+    for (let parameter in program) {
 
-    // cria os pacotes de transacao sincrona, coloca-os na fila de processamento de transacoes sincronas
-    // o resultado é processado e devolvido ou caso erro a promessa falha
+        // helpers
+        const memmap = device.memmap[parameter]
+        const cmppAddress = device.cmppAddress
+        const portOpener = serialPortOpenner_PC
+
+        // waving
+        const waver = memmap.Waver
+        const toWave = waver.toWave
+        const unWavedValue = program[parameter]
+        const wavedValue = toWave(unWavedValue, device)
+
+        const comando = device.memmap[parameter].StartWord
+
+        const bitSize = memmap.BitSize
+        let packet: PacoteDeTransmissaoPadrao;
+
+        if (bitSize===16) {
+            // tslint:disable-next-line: no-expression-statement
+            packet = PacoteDeTransmissaoPadrao('Envio', comando, wavedValue.waved)
+        }
+        else {
+            throw new TypeError('Error: only bitize 16 are supported')
+        }
+
+        const pacoteRetornado = await transact(portOpener, cmppAddress, packet) 
+
+        console.log(`loop ${parameter}`)
+        console.log(`Resultado...`)
+        console.log(pacoteRetornado)
+    
+        switch (pacoteRetornado.kind) {
+            case 'PacoteDeRetornoDeEnvioSemErro': 
+                console.table(pacoteRetornado.payload.statusL); break;
+            case 'PacoteDeRetorno_ComErro': 
+                console.table(pacoteRetornado.payload.statusL); break;
+            case 'PacoteDeRetorno_DeSolicitacaoSemErro': 
+                console.log(`Word recebida: ${ByteToWord(pacoteRetornado.payload.dadoL, pacoteRetornado.payload.dadoH)}`); break;
+        }
+
+
+    }
 
 } 
 

@@ -28,12 +28,12 @@ export type Driver = {
 /** note:   This variable name is a Memmap<Driver> indeed. But 'Driver' variable name is overloaded with 
  *          the Memmap to simplify namespace for client */
 export const Driver : Memmap<Driver> = {
-    'Posicao Inicial': { StartWord: 0x60, StartBit: 0, BitSize: 16, Waver: spaceWaver},
-    'Posicao Final': { StartWord: 0x60, StartBit: 0, BitSize: 16, Waver: spaceWaver},
-    'Velocidade de Avanço': { StartWord: 0x60, StartBit: 0, BitSize: 16, Waver: speedWaver},
-    'Velocidade de Retorno': { StartWord: 0x60, StartBit: 0, BitSize: 16, Waver: speedWaver},
-    'Aceleração de Avanço': { StartWord: 0x60, StartBit: 0, BitSize: 16, Waver: accelerationWaver},
-    'Aceleração de Retorno': { StartWord: 0x60, StartBit: 0, BitSize: 16, Waver: accelerationWaver},
+    'Posicao Inicial': { StartWord: 0x50, StartBit: 0, BitSize: 16, Waver: spaceWaver},
+    'Posicao Final': { StartWord: 0x51, StartBit: 0, BitSize: 16, Waver: spaceWaver},
+    'Velocidade de Avanço': { StartWord: 0x52, StartBit: 0, BitSize: 16, Waver: speedWaver},
+    'Velocidade de Retorno': { StartWord: 0x53, StartBit: 0, BitSize: 16, Waver: speedWaver},
+    'Aceleração de Avanço': { StartWord: 0x54, StartBit: 0, BitSize: 16, Waver: accelerationWaver},
+    'Aceleração de Retorno': { StartWord: 0x55, StartBit: 0, BitSize: 16, Waver: accelerationWaver},
 }
 
 

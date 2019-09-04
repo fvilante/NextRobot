@@ -31,9 +31,9 @@ const Test = async () => {
     }
     
     const bracoMecanico = LinearAxisClassic(200, 20, 5.08)
-    const cmppAddress = CmppAddress({channel: 0, baudRate: 9600, portName: 'COM3'})
+    const cmppAddress = CmppAddress({channel: 1, baudRate: 9600, portName: 'COM3'})
     
-    const eixoX = Device(bracoMecanico, cmppAddress , CMPP00LG )
+    const eixoX = Device(bracoMecanico, cmppAddress , CMPP00LG)
     
     console.log(`Enviando...`)
     const a = await SendCmppProgram(programa, eixoX)
