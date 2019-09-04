@@ -6,11 +6,7 @@ export interface LinearAxisClassic  {
     readonly beltStepInMilimeters: 5.08,          // passo da correia dentada em milimetros
 }
 
-export const LinearAxisClassic = (
-    pulsesPerMotorRevolution: LinearAxisClassic['pulsesPerMotorRevolution'],
-    teethOnTheMotorPulley: LinearAxisClassic['teethOnTheMotorPulley'],
-    beltStepInMilimeters: LinearAxisClassic['beltStepInMilimeters']
-): LinearAxisClassic => ({pulsesPerMotorRevolution,teethOnTheMotorPulley,beltStepInMilimeters})
+export const LinearAxisClassic = (_: LinearAxisClassic): LinearAxisClassic => _
 
 
 export type PhysicalArm = LinearAxisClassic
