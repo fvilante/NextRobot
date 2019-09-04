@@ -47,3 +47,6 @@ export { delay } from './delay'
 
 // bitWise
 export { Bit, bitToBoolean, bolleanToBit, setBit, clearBit, updateBit } from './bitTools' 
+
+// misc
+export { getKeyByValue } from './misc/getKeyByValue'

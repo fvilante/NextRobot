@@ -7,21 +7,6 @@ import { datalinkerWrapper, NACK } from '../datalink/posijet1-datalink';
 import { DatalinkResult } from '../datalink/datalink-result';
 
 
-// ----------
-
-// helpers -- todo: Move to core-utils package
-type Keys<T> = keyof T
-type Values<T> = T[keyof T]
-
-/** helpers -- todo: Move to core-utils package 
- * 
- * note: eventualy in an uncasted run-time scenario where value is not present in object, the function returns undefined
- * */  
-const getKeyByValue = <T>(object:T , value: T[keyof T]): keyof T | undefined => {
-    return Object.keys(object).find(key => object[key as keyof T] === value) as keyof T | undefined
-  }
-
-
 /** Helper to represent bitwise data from a core type where key represents the bit position and value represents a label describing that bit*/
 
 type AnyCore = {readonly [bit: number]: string}
