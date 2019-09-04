@@ -1,6 +1,6 @@
 import { Bitmask, BitmaskCreator } from './bitmask-core'
 import { Reservado } from './consts'
-import { Word } from '../type-word'
+import { Word } from '../other-types/Word'
 
 
 const __mascaraDeErro = {

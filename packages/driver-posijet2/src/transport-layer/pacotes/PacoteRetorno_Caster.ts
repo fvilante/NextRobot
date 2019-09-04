@@ -1,8 +1,8 @@
-import { DatalinkResult } from "../../datalink/datalink-result";
-import { Direcao } from "../Direcao";
+import { DatalinkResult } from "../../datalink-layer/datalink-result";
+import { Direcao } from "../other-types/Direcao";
 import { PacoteDeRetorno, PacoteDeRetorno_ComErro, PacoteDeRetorno_DeSolicitacaoSemErro, PacoteDeRetorno_DeEnvioSemErro } from "./PacoteDeRetorno";
 import { PacoteRetornoPadrao } from "./PacoteRetornoPadrao";
-import { NACK } from "../../datalink/posijet1-datalink";
+import { NACK } from "../../datalink-layer/posijet1-protocol";
 
 
 

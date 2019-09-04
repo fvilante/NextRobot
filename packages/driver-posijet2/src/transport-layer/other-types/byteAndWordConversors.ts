@@ -1,5 +1,5 @@
 import { Byte } from '@nextrobot/serialport-manager'
-import { Word } from './type-word'
+import { Word } from './Word'
 
 export const ByteToWord = (dadoL: Byte, dadoH: Byte): Word => {
     return dadoH*256 + dadoL

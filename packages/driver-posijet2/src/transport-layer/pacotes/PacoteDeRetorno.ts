@@ -4,7 +4,7 @@ import { StatusL } from '../bitmask/StatusL';
 import { PacoteRetornoPadrao } from './PacoteRetornoPadrao'
 import { ByteDeErro } from './ByteDeErro';
 import { MascaraDeErro } from '../bitmask/MascaraDeErro';
-import { ByteToWord } from '../tools-byteAndWordConversors';
+import { ByteToWord } from '../other-types/byteAndWordConversors';
 
 export type PacoteDeRetorno_DeEnvioSemErro = {
     readonly kind: 'PacoteDeRetornoDeEnvioSemErro'
@@ -64,25 +64,9 @@ export const PacoteDeRetorno_ComErro = (_: PacoteRetornoPadrao): PacoteDeRetorno
         }})
 
 
-export type PacoteDeRetorno_MascaraDeErro = {
-    readonly kind: 'PacoteDeRetorno_MascaraDeErro'
-    readonly payload: {
-        readonly canal: Byte
-        readonly comando: undefined 
-        readonly mascaraDeErro: MascaraDeErro 
-    }
-}
 
-export const PacoteDeRetorno_MascaraDeErro = (_: PacoteRetornoPadrao): PacoteDeRetorno_MascaraDeErro => 
-    ({kind: 'PacoteDeRetorno_MascaraDeErro', 
-        payload: { 
-            canal: _.canal, 
-            comando: undefined, 
-            mascaraDeErro: MascaraDeErro( ByteToWord(_.dadoL, _.dadoH)), 
-        }})
 
 export type PacoteDeRetorno = 
     | PacoteDeRetorno_DeSolicitacaoSemErro
     | PacoteDeRetorno_DeEnvioSemErro
     | PacoteDeRetorno_ComErro
-    | PacoteDeRetorno_MascaraDeErro

@@ -1,5 +1,7 @@
 import { Byte } from '@nextrobot/serialport-manager'
-import { Direcao } from '../Direcao'
+import { Direcao } from '../other-types/Direcao'
+import { Word } from '../other-types/Word';
+import { WordToByte } from '../other-types/byteAndWordConversors';
 
 export type PacoteDeTransmissaoPadrao = {
     readonly direcao: Direcao
@@ -8,5 +10,10 @@ export type PacoteDeTransmissaoPadrao = {
     readonly dadoL: Byte
 }
 
-export const PacoteDeTransmissaoPadrao = (direcao: Direcao, comando: Byte, dadoL: Byte, dadoH: Byte): PacoteDeTransmissaoPadrao => 
-    ({direcao, comando, dadoH, dadoL})
+export const PacoteDeTransmissaoPadrao = (direcao: Direcao, comando: Byte, word: Word): PacoteDeTransmissaoPadrao => {
+    const _ = WordToByte(word)
+    const dadoH = _.dadoH
+    const dadoL = _.dadoL
+    return  ({direcao, comando, dadoH, dadoL})
+}
+   

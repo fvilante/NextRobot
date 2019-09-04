@@ -5,35 +5,25 @@ import { PortReference, serialPortOpenner_PC } from "@nextrobot/serialport-manag
 import { transact } from "./transaction/transact";
 import { CmppAddress } from "./transaction/CmppAddress";
 import { PacoteDeTransmissaoPadrao } from "./pacotes/PacoteDeTransmissao";
-import { ByteToWord } from "./tools-byteAndWordConversors";
+import { ByteToWord } from "./other-types/byteAndWordConversors";
+import { Direcao } from "./other-types/Direcao";
 
 
 // tslint:disable: no-if-statement
 
 const Test = async () => {
-    const a = StatusL(15)
-    //console.table(a)
-    const b = StatusH(16)
-    //onsole.table(b)
-    const c = MascaraDeErro(31)
-    //console.table(c)
+  
+    const portName = 'COM3'
+    const direcao: Direcao = 'Solicitacao'
+    const channel = 1
+    const baudRate = 9600
+    const comando = 69 //COMANDO_MASCARA_DE_ERRO
+    const word16 = 0
+    const portOpener = serialPortOpenner_PC
 
-    const portReference = PortReference('COM3', {
-        baudRate: 9600,
-        dataBits: 8,
-        stopBits: 1,
-        parity: 'none',
-        rtscts: false,
-        xon: false,
-        xoff: false,
-    })
-
-    const COMANDO_MASCARA_DE_ERRO = 0x45
-
-    const pacoteRetornado = await transact(serialPortOpenner_PC, CmppAddress(portReference, 1), 
-        PacoteDeTransmissaoPadrao('Solicitacao',COMANDO_MASCARA_DE_ERRO,0,0))
-
-
+    const pacoteRetornado = 
+        await transact(portOpener, CmppAddress({channel, portName, baudRate}), PacoteDeTransmissaoPadrao(direcao, comando, word16)) 
+    
 
     console.log(`Resultado...`)
     console.log(pacoteRetornado)
@@ -43,8 +33,6 @@ const Test = async () => {
             console.table(pacoteRetornado.payload.statusL); break;
         case 'PacoteDeRetorno_ComErro': 
             console.table(pacoteRetornado.payload.statusL); break;
-        case 'PacoteDeRetorno_MascaraDeErro': 
-            console.table(pacoteRetornado.payload.mascaraDeErro); break; 
         case 'PacoteDeRetorno_DeSolicitacaoSemErro': 
             console.log(`Word recebida: ${ByteToWord(pacoteRetornado.payload.dadoL, pacoteRetornado.payload.dadoH)}`); break;
     }

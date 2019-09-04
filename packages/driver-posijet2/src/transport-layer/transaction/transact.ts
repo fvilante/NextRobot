@@ -1,9 +1,9 @@
 import { CmppAddress } from './CmppAddress'
-import { direcaoToNumber } from '../Direcao'
+import { direcaoToNumber } from '../other-types/Direcao'
 import { PacoteDeTransmissaoPadrao } from '../pacotes/PacoteDeTransmissao';
 import { PacoteDeRetorno } from '../pacotes/PacoteDeRetorno';
 import { SerialPortOpener, syncTransactioner } from '@nextrobot/serialport-manager';
-import { datalinkerWrapper } from '../../datalink/posijet1-datalink';
+import { datalinkerWrapper } from '../../datalink-layer/posijet1-protocol';
 import { PacoteRetorno_Caster } from '../pacotes/PacoteRetorno_Caster';
 
 export const transact = async (portOpener: SerialPortOpener, cmppAddr: CmppAddress, pacote: PacoteDeTransmissaoPadrao ): Promise<PacoteDeRetorno> => {
