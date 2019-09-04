@@ -1,28 +1,32 @@
 import { Byte, Datalinker, PortReference, syncTransactioner } from '@nextrobot/serialport-manager'
 import { mapObjectIndexed } from '@nextrobot/core-utils';
 import { Channel } from '../core-models/channel'
+import { ByteToWord } from './tools-byteAndWordConversors'
 
 import { SerialPortOpener } from '@nextrobot/serialport-manager'
 import { datalinkerWrapper, NACK } from '../datalink/posijet1-datalink';
 import { DatalinkResult } from '../datalink/datalink-result';
 
+import { Word } from './type-word'
+
 
 /** Helper to represent bitwise data from a core type where key represents the bit position and value represents a label describing that bit*/
 
-type AnyCore = {readonly [bit: number]: string}
-type Value<T extends AnyCore > = {
+type AnyBitmaskBase = {readonly [bit: number]: string}
+type Bitmask<T extends AnyBitmaskBase > = {
     [Bit in keyof T]: {readonly label: T[Bit], readonly value: boolean}
 }
-const Value = <T extends AnyCore>(core: T, value: number): Value<T> => {
+const Bitmask = <T extends AnyBitmaskBase>(bitmaskBase: T, value: number): Bitmask<T> => {
     const getBit = (bitPosition: number, value: number):boolean => 
         (value & (1 << bitPosition)) === 0 ? false : true     
-    const t = mapObjectIndexed(core, (label, bit) => ({
+    const t = mapObjectIndexed(bitmaskBase, (label, bit) => ({
         label,
         value: getBit(bit as number, value),
     }) )
-    return t as Value<T> //todo: is it possible to remove this type coersion ? Maybe this result in a improvement in mapObjectIndexed
+    return t as Bitmask<T> //todo: is it possible to remove this type coersion ? Maybe this result in a improvement in mapObjectIndexed
 }
 
+type BitmaskCreator<T extends AnyBitmaskBase> = (_: number) => Bitmask<T>
 
 // ---------------------
 
@@ -30,16 +34,6 @@ const Reservado = "Reservado para aplicacoes especiais"
 
 // ---------------------
 
-const ByteToWord = (dadoH: Byte, dadoL: Byte): number => {
-    return dadoH*256 + dadoL
-}
-
-const WordToByte = (word: number): {readonly dadoH: Byte, readonly dadoL: Byte} => {
-    return {
-        dadoH: Math.floor(word / 256),
-        dadoL: word % 256,
-    }
-}
 
 // ---------------------
 
@@ -53,11 +47,12 @@ const __StatusL = {
     6: Reservado,
     7: "Evento de erro, e deve ser consultado na mascara de erro. CMD=69 =45h",
 } as const
+type __StatusL = typeof __StatusL
 
-export type StatusL = Value<typeof __StatusL>
+export type StatusL = Bitmask<__StatusL>
 
-export const StatusL = (_: Byte): StatusL => {
-    return Value(__StatusL, _)
+export const StatusL: BitmaskCreator<__StatusL> = (byte:Byte):StatusL => {
+    return Bitmask(__StatusL, byte)
 }
 
 
@@ -75,11 +70,12 @@ const __StatusH = {
     6: Reservado,
     7: Reservado,
 } as const
+type __StatusH = typeof __StatusH
 
-export type StatusH = Value<typeof __StatusH>
+export type StatusH = Bitmask<__StatusH>
 
-export const StatusH = (_: Byte): StatusH => {
-    return Value(__StatusH, _)
+export const StatusH: BitmaskCreator<__StatusH> = (_: Byte): StatusH => {
+    return Bitmask(__StatusH, _)
 }
 
 
@@ -105,11 +101,12 @@ const __mascaraDeErro = {
     14: Reservado,
     15: Reservado,
 } as const
+type __mascaraDeErro = typeof __mascaraDeErro
 
-export type MascaraDeErro = Value<typeof __mascaraDeErro>
+export type MascaraDeErro = Bitmask<__mascaraDeErro>
 
-export const MascaraDeErro = (dadoL: Byte, dadoH: Byte): MascaraDeErro => {
-    return Value(__mascaraDeErro, ByteToWord(dadoH, dadoL))
+export const MascaraDeErro: BitmaskCreator<__mascaraDeErro> = (word: Word): MascaraDeErro => {
+    return Bitmask(__mascaraDeErro, word)
 }
 
 // ---------------------
@@ -238,7 +235,7 @@ const PacoteDeRetorno_MascaraDeErro = (_: PacoteRetornoPadrao): PacoteDeRetorno_
         payload: { 
             canal: _.canal, 
             comando: undefined, 
-            mascaraDeErro: MascaraDeErro(_.dadoL, _.dadoH), 
+            mascaraDeErro: MascaraDeErro( ByteToWord(_.dadoL, _.dadoH)), 
         }})
 
 export type PacoteDeRetorno = 
@@ -295,12 +292,10 @@ const __direcao = {
     'MascaraSetarBits': 128,
     'MascaraResetarBits': 192,
 } as const
-type __direcao = typeof __direcao
-type Direcao = keyof __direcao
+type Direcao = keyof typeof __direcao
 const DirecaoToNumber = (_: Direcao): number => __direcao[_]
 
     
-
 
 export type PacoteDeTransmissaoPadrao = {
     readonly direcao: Direcao
@@ -309,7 +304,7 @@ export type PacoteDeTransmissaoPadrao = {
     readonly dadoL: Byte
 }
 
-const PacoteDeTransmissaoPadrao = (direcao: Direcao, comando: Byte, dadoH: Byte, dadoL: Byte): PacoteDeTransmissaoPadrao => 
+const PacoteDeTransmissaoPadrao = (direcao: Direcao, comando: Byte, dadoL: Byte, dadoH: Byte): PacoteDeTransmissaoPadrao => 
     ({direcao, comando, dadoH, dadoL})
 
 
@@ -342,14 +337,14 @@ import { serialPortOpenner_PC } from '@nextrobot/serialport-manager'
 
 const Test = async () => {
     const a = StatusL(15)
-    console.table(a)
+    //console.table(a)
     const b = StatusH(16)
-    console.table(b)
-    const c = MascaraDeErro(31,2)
-    console.table(c)
+    //onsole.table(b)
+    const c = MascaraDeErro(31)
+    //console.table(c)
 
     const portReference = PortReference('COM3', {
-        baudRate: 2400,
+        baudRate: 9600,
         dataBits: 8,
         stopBits: 1,
         parity: 'none',
@@ -358,7 +353,7 @@ const Test = async () => {
         xoff: false,
     })
 
-    const pacoteRetornado = await transmit(serialPortOpenner_PC, CmppAddress(portReference, 2), 
+    const pacoteRetornado = await transmit(serialPortOpenner_PC, CmppAddress(portReference, 1), 
         PacoteDeTransmissaoPadrao('Solicitacao',COMANDO_MASCARA_DE_ERRO,0,0))
 
     console.log(`Resultado...`)
@@ -369,6 +364,9 @@ const Test = async () => {
     // tslint:disable-next-line: no-if-statement
     } else if ( pacoteRetornado.kind === 'PacoteDeRetorno_ComErro') {
         console.table(pacoteRetornado.payload.statusL)
+    // tslint:disable-next-line: no-if-statement
+    } else if ( pacoteRetornado.kind === 'PacoteDeRetorno_MascaraDeErro') {
+        console.table(pacoteRetornado.payload.mascaraDeErro)
     }
    
 }
