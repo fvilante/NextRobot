@@ -1,6 +1,5 @@
 
 import { PhysicalArm } from './physical-arm'
-import { Channel } from './channel'
 import { Memmap, AnyDriver } from '../driver/driver-core'
 import { CmppAddress } from '../../transport-layer/transaction/CmppAddress';
 
