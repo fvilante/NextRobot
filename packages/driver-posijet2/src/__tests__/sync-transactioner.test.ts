@@ -1,6 +1,6 @@
 import { PortReference } from  '@nextrobot/serialport-manager' 
 import { serialPortOpenner_PC } from '@nextrobot/serialport-manager' 
-import { datalinker } from '../protocol/posijet1-datalink' 
+import { datalinkerWrapper } from '../protocol/posijet1-datalink' 
 import { syncTransactioner } from '@nextrobot/serialport-manager' 
 
 import { rangeSync } from '@nextrobot/core-utils'
@@ -27,7 +27,7 @@ describe('Sync transaction using Posijet1 Datalinker', () => {
 
 
     it('algorithm can create valid frame', () => {        
-        const expected = datalinker([0xC2, 0x50, 0x61, 0x02]).toWrite()
+        const expected = datalinkerWrapper([0xC2, 0x50, 0x61, 0x02]).toWrite()
         const result = [0x1B, 0x02, 0xC2, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x86]
         expect(result).toEqual(expected)
     })
@@ -37,7 +37,7 @@ describe('Sync transaction using Posijet1 Datalinker', () => {
         /** NOTE: This test will fail if there is no real CMPP connected on the specified serial port */
 
         const probe = [0xC2, 0x50, 0x61, 0x02]
-        const msg = datalinker(probe)
+        const msg = datalinkerWrapper(probe)
         const response = await syncTransactioner(serialPortOpenner_PC, portReference, msg)
         //console.log(`Resposta do pacote: ${response.data}`)
 

@@ -3,7 +3,8 @@
 import { Datalinker, ResultError, ReceptionHandlerResult, ResultProcessing, ResultSucessful } from '@nextrobot/serialport-manager'
 import { Byte, Bytes } from '@nextrobot/serialport-manager'
 import { flattenDeep } from '@nextrobot/core-utils'
-
+import { DatalinkResult } from './datalink-result'
+import { DatalinkWrapper } from './datalink-wrapper'
 
 // === Constantes === 
 
@@ -12,7 +13,7 @@ const ESCDUP = 27
 const STX = 2
 const ETX = 3
 const ACK = 6
-const NACK = 21
+export const NACK = 21 // Nack leaks datalink abstraction going to transport-layer :-(
 
 
 // Checksum
@@ -26,20 +27,14 @@ const calcChecksum = (undupedData: Bytes, start_byte: Byte): number => {
 
 // === Transmission ===
 
-const makeFrame = (data: Bytes) => ():Bytes => {    
+const makeFrame = (data: Bytes) => ():Bytes => {   
     const dup_esc = (data: Bytes): Bytes => flattenDeep(data.map( byte => byte===ESC ? [ESC, ESCDUP] : [byte] ))
-    return [ESC, STX, ...dup_esc(data), ESC, ETX, calcChecksum(data, STX)]
+    const frame = [ESC, STX, ...dup_esc(data), ESC, ETX, calcChecksum(data, STX)]
+    console.log(`enviando bytes: ${frame}`) 
+    return frame
 }
 
 
-// === Reception ===
-
-type DatalinkResult = {
-    readonly payload: Bytes
-    readonly startByte: Byte
-    readonly rawFrame: Bytes
-    readonly checksum: number
-}
 
 const getReceptionHandler = (): Datalinker<DatalinkResult>['receptionHandler'] => {
 
@@ -156,11 +151,11 @@ const getReceptionHandler = (): Datalinker<DatalinkResult>['receptionHandler'] =
 }
 
     
-export const datalinker = (data: Bytes): Datalinker<DatalinkResult> => {
+export const datalinkerWrapper: DatalinkWrapper = (data: Bytes): Datalinker<DatalinkResult> => {
 
     return {
         toWrite: makeFrame(data),
-        receptionHandler: getReceptionHandler(),
+        receptionHandler: getReceptionHandler() ,
     }
 
 
