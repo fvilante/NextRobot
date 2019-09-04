@@ -17,6 +17,10 @@ lib/
 # VsCode editor info
 .vscode/
 
+# VsCode Madge plugin 
+**/dependencies.png
+
+
 
 # and others....
 
