@@ -9,8 +9,7 @@ import { Waver } from '../application-types/wave-core'
 // https://gist.github.com/fvilante/a4652afc92114d1440649bd325a9174b
 
 // core abstraction
-type AnyEntry = { readonly type: AnyParamType }
-export type AnyDriver = { readonly [ParameterName in string]: AnyEntry }
+export type AnyDriver = { readonly [ParameterName in string]: { readonly type: AnyParamType } }
 
 // helpers
 export type GetParameters<Drive extends AnyDriver> = Extract<keyof Drive, string>
