@@ -3,8 +3,8 @@ import { mapObjectIndexed } from '@nextrobot/core-utils';
 import { Channel } from '../core-models/channel'
 
 import { SerialPortOpener } from '@nextrobot/serialport-manager'
-import { datalinkerWrapper, NACK } from '../protocol/posijet1-datalink';
-import { DatalinkResult } from '../protocol/datalink-result';
+import { datalinkerWrapper, NACK } from '../datalink/posijet1-datalink';
+import { DatalinkResult } from '../datalink/datalink-result';
 
 
 // ----------

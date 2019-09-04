@@ -1,7 +1,7 @@
 
 // type utils
 export { mapObjectIndexed } from './mapObjectIndexed'
-export { FilterKeysByValue } from './type-utils-interfaceIntrospector'
+export { FilterKeysByValue } from './type-utils/type-utils-interfaceIntrospector'
 export { MappedObject } from './mapObjectIndexed'
 export { TKey } from './tkey'
 
