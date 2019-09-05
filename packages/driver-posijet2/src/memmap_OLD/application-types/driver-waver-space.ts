@@ -2,7 +2,7 @@ import { Waver, ToWave, FromWave, wave } from './wave-core'
 import { exhaustiveSwitch } from '@nextrobot/core-utils'
 import { AnyDriver } from '../driver/driver-core'
 
-import { Milimeter, Pulse, Space} from '.'
+import { Milimeter, Pulse, Space} from '../application-types'
 
 
 const spaceToWave: ToWave<AnyDriver, Space> = (space, device) => {

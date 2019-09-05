@@ -1,4 +1,4 @@
-import { AnyParamType } from ".";
+import { AnyParamType } from "../application-types";
 import { Device } from "../core-models/device";
 import { AnyDriver, GetParameterType, GetParameters } from "../driver/driver-core";
 

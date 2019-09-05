@@ -4,7 +4,7 @@ import { AnyDriver } from '../driver/driver-core'
 import { 
     Speed, 
     PulsesPerMicroControlerTick
-} from '.'
+} from '../application-types'
 
 import { spaceWaver } from './driver-waver-space'
 import { timeWaver } from './driver-waver-time'
