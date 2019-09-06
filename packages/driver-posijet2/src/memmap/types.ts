@@ -1,5 +1,5 @@
 
-import { mapObjectIndexed } from '@nextrobot/core-utils'
+import { mapObjectIndexed, objectToPairs, foldLeftArray} from '@nextrobot/core-utils'
 
 
 
@@ -7,17 +7,6 @@ import { mapObjectIndexed } from '@nextrobot/core-utils'
 
 
 // todo: move to core-utils
-
-
-
-//
-
-
-type FindInTuple<T extends readonly any[], V> = V extends T[number] ? V : never
-
-//example:
-type R0 = readonly ['a', 'b', 'c']
-type T0 = FindInTuple<R0,'c'>
 
 
 // generic MappedInterface
@@ -54,19 +43,6 @@ type MapStringedTupledInterface<T extends AnyStringedTupledInterface, F> = {
 
 
 
-// generic - Boleanized interface
-
-type BoleanizedInterface<T> = MappedInterface<T,boolean>
-
-const filterBooleanizedInterface = <T>(o: BoleanizedInterface<T>, filterBy: boolean ) => {
-
-    const keys = Object.keys(o)
-    const a = keys.reduce( (acc, val) => )
-
-}
-
-
-
 
 
 
@@ -92,13 +68,23 @@ type GetUnitsGivenDimension<D extends keyof DimensionsDeclaration> = DimensionsD
 
 type GetUnitsOfSameDimensionGivenAUnit<U extends AnyUnit> = GetUnitsGivenDimension<GetDimensionGivenAUnit<U>> // result is unionized
 
-const GetDimensionGivenAUnit = <U extends AnyUnit>(unit: U): GetDimensionGivenAUnit<U> => {
-    const firstmap = mapObjectIndexed(DimensionsDeclaration, (units, dimension) => {
-        const r = (units as readonly string[]).map( _unit => unit===_unit).some( value => value === true)
-        return r
-    } )
-    const takeOnlyTrueKeys = (o: typeof firstmap): string[] => Object.keys(o).reduce( (acc,cur) =>  )
-    const a = firstmap
+const GetDimensionGivenAUnit = <U extends AnyUnit>(unit: U): AnyDimension => {
+ 
+    const pairs = objectToPairs(DimensionsDeclaration)
+    const c = foldLeftArray(pairs, undefined , (acc: keyof DimensionsDeclaration | undefined, cur) => {
+
+        const dim = cur.key
+        const units = cur.value
+        const doesExists = (units as readonly string[]).map( _unit => unit === unit ? true : false).some( value => value === true)
+        return doesExists ? dim : acc
+
+     })
+
+    // tslint:disable-next-line: no-if-statement
+    if (c) 
+        return c
+    else 
+        throw new Error('Given unit not found') //this error is suposed to never occur
 }
 
 
@@ -120,8 +106,6 @@ const Time: DimensionsDefinition['Time'] = {
         fromBase: (x) => x / 60,
     }, 
 
-
-    // base
     'second': {
         toBase: x => x,
         fromBase: x => x,
@@ -165,8 +149,8 @@ const convert = <A extends AnyUnit, B extends GetUnitsOfSameDimensionGivenAUnit<
 
     const currentUnit = measure.unit
     const currentValue = measure.value
-    const dimension = get
-    const currentUnitEntry = DimensionsDefinition[currentUnit]
+    const dimension = GetDimensionGivenAUnit(currentUnit)
+    const currentUnitEntry = DimensionsDefinition[dimension]
     const newUnitEntry = dimension[newUnit]
     const toBase = currentUnitEntry.toBase
     const fromBase = newUnitEntry.fromBase
