@@ -1,7 +1,7 @@
 import { 
     TypeScriptBuiltInTypes,
     TypeGuard
-} from '../TypeScriptBuiltInTypes'
+} from '../type-utils/TypeScriptBuiltInTypes'
 
 // tslint:disable: no-null-keyword
 

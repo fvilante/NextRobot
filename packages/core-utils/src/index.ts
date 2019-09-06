@@ -1,14 +1,14 @@
 
 // type utils
-export { mapObjectIndexed } from './mapObjectIndexed'
+export { mapObjectIndexed } from './object/mapObjectIndexed'
 export { FilterKeysByValue } from './type-utils/type-utils-interfaceIntrospector'
-export { MappedObject } from './mapObjectIndexed'
+export { MappedObject } from './object/mapObjectIndexed'
 
 //type guard
-export { TypeScriptBuiltInTypes, TypeGuard } from './TypeScriptBuiltInTypes' 
+export { TypeScriptBuiltInTypes, TypeGuard } from './type-utils/TypeScriptBuiltInTypes' 
 
 // type safety
-export { exhaustiveSwitch } from './exhaustiveSwitch'
+export { exhaustiveSwitch } from './type-utils/exhaustiveSwitch'
 
 //pair
 export { objectToPairs } from './pair/objectToPairs'
@@ -34,7 +34,7 @@ export { subscribe } from './Generators/async/subscribe'
 export { bufferCount } from './Generators/async/bufferCount'
 
 // equality
-export { isArrayEqual } from './isEqual'
+export { isArrayEqual } from './type-utils/isEqual'
 
 //stats
 export { min, max, average } from './statistics'
@@ -49,4 +49,4 @@ export { delay } from './delay'
 export { Bit, bitToBoolean, bolleanToBit, setBit, clearBit, updateBit } from './bitTools' 
 
 // misc
-export { getKeyByValue } from './misc/getKeyByValue'
+export { getKeyByValue } from './object/getKeyByValue'

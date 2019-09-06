@@ -1,7 +1,7 @@
 import { 
     TypeScriptBuiltInTypes as Type,
     TypeGuard
-} from '../TypeScriptBuiltInTypes'
+} from '../type-utils/TypeScriptBuiltInTypes'
 
 
 

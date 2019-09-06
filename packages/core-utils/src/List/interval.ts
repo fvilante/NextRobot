@@ -1,4 +1,4 @@
-import { TypeScriptBuiltInTypes as Type} from '../TypeScriptBuiltInTypes'
+import { TypeScriptBuiltInTypes as Type} from '../type-utils/TypeScriptBuiltInTypes'
 
 // Note: I'm using tuple and not interface for efficience reason
 export type RangeInterval = readonly [number, number]
