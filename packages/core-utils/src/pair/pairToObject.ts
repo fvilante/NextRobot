@@ -1,5 +1,5 @@
 import { Pairs } from './pair'
-import { TKey } from './tkey';
+import { TKey } from '../tkey';
 
 // tslint:disable: no-let no-object-mutation no-expression-statement
 
@@ -22,15 +22,21 @@ const pairsToObject = <K extends TKey,V>(pairs: Pairs<K,V>): Record<K,V>=> {
 
 import { objectToPairs } from './objectToPairs'
 
-const input = {
-    juca: 'nego',
-    test: 2
+const Test = () => {
+
+    const input = {
+        juca: 'nego',
+        test: 2
+    }
+    
+    const o = objectToPairs(input)
+    
+    const output = pairsToObject(o)
+    
+    console.log('---')
+    console.log(input)
+    console.log(output)
+
 }
 
-const o = objectToPairs(input)
 
-const output = pairsToObject(o)
-
-console.log('---')
-console.log(input)
-console.log(output)

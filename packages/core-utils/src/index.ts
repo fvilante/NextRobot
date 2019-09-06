@@ -12,8 +12,8 @@ export { TypeScriptBuiltInTypes, TypeGuard } from './TypeScriptBuiltInTypes'
 export { exhaustiveSwitch } from './exhaustiveSwitch'
 
 //pair
-export { objectToPairs } from './objectToPairs'
-export { Pair, Pairs } from './pair'
+export { objectToPairs } from './pair/objectToPairs'
+export { Pair, Pairs } from './pair/pair'
 
 // utils on arrays
 export { flattenDeep } from './array/ArrayFlattenDeep'
