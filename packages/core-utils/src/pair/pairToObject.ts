@@ -1,9 +1,8 @@
 import { Pairs } from './pair'
-import { TKey } from '../tkey';
 
 // tslint:disable: no-let no-object-mutation no-expression-statement
 
-const pairsToObject = <K extends TKey,V>(pairs: Pairs<K,V>): Record<K,V>=> {
+const pairsToObject = <K extends keyof any,V>(pairs: Pairs<K,V>): Record<K,V>=> {
 
    let result = {} as Record<K,V>
 
