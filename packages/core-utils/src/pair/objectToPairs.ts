@@ -1,4 +1,4 @@
-import { mapObjectIndexed } from "../mapObjectIndexed";
+import { mapObjectIndexed } from "../object/mapObjectIndexed";
 import { Pairs, Pair } from './pair'
 
 export const objectToPairs = <T extends object>(o: T): Pairs<keyof T, T[keyof T]> => {

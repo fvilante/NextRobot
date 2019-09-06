@@ -1,4 +1,4 @@
-import { mapObjectIndexed, MapObjectIndexCallBack } from '../mapObjectIndexed'
+import { mapObjectIndexed, MapObjectIndexCallBack } from '../object/mapObjectIndexed'
 
 // just a example how to write a test: arrange / act / assert (TDD)
 describe('mapObjectIndexed function test', () => { 

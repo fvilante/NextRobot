@@ -2,7 +2,7 @@ import { Message } from './message'
 
 
 import { MessageMorphism } from './morphism'
-import { exhaustiveSwitch } from '../exhaustiveSwitch';
+import { exhaustiveSwitch } from '../type-utils/exhaustiveSwitch';
 import { Observed } from '../Generators/core-types';
 
 
