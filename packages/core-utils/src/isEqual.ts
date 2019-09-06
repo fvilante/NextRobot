@@ -1,4 +1,4 @@
-import { flattenDeep } from './ArrayFlattenDeep'
+import { flattenDeep } from './array/ArrayFlattenDeep'
 import { equals} from 'ramda'
 
 // fix: this function is not working (using ramda instead temporarily)

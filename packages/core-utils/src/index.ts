@@ -16,7 +16,7 @@ export { objectToPairs } from './objectToPairs'
 export { Pair, Pairs } from './pair'
 
 // utils on arrays
-export { flattenDeep } from './ArrayFlattenDeep'
+export { flattenDeep } from './array/ArrayFlattenDeep'
 export { findRangesOnArray, FixedSizeSearchFromLeft } from './List/find-ranges'
 
 // functional - mondas
