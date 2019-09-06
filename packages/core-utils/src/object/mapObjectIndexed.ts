@@ -3,13 +3,14 @@
 export type MapObjectIndexCallBack<T, B> = 
     (value: T[keyof T], key: keyof T, obj: T) => B
 
-//todo: convert to readonly (verify if it will not break any dependency)
+//todo: this type was substituted to a a Record type in the mapObjectIndexed. May I delete this type now or there exists other dependency ?
+/** DEPRECATED */
 export type MappedObject<T,B> = {
     [K in keyof T]: B
 }
 
 
-export const mapObjectIndexed = <T, B>(o: T, callback: MapObjectIndexCallBack<T, B>): MappedObject<T,B> => {
+export const mapObjectIndexed = <T, B>(o: T, callback: MapObjectIndexCallBack<T, B>): Record<keyof T,B> => {
     
     // tslint:disable-next-line: no-let
     let result = {} as  Record<keyof T, B>
@@ -23,3 +24,24 @@ export const mapObjectIndexed = <T, B>(o: T, callback: MapObjectIndexCallBack<T,
 
     return result
 }
+
+const Test = () => {
+
+    const o = {
+        oi: 'hello',
+        2: 'world',
+        make: 99,
+        juca: 12
+    }
+
+    const m = mapObjectIndexed(o, (value, key) => {
+        return `key ${key} - value ${value}`
+    })
+
+    console.table(o)
+    console.table(m)
+
+}
+
+// tslint:disable-next-line: no-expression-statement
+Test()

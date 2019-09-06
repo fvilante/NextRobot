@@ -1,5 +1,5 @@
-import { FilterKeysByValue, objectToPairs } from "@nextrobot/core-utils";
-import mapObjIndexed from "ramda/es/mapObjIndexed";
+
+import { mapObjectIndexed } from '@nextrobot/core-utils'
 
 
 
@@ -23,7 +23,7 @@ type T0 = FindInTuple<R0,'c'>
 // generic MappedInterface
 
 
-type MappedInterface<T,F> = {[K in keyof T]: F}
+type MappedInterface<T,F> = {[K in keyof T]: F} // todo: same as core-utils MappedObject (should be a better name for one of both)
 
 
 // generic TupledInterface
@@ -48,10 +48,11 @@ type StringedTupledInterface<T> = TupledInterface<T,string>
 type AnyStringedTupledInterface = StringedTupledInterface<any>
 
 type MapStringedTupledInterface<T extends AnyStringedTupledInterface, F> = {
-    [K in keyof T]: {
-        [P in T[K][number]]: F
-    }
+    [K in keyof T]: Record<T[K][number], F>
+
 } 
+
+
 
 // generic - Boleanized interface
 
@@ -78,6 +79,7 @@ const DimensionsDeclaration = {
     //Mass: ['miligram', 'kilogram']
 } as const
 
+
 type DimensionsDeclaration = typeof DimensionsDeclaration
 
 type AnyDimension = keyof DimensionsDeclaration
@@ -91,10 +93,10 @@ type GetUnitsGivenDimension<D extends keyof DimensionsDeclaration> = DimensionsD
 type GetUnitsOfSameDimensionGivenAUnit<U extends AnyUnit> = GetUnitsGivenDimension<GetDimensionGivenAUnit<U>> // result is unionized
 
 const GetDimensionGivenAUnit = <U extends AnyUnit>(unit: U): GetDimensionGivenAUnit<U> => {
-    const firstmap = mapObjIndexed( (units, dimension) => {
+    const firstmap = mapObjectIndexed(DimensionsDeclaration, (units, dimension) => {
         const r = (units as readonly string[]).map( _unit => unit===_unit).some( value => value === true)
         return r
-    }, DimensionsDeclaration )
+    } )
     const takeOnlyTrueKeys = (o: typeof firstmap): string[] => Object.keys(o).reduce( (acc,cur) =>  )
     const a = firstmap
 }
