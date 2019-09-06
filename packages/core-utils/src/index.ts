@@ -17,6 +17,7 @@ export { Pair, Pairs } from './pair'
 
 // utils on arrays
 export { flattenDeep } from './array/ArrayFlattenDeep'
+export { foldLeftArray, FoldLeftArray, FoldLeftCallback } from './array/foldLeftArray'
 export { findRangesOnArray, FixedSizeSearchFromLeft } from './List/find-ranges'
 
 // functional - mondas
