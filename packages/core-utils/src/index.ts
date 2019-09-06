@@ -3,6 +3,7 @@
 export { mapObjectIndexed } from './object/mapObjectIndexed'
 export { FilterKeysByValue } from './type-utils/type-utils-interfaceIntrospector'
 export { MappedObject } from './object/mapObjectIndexed'
+export { FindInTuple } from './type-utils/FindInTuple'
 
 //type guard
 export { TypeScriptBuiltInTypes, TypeGuard } from './type-utils/TypeScriptBuiltInTypes' 
