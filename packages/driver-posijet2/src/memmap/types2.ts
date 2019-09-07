@@ -1,5 +1,5 @@
 
-import { mapObjectIndexed, objectToPairs, foldLeftArray, Pair } from '@nextrobot/core-utils'
+import { mapObjectIndexed, objectToPairs, foldLeftArray, Pair, hasValueInArray } from '@nextrobot/core-utils'
 
 // ------------------- Helper
 
@@ -18,6 +18,7 @@ type FindKeyGivenValueInATupledInterface<T extends AnyTupledInterface, U extends
  
 // ===================
 
+/**IMPORTANT: Unit name must be unique to all dimensions */
 const DimensionsDeclaration = {
     Time: ['minute', 'second'],
     Space: ['milimeter', 'meter'],
@@ -28,15 +29,18 @@ type DimensionsDeclaration = typeof DimensionsDeclaration
 type AnyDimension = keyof DimensionsDeclaration
 type AnyUnit = DimensionsDeclaration[AnyDimension][number]
 
-type GetUnitsByDimension<D extends keyof DimensionsDeclaration> = DimensionsDeclaration[D][number]
+type GetUnitsGivenDimension<D extends keyof DimensionsDeclaration> = DimensionsDeclaration[D][number]
+type GetDimensionGivenAUnit<U extends AnyUnit> = FindKeyGivenValueInATupledInterface<DimensionsDeclaration,U>
+type GetUnitsOfSameDimensionGivenAUnit<U extends AnyUnit> = GetUnitsGivenDimension<GetDimensionGivenAUnit<U>> // result is unionized
 
+// ----------
 
 type UnitEntry = {
     readonly toBase: (_: number) => number
     readonly fromBase: (_: number) => number
 }
 
-type DimensionsDefinition = { [K in AnyDimension]: {[ P in GetUnitsByDimension<K>]: UnitEntry }}
+type DimensionsDefinition = { [K in AnyDimension]: {[ P in GetUnitsGivenDimension<K>]: UnitEntry }}
 
 
 const Time: DimensionsDefinition['Time'] = {
@@ -46,6 +50,7 @@ const Time: DimensionsDefinition['Time'] = {
         fromBase: (x) => x / 60,
     }, 
 
+    // base
     'second': {
         toBase: x => x,
         fromBase: x => x,
@@ -62,8 +67,8 @@ const Space: DimensionsDefinition['Space']  = {
     },
 
     'milimeter': {
-        toBase: x => x*1000,
-        fromBase: x => x/1000,
+        toBase: x => x/1000,
+        fromBase: x => x*1000,
     },
 
 }
@@ -74,32 +79,62 @@ const DimensionsDefinition: DimensionsDefinition = {
     Space,
 }
 
-type GetDimensionGivenAUnit<U extends AnyUnit> = FindKeyGivenValueInATupledInterface<DimensionsDeclaration,U>
 
 
-const GetDimensionGivenUnit = <U extends AnyUnit>(unit: U) => {
+const GetDimensionGivenAUnit = <U extends AnyUnit>(unit: U): GetDimensionGivenAUnit<U> => {
 
-    const dimensions = Object.keys(DimensionsDeclaration) as (AnyDimension)[]
-    const units = dimensions.map( (dimension: AnyDimension) => DimensionsDeclaration[dimension] )
+    const hasMatch = mapObjectIndexed(DimensionsDeclaration, (units, _) => {
+        return hasValueInArray(units as readonly string[], unit)
+    })
+
+    const pair = objectToPairs(hasMatch)
+    const dimensionsMatched = foldLeftArray(pair, [] as readonly string[], (acc, cur) => {
+        const _dimension = cur.key
+        const _hasMatch = cur.value
+        return _hasMatch ? [...acc, _dimension] : acc
+    })
+
+    return dimensionsMatched[0] as GetDimensionGivenAUnit<U>
 
 }
 
 
+const getUnitEntry = <U extends AnyUnit, D extends GetDimensionGivenAUnit<U>>(unit: U): UnitEntry => {
+    const dimension = GetDimensionGivenAUnit(unit)
+    // Fix: I don't like bellow type coersion (and can't see why it is necessary)
+    const r: UnitEntry = (DimensionsDefinition as any)[dimension][unit]
+    return r
+}
+
+// measure
+
+
+type Measure<U extends AnyUnit> = { readonly value: number, readonly unit: U}
+const Measure = <U extends AnyUnit>(value: number, unit: U): Measure<U> => ({value, unit})
+type AnyMeasure = Measure<any>
+
+
+
 // convert
 
-const convert = (measure, newUnit) =>  {
 
-    const currentUnit = measure.unit
-    const currentValue = measure.value
-    const dimension = GetDimensionGivenAUnit(currentUnit)
-    const currentUnitEntry = DimensionsDefinition[dimension]
-    const newUnitEntry = dimension[newUnit]
-    const toBase = currentUnitEntry.toBase
-    const fromBase = newUnitEntry.fromBase
-    const baseValue = toBase(currentValue)
-    const newValue = fromBase(baseValue)
-    const newMeasure = Measure(dimension, newUnit, newValue)
-    return newMeasure
+const convert = <
+    A extends AnyUnit, 
+    B extends GetUnitsOfSameDimensionGivenAUnit<A>
+    >
+    (measure: Measure<A>, newUnit: B): Measure<B> =>  {
+
+        const currentUnit = measure.unit
+        const currentValue = measure.value
+        const dimension = GetDimensionGivenAUnit(currentUnit)
+        const currentUnitEntry = getUnitEntry(currentUnit)
+        const newUnitEntry = getUnitEntry(newUnit)
+        const toBase = currentUnitEntry.toBase
+        const fromBase = newUnitEntry.fromBase
+        const baseValue = toBase(currentValue)
+        const newValue = fromBase(baseValue)
+        const newMeasure = Measure(newValue, newUnit)
+        return newMeasure
 
 }
 
@@ -107,14 +142,24 @@ const convert = (measure, newUnit) =>  {
 
 const Test = () => {
 
-    const azx = convert(Measure(10,'milimeter'), 'meter')
 
-    const a = Measure('Time', 'minute', 1)
+    const testA = () => {
+        const measure = Measure(1, 'minute')
+        const converted = convert(measure, 'second')
+        console.log(measure)
+        console.log(converted)
+    }
 
-    const b = convert(a, 'second')
+    const testB = () => {
+        const measure = Measure(1, 'milimeter')
+        const converted = convert(measure, 'meter')
+        console.log(measure)
+        console.log(converted)
+    }
+    // tslint:disable-next-line: no-expression-statement
+    testA() ; testB()
 
-    console.log(a)
-    console.log(b)
+
 
 }
 
