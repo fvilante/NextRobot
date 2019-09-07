@@ -19,6 +19,7 @@ export { Pair, Pairs } from './pair/pair'
 export { flattenDeep } from './array/ArrayFlattenDeep'
 export { foldLeftArray, FoldLeftArray, FoldLeftCallback } from './array/foldLeftArray'
 export { findRangesOnArray, FixedSizeSearchFromLeft } from './List/find-ranges'
+export { hasValueInArray } from './array/hasValueInArray'
 
 // functional - mondas
 export { Maybe, Just, Nothing } from './maybe'

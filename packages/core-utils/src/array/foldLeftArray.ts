@@ -1,4 +1,4 @@
-
+// todo: What if there exists a foldLeftArray that permit early abortion of the iteration on elements of array ? Some time we just found what we want in the reduction process and return early is more efficient
 
 export type FoldLeftCallback<Acc,Cur> = (acc: Acc, cur: Cur) => Acc
 
