@@ -41,18 +41,18 @@ type CMPP = {
 const Memmap: Memmap<CMPP> = {
     'Primeira Mensagem no retorno': {
         position: 12,
-        toWave: unWaved => 10,
-        fromWave: waved => Tipo1.TipoA()
+        toWave: _ => 10,
+        fromWave: _ => Tipo1.TipoA()
     },
     'Primeira Mensagem no retorno2': {
         position: 12,
-        toWave: unWaved => 10,
-        fromWave: waved => Tipo2(waved)
+        toWave: _ => 10,
+        fromWave: _ => Tipo2(_)
     },
     'Primeira Mensagem no retorno3': {
         position: 12,
-        toWave: unWaved => 10,
-        fromWave: waved => 'make'
+        toWave: _ => 10,
+        fromWave: _ => 'make'
     } 
 } 
 
