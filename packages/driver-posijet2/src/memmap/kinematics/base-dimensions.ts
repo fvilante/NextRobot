@@ -138,13 +138,6 @@ export const convertMeasure = <
 
 }
 
-export const convertTimeMeasure = <
-    A extends GetUnitsGivenDimension<'Time'>, 
-    B extends GetUnitsOfSameDimensionGivenAUnit<A>
-    >
-    (measure: Measure<A>, newUnit: B): Measure<B> =>  {
-    
-}
 
 
 /** UNSAFE!
@@ -178,14 +171,14 @@ const Test = () => {
 
     const testA = () => {
         const measure = Measure(1, 'minute')
-        const converted = convert(measure, 'second')
+        const converted = convertMeasure(measure, 'second')
         console.log(measure)
         console.log(converted)
     }
 
     const testB = () => {
         const measure = Measure(1, 'milimeter')
-        const converted = convert(measure, 'meter')
+        const converted = convertMeasure(measure, 'meter')
         console.log(measure)
         console.log(converted)
     }
