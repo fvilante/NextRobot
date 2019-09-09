@@ -5,7 +5,7 @@ import { mapObjectIndexed, objectToPairs, foldLeftArray, Pair, hasValueInArray }
 
 
 // generic TupledInterface
-
+// todo: move to core-utils
 type TupledInterface<T,F> = {[K in keyof T]: readonly F[]}
 type AnyTupledInterface = TupledInterface<any,any>
 type UnionizeTupledInterface<T extends AnyTupledInterface> = {
@@ -29,9 +29,9 @@ type DimensionsDeclaration = typeof DimensionsDeclaration
 type AnyDimension = keyof DimensionsDeclaration
 type AnyUnit = DimensionsDeclaration[AnyDimension][number]
 
-type GetUnitsGivenDimension<D extends keyof DimensionsDeclaration> = DimensionsDeclaration[D][number]
-type GetDimensionGivenAUnit<U extends AnyUnit> = FindKeyGivenValueInATupledInterface<DimensionsDeclaration,U>
-type GetUnitsOfSameDimensionGivenAUnit<U extends AnyUnit> = GetUnitsGivenDimension<GetDimensionGivenAUnit<U>> // result is unionized
+export type GetUnitsGivenDimension<D extends keyof DimensionsDeclaration> = DimensionsDeclaration[D][number]
+export type GetDimensionGivenAUnit<U extends AnyUnit> = FindKeyGivenValueInATupledInterface<DimensionsDeclaration,U>
+export type GetUnitsOfSameDimensionGivenAUnit<U extends AnyUnit> = GetUnitsGivenDimension<GetDimensionGivenAUnit<U>> // result is unionized
 
 // ----------
 
@@ -109,8 +109,8 @@ const getUnitEntry = <U extends AnyUnit, D extends GetDimensionGivenAUnit<U>>(un
 // measure
 
 
-type Measure<U extends AnyUnit> = { readonly value: number, readonly unit: U}
-const Measure = <U extends AnyUnit>(value: number, unit: U): Measure<U> => ({value, unit})
+export type Measure<U extends AnyUnit> = { readonly quantity: number, readonly unit: U}
+export const Measure = <U extends AnyUnit>(quantity: number, unit: U): Measure<U> => ({quantity, unit})
 type AnyMeasure = Measure<any>
 
 
@@ -118,14 +118,47 @@ type AnyMeasure = Measure<any>
 // convert
 
 
-const convert = <
+export const convertMeasure = <
     A extends AnyUnit, 
     B extends GetUnitsOfSameDimensionGivenAUnit<A>
     >
     (measure: Measure<A>, newUnit: B): Measure<B> =>  {
 
         const currentUnit = measure.unit
-        const currentValue = measure.value
+        const currentValue = measure.quantity
+        const dimension = GetDimensionGivenAUnit(currentUnit)
+        const currentUnitEntry = getUnitEntry(currentUnit)
+        const newUnitEntry = getUnitEntry(newUnit)
+        const toBase = currentUnitEntry.toBase
+        const fromBase = newUnitEntry.fromBase
+        const baseValue = toBase(currentValue)
+        const newValue = fromBase(baseValue)
+        const newMeasure = Measure(newValue, newUnit)
+        return newMeasure
+
+}
+
+export const convertTimeMeasure = <
+    A extends GetUnitsGivenDimension<'Time'>, 
+    B extends GetUnitsOfSameDimensionGivenAUnit<A>
+    >
+    (measure: Measure<A>, newUnit: B): Measure<B> =>  {
+    
+}
+
+
+/** UNSAFE!
+ * todo: make it safe!
+ */
+export const convert = <
+    A extends AnyUnit, 
+    B extends AnyUnit
+    >
+    (scalar: number, fromUnit: A, toUnit: B): Measure<B> =>  {
+
+        const currentUnit = fromUnit
+        const currentValue = scalar
+        const newUnit = toUnit
         const dimension = GetDimensionGivenAUnit(currentUnit)
         const currentUnitEntry = getUnitEntry(currentUnit)
         const newUnitEntry = getUnitEntry(newUnit)
