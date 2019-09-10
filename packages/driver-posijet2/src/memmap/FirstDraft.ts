@@ -1,61 +1,98 @@
-import { O, T } from "ts-toolbelt";
+// types
+
+import {
+    TimeConstructor as time,
+    AnyTime as Time,
+
+    SpaceConstructor as space,
+    AnySpace as Space,
+
+    VelocityConstructor as velocity,
+    AnyVelocity as Velocity,
+
+    AccelerationConstructor as acceleration,
+    AnyAcceleration as Acceleration,
+
+} from './kinematics/kinematic-types'
 
 
-// data types
 
-type TipoA = {
-    readonly kind: 'A'
+
+
+// def
+
+type Memmap<T> = {
+    readonly [ParamName in keyof T]: {
+
+        // memory region
+        readonly startWord: number // word onde o parametro começa
+        readonly startBit: number // bit onde o parametro começa a partir da startWord (0 é igual startWord)
+        readonly bitSize: number // tamanho do dado em bits
+
+        // description
+        readonly helpMsg?: string //texto descritivo do parametro
+
+        // memory class
+        // todo: implement bellow
+        readonly memoryType: 'volatile' | 'stable'
+        readonly accessType: 'read-only' | 'read-write' | 'write-only'  
+        
+        // conversor
+        readonly toWave: (_: T[ParamName]) => number,
+        readonly fromWave: (_: number) => T[ParamName], 
+
+    }
 }
-const TipoA = (): TipoA => ({ kind: 'A'})
 
-type TipoB = {
-    readonly kind: 'B'
-}
-const TipoB = (): TipoB => ({ kind: 'B'})
-
-type TipoC = {
-    readonly kind: 'C'
-}
-const TipoC = (): TipoC => ({ kind: 'C'})
-
-type Tipo1 = TipoA | TipoB | TipoC
-
-
-const Tipo1 = {
-    TipoA,
-    TipoB,
-    TipoC,
-}
-
-type Tipo2 = () => number
-const Tipo2 = (_:number):Tipo2 => () => _+1
 
 // spec
 
 type CMPP = {
-    readonly 'Primeira Mensagem no retorno': Tipo1,
-    readonly 'Primeira Mensagem no retorno2': Tipo2,
-    readonly 'Primeira Mensagem no retorno3': 'juca' | 'test' | 'make', 
+    readonly 'Posicao Inicial': Space
+    readonly 'Posicao Final': Space
+    readonly 'Velocidade de avanco': Velocity
+    readonly 'Velocidade de retorno': Velocity
+    readonly 'Aceleracao de avanco': Acceleration
+    readonly 'Aceleracao de retorno': Acceleration
+
+    readonly 'Primeira Mensagem no avanco': number,
+    readonly 'Primeira Mensagem no retorno': number,
+    readonly 'Modo de trabalho do eixo': 'continuo' | 'passo-a-passo' | 'expresssw', 
 }
 
+
+
+
+
+// memmap def
+
 const Memmap: Memmap<CMPP> = {
-    'Primeira Mensagem no retorno': {
-        position: 12,
-        toWave: unWaved => 10,
-        fromWave: waved => Tipo1.TipoA()
+    'Posicao Inicial': {
+        startWord: 0x60,
+        startBit: 0,
+        bitSize: 16,
+        helpMsg: '',
+        memoryType: 'stable',
+        accessType: 'read-write',
+        toWave: _ => _.scalar,
+        fromWave: _ => space.milimeter(_), 
     },
-    'Primeira Mensagem no retorno2': {
-        position: 12,
-        toWave: unWaved => 10,
-        fromWave: waved => Tipo2(waved)
+
+    'Posicao Final': {
+        startWord: 0x61,
+        startBit: 0,
+        bitSize: 16,
+        helpMsg: '',
+        memoryType: 'stable',
+        accessType: 'read-write',
+        toWave: _ => _.scalar,
+        fromWave: _ => space.milimeter(_), 
     },
-    'Primeira Mensagem no retorno3': {
-        position: 12,
-        toWave: unWaved => 10,
-        fromWave: waved => 'make'
-    } 
+
+
 } 
 
+/*
 type __Parameter<T> = {
     [K in keyof T]: {
         readonly name: K
@@ -92,15 +129,5 @@ const F = <T>(p: Parameter<T>, m: Memmap<T>) => {
 
 
 
-type Memmap<T> = {
-    readonly [K in keyof T]: {
-        readonly caption?: string,
-        readonly position: number,
-        readonly toWave: (_: T[K]) => number,
-        readonly fromWave: (_: number) => T[K], 
-    }
-}
 
-
-
-
+*/
