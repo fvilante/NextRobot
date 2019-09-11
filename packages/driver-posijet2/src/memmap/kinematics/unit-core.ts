@@ -6,11 +6,11 @@
 
 // ---- motion ----
 
-export type AnyTranslationUnit = 'milimeter' | 'meter' | 'linear-pulse'
+export type AnyLinearUnit = 'milimeter' | 'meter' | 'linearPulse'
 
-export type AnyRotationUnit = 'radian' | 'degree' | 'angular-pulse'
+export type AnyAngleUnit = 'radian' | 'degree' | 'angularPulse'
 
-export type AnyMotionUnit = AnyTranslationUnit | AnyRotationUnit
+export type AnyMotionUnit = AnyLinearUnit | AnyAngleUnit
 
 
 
@@ -23,4 +23,4 @@ export type AnyTimeUnit = 'second' | 'minute' | 'mpcTick'
 
 // ---- all ----
 
-export type AnyUnit = AnyTranslationUnit | AnyRotationUnit | AnyTimeUnit
+export type AnyUnit = AnyLinearUnit | AnyAngleUnit | AnyTimeUnit

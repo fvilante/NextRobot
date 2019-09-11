@@ -1,5 +1,5 @@
 import { FromTo, __unsafeConvert, Converter } from "./unit-conversor-core"
-import { AnyRotationUnit } from "./unit-core"
+import { AnyAngleUnit } from "./unit-core"
 
 
 
@@ -20,9 +20,9 @@ const degree: FromTo<'degree'> = {
     toBase: deg => (deg/360)*(2*pi)
 }
 
-const angularPulse = (pulsesPerRevolution: number): FromTo<'angular-pulse'> => {
+const angularPulse = (pulsesPerRevolution: number): FromTo<'angularPulse'> => {
     return {
-        kind: 'angular-pulse',
+        kind: 'angularPulse',
         fromBase: rad => ((rad/(2*pi)) * pulsesPerRevolution),
         toBase: angularPulse => (angularPulse/pulsesPerRevolution)*(2*pi),
     }
@@ -31,4 +31,4 @@ const angularPulse = (pulsesPerRevolution: number): FromTo<'angular-pulse'> => {
 
 
 
-export const __convertRotation: Converter<AnyRotationUnit> = (scalar, source, target) => __unsafeConvert(scalar, source, target)
+export const __convertAngle: Converter<AnyAngleUnit> = (scalar, source, target) => __unsafeConvert(scalar, source, target)

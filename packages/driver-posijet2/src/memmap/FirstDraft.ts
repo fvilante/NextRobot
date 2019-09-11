@@ -4,7 +4,7 @@ import {
     TimeConstructor as time,
     AnyTime as Time,
 
-    SpaceConstructor as space,
+    TranslationConstructor as space,
     AnySpace as Space,
 
     VelocityConstructor as velocity,
@@ -13,7 +13,7 @@ import {
     AccelerationConstructor as acceleration,
     AnyAcceleration as Acceleration,
 
-} from './kinematics/kinematic-types'
+} from './kinematics/core-kinematic-types'
 
 
 

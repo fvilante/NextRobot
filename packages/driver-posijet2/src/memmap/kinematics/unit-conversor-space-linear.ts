@@ -1,5 +1,5 @@
 import { FromTo, __unsafeConvert, Converter } from "./unit-conversor-core"
-import { AnyTranslationUnit } from "./unit-core"
+import { AnyLinearUnit } from "./unit-core"
 
 
 
@@ -18,14 +18,14 @@ const meter: FromTo<'meter'> = {
     toBase: x => x/1000,
 }
 
-const linearPulse = (milimetersPerPulse: number):FromTo<'linear-pulse'> => {
+const linearPulse = (milimetersPerPulse: number):FromTo<'linearPulse'> => {
     return { 
-        kind: 'linear-pulse',
+        kind: 'linearPulse',
         fromBase: mm => mm/milimetersPerPulse,
         toBase: pulses => pulses*milimetersPerPulse,
     }
 }
 
-export const __convertTranslation: Converter<AnyTranslationUnit> = (scalar, source, target) => __unsafeConvert(scalar, source, target)
+export const __convertLinear: Converter<AnyLinearUnit> = (scalar, source, target) => __unsafeConvert(scalar, source, target)
 
 
