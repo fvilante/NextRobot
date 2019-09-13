@@ -67,23 +67,6 @@ type CMPP = {
 // memmap def
 
 const Memmap: Memmap<CMPP> = {
-<<<<<<< HEAD
-    'Primeira Mensagem no retorno': {
-        position: 12,
-        toWave: _ => 10,
-        fromWave: _ => Tipo1.TipoA()
-    },
-    'Primeira Mensagem no retorno2': {
-        position: 12,
-        toWave: _ => 10,
-        fromWave: _ => Tipo2(_)
-    },
-    'Primeira Mensagem no retorno3': {
-        position: 12,
-        toWave: _ => 10,
-        fromWave: _ => 'make'
-    } 
-=======
     'Posicao Inicial': {
         startWord: 0x60,
         startBit: 0,
@@ -107,7 +90,6 @@ const Memmap: Memmap<CMPP> = {
     },
 
 
->>>>>>> combine_memmap_with_datalink
 } 
 
 /*

@@ -2,8 +2,8 @@
 
 interface ParametersMask {
 
-    readonly 'Posicao Inicial': Space
-    readonly 'Posicao Final': Space
-    readonly 'Velocidade de Avanco': Velocity
+    readonly 'Posicao Inicial': __Space
+    readonly 'Posicao Final': __Space
+    readonly 'Velocidade de Avanco': __Velocity
 
 }
