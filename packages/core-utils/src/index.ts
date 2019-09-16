@@ -52,3 +52,6 @@ export { Bit, bitToBoolean, bolleanToBit, setBit, clearBit, updateBit } from './
 
 // misc
 export { getKeyByValue } from './object/getKeyByValue'
+
+// static algebra
+export * from './static-algebra/static-sum-and-subtraction'
