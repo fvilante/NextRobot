@@ -1,4 +1,11 @@
-import { TypedNumber } from './typed-number'
+
+
+
+export type TypedNumber<T> = {readonly number: number,  readonly type: T }
+export const TypedNumber = <T>(number: number, type: T): TypedNumber<T> => ({ number, type })
+
+type AnyTypedNumber = TypedNumber<string>
+
 
 /*
 
@@ -16,7 +23,7 @@ const Formulas: {[K in string]: Formula} = {
 
 
 
-type URIs = 'Time' | 'Space' | 'Angle'
+type URIs = 'Time' | 'Space' | 'Angle' | 'Mass'
 
 
 type HKT<K extends URIs, A> = { 
@@ -30,18 +37,21 @@ type HKT<K extends URIs, A> = {
 type TimeUnit = 'sec' | 'min'
 type SpaceUnit = 'mm' | 'm' | 'inch'
 type AngleUnit = 'rad'
-type AnyUnit = TimeUnit | SpaceUnit | AngleUnit
+type MassUnit = 'kg'
+type AnyUnit = TimeUnit | SpaceUnit | AngleUnit | MassUnit
 
 type TypeUnits = {
     readonly Time: TimeUnit 
     readonly Space: SpaceUnit
     readonly Angle: AngleUnit
+    readonly Mass: MassUnit
 }
 
 const TypeUnits = {
     Time: ['sec', 'min'],
     Space: ['mm'],
     Angle: ['rad'],
+    Mass: ['kg'],
 } as const
 
 
@@ -50,21 +60,25 @@ const TypeUnits = {
 type Time<T extends TimeUnit> = HKT<'Time',T>
 type Space<S extends SpaceUnit> = HKT<'Space', S>
 type Angle<A extends AngleUnit> = HKT<'Angle', A>
+type Mass<A extends MassUnit> = HKT<'Mass', A>
 
 type AnyAngle = Angle<AngleUnit>
 type AnySpace = Space<SpaceUnit>
 type AnyTime = Time<TimeUnit>
+type AnyMass = Mass<MassUnit>
 
 
 const Angle = <A extends AngleUnit>(value: number, unit: A): Angle<A> => ({kind: 'Angle', value: TypedNumber(value, unit)})
 const Time = <T extends TimeUnit>(value: number, unit: T): Time<T> => ({kind: 'Time', value: TypedNumber(value, unit)})
 const Space = <S extends SpaceUnit>(value: number, unit: S): Space<S> => ({kind: 'Space', value: TypedNumber(value, unit)})
+const Mass = <M extends MassUnit>(value: number, unit: M): Mass<M> => ({kind: 'Mass', value: TypedNumber(value, unit)})
 
 
 const TypeConstructor = {
     Time,
     Space,
     Angle,
+    Mass,
 }
 
 
@@ -77,11 +91,13 @@ const lift = <K extends URIs, A extends  TypeUnits[K]>(ctor: (value: number, uni
 const TimeMap: HKTMap<'Time'> = (o, fn) => lift(Time, fn(o.value))
 const SpaceMap: HKTMap<'Space'> = (o, fn) => lift(Space, fn(o.value))
 const AngleMap: HKTMap<'Angle'> = (o, fn) => lift(Angle, fn(o.value))
+const MassMap: HKTMap<'Mass'> = (o, fn) => lift(Mass, fn(o.value))
 
 const Map = {
     Time: TimeMap,
     Space: SpaceMap,
     Angle: AngleMap,
+    Mass: MassMap,
 }
 
 type FromTo<A, B> = {
@@ -159,10 +175,23 @@ const GetAngleConversionTable: () => ConversionTable<'Angle', 'rad'> = () => {
     }
 }
 
+const GetMassConversionTable: () => ConversionTable<'Mass', 'kg'> = () => {    
+    return {
+        kind: 'Mass',
+        baseUnit: 'kg',
+
+        kg: {
+            fromBase: kg => kg,
+            toBase: kg => kg,
+        },
+    }
+}
+
 const GetConversionTable = {
     Time: GetTimeConversionTable(),
     Space: GetSpaceConversionTable(),
     Angle: GetAngleConversionTable(),
+    Mass: GetMassConversionTable(),
 }
 
 type ConvertionFn<A,B> = (a: TypedNumber<A>) => TypedNumber<B>
@@ -209,6 +238,9 @@ const Test1 = () => {
     
     const s0 = Space(25,'mm')
     const s1 = UnitConversor(s0,'inch')
+
+    const m0 = Mass(25,'kg')
+    const m1 = UnitConversor(s0,'inch')
     
     console.table(s0)
     console.table(s1)
