@@ -16,9 +16,9 @@ export type Result = AddResult | SubResult
 
 // Dimension Type ---------------------------------------
 
-export type DIMENSION<T extends Result, L extends Result, A extends Result, M extends Result> = {
-    readonly TIME: T,
+export type DIMENSION<L extends Result, T extends Result, A extends Result, M extends Result> = {
     readonly LENGTH: L,
+    readonly TIME: T,
     readonly ANGLE: A,
     readonly MASS: M,
 }
@@ -30,22 +30,22 @@ export type ANYDIMENSION = DIMENSION<Result, Result, Result, Result>
  * ATTENTION: there is an acceptable range of calculation (normally from -10 to +10)
  * if some result calculation is outside this range you'll have compilation problem
  */
-export const DIMENSION = <T extends Result, L extends Result, A extends Result, M extends Result>(TIME: T, LENGTH: L, ANGLE: A, MASS: M):DIMENSION<T,L,A,M> => ({TIME, LENGTH, ANGLE, MASS})
+export const DIMENSION = <L extends Result, T extends Result, A extends Result, M extends Result>(LENGTH: L, TIME: T, ANGLE: A, MASS: M):DIMENSION<L,T,A,M> => ({LENGTH, TIME, ANGLE, MASS})
 
 
 // Addition operator ---------------------------------------
 
 
 export const add = <
-    T0 extends EXP,
     L0 extends EXP,
+    T0 extends EXP,
     A0 extends EXP,
     M0 extends EXP,
-    T1 extends EXP,
     L1 extends EXP,
+    T1 extends EXP,
     A1 extends EXP,
     M1 extends EXP,
-    >(a: DIMENSION<T0,L0,A0,M0>, b: DIMENSION<T1,L1,A1,M1>) => { 
+    >(a: DIMENSION<L0,T0,A0,M0>, b: DIMENSION<L1,T1,A1,M1>) => { 
 
 
         const newTime = _add(a.TIME, b.TIME) 
@@ -61,15 +61,15 @@ export const add = <
 // Subtraction operation ---------------------------------------
 
 export const sub = <
-    T0 extends EXP,
     L0 extends EXP,
+    T0 extends EXP,
     A0 extends EXP,
     M0 extends EXP,
-    T1 extends EXP,
     L1 extends EXP,
+    T1 extends EXP,
     A1 extends EXP,
     M1 extends EXP,
-    >(a: DIMENSION<T0,L0,A0,M0>, b: DIMENSION<T1,L1,A1,M1>) => { 
+    >(a: DIMENSION<L0,T0,A0,M0>, b: DIMENSION<L1,T1,A1,M1>) => { 
 
 
         const newTime = _sub(a.TIME, b.TIME) 
