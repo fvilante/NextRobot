@@ -26,7 +26,7 @@ const Formulas: {[K in string]: Formula} = {
 type URIs = 'Time' | 'Space' | 'Angle' | 'Mass'
 
 
-type HKT<K extends URIs, A> = { 
+export type HKT<K extends URIs, A> = { 
     readonly kind: K, 
     readonly value: TypedNumber<A> 
 }
@@ -40,7 +40,7 @@ type AngleUnit = 'rad'
 type MassUnit = 'kg'
 type AnyUnit = TimeUnit | SpaceUnit | AngleUnit | MassUnit
 
-type TypeUnits = {
+export type TypeUnits = {
     readonly Time: TimeUnit 
     readonly Space: SpaceUnit
     readonly Angle: AngleUnit
@@ -60,7 +60,7 @@ const TypeUnits = {
 export type Time<T extends TimeUnit> = HKT<'Time',T>
 export type Space<S extends SpaceUnit> = HKT<'Space', S>
 export type Angle<A extends AngleUnit> = HKT<'Angle', A>
-export type Mass<A extends MassUnit> = HKT<'Mass', A>
+export type Mass<M extends MassUnit> = HKT<'Mass', M>
 
 type AnyAngle = Angle<AngleUnit>
 type AnySpace = Space<SpaceUnit>
@@ -74,7 +74,7 @@ export const Space = <S extends SpaceUnit>(value: number, unit: S): Space<S> => 
 export const Mass = <M extends MassUnit>(value: number, unit: M): Mass<M> => ({kind: 'Mass', value: TypedNumber(value, unit)})
 
 
-const TypeConstructor = {
+export const TypeConstructor = {
     Time,
     Space,
     Angle,
