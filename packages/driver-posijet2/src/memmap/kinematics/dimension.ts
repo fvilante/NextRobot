@@ -53,7 +53,7 @@ export const add = <
         const newAngle = _add(a.ANGLE, b.ANGLE)
         const newMass = _add(a.MASS, b.MASS)
 
-        return DIMENSION(newTime, newLength, newAngle, newMass)
+        return DIMENSION(newLength, newTime, newAngle, newMass)
 
 }
 
@@ -77,7 +77,7 @@ export const sub = <
         const newAngle = _sub(a.ANGLE, b.ANGLE)
         const newMass = _sub(a.MASS, b.MASS)
 
-        return DIMENSION(newTime, newLength, newAngle, newMass)
+        return DIMENSION(newLength, newTime,  newAngle, newMass)
 
 }
 
