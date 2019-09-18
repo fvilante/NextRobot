@@ -13,7 +13,7 @@ import {
     AccelerationConstructor as acceleration,
     AnyAcceleration as Acceleration,
 
-} from './kinematics/core-kinematic-types'
+} from './kinetics/core-kinematic-types'
 
 
 
