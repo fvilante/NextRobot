@@ -1,4 +1,4 @@
-import { DIMENSION, add as dimensionAdder, sub as dimensionSubtracter, EXP, Result as ValidStaticNumbers } from "./dimension-operation";
+import { DIMENSION, add as dimensionAdder, sub as dimensionSubtracter, EXP, Result as ValidStaticNumbers } from "./dimension";
 import  {
 
     Time,
