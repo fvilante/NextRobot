@@ -1,7 +1,8 @@
 import { 
-    DIMENSION, 
+    Dimension as Expoent, 
+    AnyDimension as AnyExpoent,
     add as dimensionAdder, 
-    sub as dimensionSubtracter, 
+    sub as dimensionSubtracter,
     EXP, 
     Result as ValidStaticNumbers 
 } from "./dimension";
@@ -23,37 +24,6 @@ import  {
 } from './units-core'
 
 import { mapObjectIndexed } from "@nextrobot/core-utils";
-
-
-
-
-type UNIT<
-    S extends TypeUnits['Space'], //todo: change name convention: from 'Space' to 'Length'
-    T extends TypeUnits['Time'],
-    A extends TypeUnits['Angle'],
-    M extends TypeUnits['Mass'],    
-    > = {
-
-    readonly length: Space<S>
-    readonly time: Time<T>
-    readonly angle: Angle<A>
-    readonly mass: Mass<M>
-
-}
-
-const UNIT = <
-    S extends TypeUnits['Space'], //todo: change name convention: from 'Space' to 'Length'
-    T extends TypeUnits['Time'],
-    A extends TypeUnits['Angle'],
-    M extends TypeUnits['Mass'],    
-    >( lengthUnit: S, timeUnit: T, angleUnit: A, massUnit: M): UNIT<S,T,A,M> => ({
-
-        length: Space(1, lengthUnit), 
-        time: Time(1, timeUnit), 
-        angle: Angle(1, angleUnit), 
-        mass: Mass(1, massUnit)
-
-    })
 
 
 
@@ -101,28 +71,20 @@ export const InternationalSystem: UnitSystem<'m','min','rad','kg'> = {
 }
 
 
-
-
 type Measure<
-    T extends ValidStaticNumbers, 
-    L extends ValidStaticNumbers,
-    A extends ValidStaticNumbers, 
-    M extends ValidStaticNumbers,
+    E extends AnyExpoent,
     U extends AnyUnitSystem,
     > = {
     readonly scalar: number
-    readonly dimension: DIMENSION<T,L,A,M> 
+    readonly expoent: E
     readonly unitSystem: U
 } 
 
 const Measure = <
-    L extends ValidStaticNumbers,
-    T extends ValidStaticNumbers, 
-    A extends ValidStaticNumbers, 
-    M extends ValidStaticNumbers,
-    U extends AnyUnitSystem
-    >(scalar: number, dimension: DIMENSION<L,T,A,M>, unitSystem: U )
-    : Measure<L,T,A,M,U> => ({scalar, dimension, unitSystem})
+    E extends AnyExpoent,
+    U extends AnyUnitSystem,
+    >(scalar: number, expoent: E, unitSystem: U )
+    : Measure<E,U> => ({scalar, expoent, unitSystem})
 
 
 
@@ -132,32 +94,32 @@ const Measure = <
 // TYPES ---------------------------------------------------------------------------
 
 
-export type LENGTH<U extends AnyUnitSystem> =   Measure<'1','0','0','0', U>
-export type TIME<U extends AnyUnitSystem>  =   Measure<'0','1','0','0', U>
-export type ANGLE<U extends AnyUnitSystem> =   Measure<'0','0','1','0', U>
-export type MASS<U extends AnyUnitSystem>  =   Measure<'0','0','0','1', U>
+export type LENGTH<U extends AnyUnitSystem> =   Measure<Expoent<'1','0','0','0'>, U>
+export type TIME<U extends AnyUnitSystem>  =   Measure<Expoent<'0','1','0','0'>, U>
+export type ANGLE<U extends AnyUnitSystem> =   Measure<Expoent<'0','0','1','0'>, U>
+export type MASS<U extends AnyUnitSystem>  =   Measure<Expoent<'0','0','0','1'>, U>
 
-export type LINEARVELOCITY<U extends AnyUnitSystem> = Measure<'1','-1','0','0', U>
-export type LINEARACCELERATION<U extends AnyUnitSystem> = Measure<'1','-2','0','0', U>
+export type LINEARVELOCITY<U extends AnyUnitSystem> = Measure<Expoent<'1','-1','0','0'>, U>
+export type LINEARACCELERATION<U extends AnyUnitSystem> = Measure<Expoent<'1','-2','0','0'>, U>
 
-export type ANGULARVELOCITY<U extends AnyUnitSystem> = Measure<'0','-1','1','0', U>
-export type ANGULARACCELERATION<U extends AnyUnitSystem> = Measure<'0','-2','1','0', U>
+export type ANGULARVELOCITY<U extends AnyUnitSystem> = Measure<Expoent<'0','-1','1','0'>, U>
+export type ANGULARACCELERATION<U extends AnyUnitSystem> = Measure<Expoent<'0','-2','1','0'>, U>
 
 
 
 // TYPE CONSTRUCTORS --------------------------------------------------------------- 
 
 
-export const LENGTH =  <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): LENGTH<U> => Measure(scalar, DIMENSION('1','0','0','0'), unitSystem)
-export const TIME =    <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): TIME<U> =>   Measure(scalar, DIMENSION('0','1','0','0'), unitSystem)
-export const ANGLE =   <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): ANGLE<U> =>  Measure(scalar, DIMENSION('0','0','1','0'), unitSystem)
-export const MASS =    <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): MASS<U> =>   Measure(scalar, DIMENSION('0','0','0','1'), unitSystem)
+export const LENGTH =  <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): LENGTH<U> => Measure(scalar, Expoent('1','0','0','0'), unitSystem)
+export const TIME =    <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): TIME<U> =>   Measure(scalar, Expoent('0','1','0','0'), unitSystem)
+export const ANGLE =   <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): ANGLE<U> =>  Measure(scalar, Expoent('0','0','1','0'), unitSystem)
+export const MASS =    <U extends AnyUnitSystem>  (scalar: number, unitSystem: U): MASS<U> =>   Measure(scalar, Expoent('0','0','0','1'), unitSystem)
 
-export const LINEARVELOCITY = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): LINEARVELOCITY<U> => Measure(scalar, DIMENSION('1','-1','0','0'), unitSystem)
-export const LINEARACCELERATION = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): LINEARACCELERATION<U> => Measure(scalar, DIMENSION('1','-2','0','0'), unitSystem)
+export const LINEARVELOCITY = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): LINEARVELOCITY<U> => Measure(scalar, Expoent('1','-1','0','0'), unitSystem)
+export const LINEARACCELERATION = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): LINEARACCELERATION<U> => Measure(scalar, Expoent('1','-2','0','0'), unitSystem)
 
-export const ANGULARVELOCITY = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): ANGULARVELOCITY<U> => Measure(scalar, DIMENSION('0','-1','1','0'), unitSystem)
-export const ANGULARACCELERATION = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): ANGULARACCELERATION<U> => Measure(scalar, DIMENSION('0','-2','1','0'), unitSystem)
+export const ANGULARVELOCITY = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): ANGULARVELOCITY<U> => Measure(scalar, Expoent('0','-1','1','0'), unitSystem)
+export const ANGULARACCELERATION = <U extends AnyUnitSystem>(scalar: number, unitSystem: U): ANGULARACCELERATION<U> => Measure(scalar, Expoent('0','-2','1','0'), unitSystem)
 
 
 
@@ -166,25 +128,19 @@ export const ANGULARACCELERATION = <U extends AnyUnitSystem>(scalar: number, uni
 
 
 export const sum = <
-    L extends EXP, 
-    T extends EXP, 
-    A extends EXP, 
-    M extends EXP,
-    U extends AnyUnitSystem
-    >(a: Measure<L,T,A,M,U>, b: Measure<L,T,A,M,U>): Measure<L,T,A,M,U> => {
-        return Measure(a.scalar + b.scalar, a.dimension, a.unitSystem)
+    E extends AnyExpoent,
+    U extends AnyUnitSystem,
+    >(a: Measure<E,U>, b: Measure<E,U>): Measure<E,U> => {
+        return Measure(a.scalar + b.scalar, a.expoent, a.unitSystem)
      }
 
 
 /** subtracts b from a */
 export const sub = <
-    L extends EXP, 
-    T extends EXP, 
-    A extends EXP, 
-    M extends EXP,
+    E extends AnyExpoent,
     U extends AnyUnitSystem,
-    >(a: Measure<L,T,A,M,U>, b: Measure<L,T,A,M,U>): Measure<L,T,A,M,U> => {
-        return Measure(a.scalar - b.scalar, a.dimension, a.unitSystem)
+    >(a: Measure<E,U>, b: Measure<E,U>): Measure<E,U> => {
+        return Measure(a.scalar - b.scalar, a.expoent, a.unitSystem)
      }
 
 
@@ -201,13 +157,13 @@ export const mul = <
     A1 extends EXP, 
     M1 extends EXP,
     U extends AnyUnitSystem, 
-    >(a: Measure<L0,T0,A0,M0,U>, b: Measure<L1,T1,A1,M1,U>) => {
-        
+    >(a: Measure<Expoent<L0,T0,A0,M0>,U>, b: Measure<Expoent<L1,T1,A1,M1>,U>) => {
+
         const newScalar = a.scalar * b.scalar
-        const newDimension = dimensionAdder(a.dimension, b.dimension)
+        const newExpoent = dimensionAdder(a.expoent, b.expoent)
         const newUnitSystem = a.unitSystem
         
-        return Measure(newScalar, newDimension, newUnitSystem)
+        return Measure(newScalar, newExpoent, newUnitSystem)
     }
 
 
@@ -223,9 +179,9 @@ export const div = <
     A1 extends EXP, 
     M1 extends EXP,
     U extends AnyUnitSystem, 
-    >(a: Measure<L0,T0,A0,M0,U>, b: Measure<L1,T1,A1,M1,U>) => {
+    >(a: Measure<Expoent<L0,T0,A0,M0>,U>, b: Measure<Expoent<L1,T1,A1,M1>,U>) => {
 
-          return Measure(a.scalar / b.scalar, dimensionSubtracter(a.dimension, b.dimension), a.unitSystem)
+          return Measure(a.scalar / b.scalar, dimensionSubtracter(a.expoent, b.expoent), a.unitSystem)
           
     }
 
@@ -236,24 +192,20 @@ export const div = <
 
 
 export const scalarMul = <
-    L extends EXP, 
-    T extends EXP, 
-    A extends EXP, 
-    M extends EXP,
+    E0 extends AnyExpoent,
+    E1 extends AnyExpoent,
     U extends AnyUnitSystem,
-    >(scalar: number, o: Measure<L,T,A,M,U>): Measure<L,T,A,M,U> => {
-        return Measure(scalar * o.scalar, o.dimension, o.unitSystem)
+    >(scalar: number, o: Measure<E1,U>): Measure<E1,U> => {
+        return Measure(scalar * o.scalar, o.expoent, o.unitSystem)
      }
 
 
 export const scalarDiv = <
-    L extends EXP, 
-    T extends EXP, 
-    A extends EXP, 
-    M extends EXP,
+    E0 extends AnyExpoent,
+    E1 extends AnyExpoent,
     U extends AnyUnitSystem,
-    >(scalar: number, o: Measure<L,T,A,M,U>):  Measure<L,T,A,M,U> => {
-         return Measure(o.scalar / scalar, o.dimension, o.unitSystem)
+    >(scalar: number, o: Measure<E1,U>):  Measure<E1,U> => {
+         return Measure(o.scalar / scalar, o.expoent, o.unitSystem)
     }
  
 
@@ -261,13 +213,10 @@ export const scalarDiv = <
 
 
 export const UnitSystemConversor = <   
-    L extends EXP, 
-    T extends EXP, 
-    A extends EXP, 
-    M extends EXP,
+    E extends AnyExpoent,
     UA extends AnyUnitSystem,
     UB extends AnyUnitSystem
-    >(m: Measure<L,T,A,M,UA>, newUnitSystem: UB): Measure<L,T,A,M,UB> => {
+    >(m: Measure<E,UA>, newUnitSystem: UB): Measure<E,UB> => {
 
 
         const length = __UnitConversor(Space(1, m.unitSystem.length), newUnitSystem.length)
@@ -275,10 +224,10 @@ export const UnitSystemConversor = <
         const angle = __UnitConversor(Angle(1, m.unitSystem.angle), newUnitSystem.angle)
         const mass = __UnitConversor(Mass(1, m.unitSystem.mass), newUnitSystem.mass) 
 
-        const exp_length = Number(m.dimension.LENGTH)
-        const exp_time = Number(m.dimension.TIME)
-        const exp_angle = Number(m.dimension.ANGLE)
-        const exp_mass = Number(m.dimension.MASS)
+        const exp_length = Number(m.expoent.length)
+        const exp_time = Number(m.expoent.time)
+        const exp_angle = Number(m.expoent.angle)
+        const exp_mass = Number(m.expoent.mass)
 
         const _newScalar = 
             m.scalar    * ( Math.pow(length.value.number,   exp_length) )
@@ -292,7 +241,7 @@ export const UnitSystemConversor = <
         console.log(length.value.number, time.value.number, angle.value.number, mass.value.number)
         console.log(exp_length, exp_time, exp_angle, exp_mass)
 
-        return Measure(_newScalar, m.dimension, newUnitSystem)
+        return Measure(_newScalar, m.expoent, newUnitSystem)
 
 }
 
@@ -345,7 +294,7 @@ const Test = () => {
 
     const x = fn(acc_avanco)
 
-    console.table(delta_s.dimension)
+    console.table(delta_s.expoent)
     console.table(delta_s.scalar)
     console.table(delta_s.unitSystem)
 

@@ -16,21 +16,32 @@ export type Result = AddResult | SubResult
 
 // Dimension Type ---------------------------------------
 
-export type DIMENSION<L extends Result, T extends Result, A extends Result, M extends Result> = {
-    readonly LENGTH: L,
-    readonly TIME: T,
-    readonly ANGLE: A,
-    readonly MASS: M,
+export type Dimension<L extends Result, T extends Result, A extends Result, M extends Result> = {
+    readonly length: L,
+    readonly time: T,
+    readonly angle: A,
+    readonly mass: M,
 }
 
-export type ANYDIMENSION = DIMENSION<Result, Result, Result, Result>
+export type AnyDimension = Dimension<Result, Result, Result, Result>
 
 
 /**
  * ATTENTION: there is an acceptable range of calculation (normally from -10 to +10)
  * if some result calculation is outside this range you'll have compilation problem
  */
-export const DIMENSION = <L extends Result, T extends Result, A extends Result, M extends Result>(LENGTH: L, TIME: T, ANGLE: A, MASS: M):DIMENSION<L,T,A,M> => ({LENGTH, TIME, ANGLE, MASS})
+export const Dimension = <
+    L extends Result, 
+    T extends Result, 
+    A extends Result, 
+    M extends Result
+    >(length: L, time: T, angle: A, mass: M):Dimension<L,T,A,M> => 
+        ({
+            length, 
+            time, 
+            angle, 
+            mass
+        })
 
 
 // Addition operator ---------------------------------------
@@ -45,15 +56,15 @@ export const add = <
     T1 extends EXP,
     A1 extends EXP,
     M1 extends EXP,
-    >(a: DIMENSION<L0,T0,A0,M0>, b: DIMENSION<L1,T1,A1,M1>) => { 
+    >(a: Dimension<L0,T0,A0,M0>, b: Dimension<L1,T1,A1,M1>) => { 
 
 
-        const newTime = _add(a.TIME, b.TIME) 
-        const newLength = _add(a.LENGTH, b.LENGTH) 
-        const newAngle = _add(a.ANGLE, b.ANGLE)
-        const newMass = _add(a.MASS, b.MASS)
+        const newTime = _add(a.time, b.time) 
+        const newLength = _add(a.length, b.length) 
+        const newAngle = _add(a.angle, b.angle)
+        const newMass = _add(a.mass, b.mass)
 
-        return DIMENSION(newLength, newTime, newAngle, newMass)
+        return Dimension(newLength, newTime, newAngle, newMass)
 
 }
 
@@ -69,15 +80,15 @@ export const sub = <
     T1 extends EXP,
     A1 extends EXP,
     M1 extends EXP,
-    >(a: DIMENSION<L0,T0,A0,M0>, b: DIMENSION<L1,T1,A1,M1>) => { 
+    >(a: Dimension<L0,T0,A0,M0>, b: Dimension<L1,T1,A1,M1>) => { 
 
 
-        const newTime = _sub(a.TIME, b.TIME) 
-        const newLength = _sub(a.LENGTH, b.LENGTH) 
-        const newAngle = _sub(a.ANGLE, b.ANGLE)
-        const newMass = _sub(a.MASS, b.MASS)
+        const newTime = _sub(a.time, b.time) 
+        const newLength = _sub(a.length, b.length) 
+        const newAngle = _sub(a.angle, b.angle)
+        const newMass = _sub(a.mass, b.mass)
 
-        return DIMENSION(newLength, newTime,  newAngle, newMass)
+        return Dimension(newLength, newTime,  newAngle, newMass)
 
 }
 
@@ -89,8 +100,8 @@ const Test = () => {
     // there is an acceptable range of calculation (normally from -10 to +10)
     // if some result calculation is outside this range you'll have compilation problem
 
-    const d1 = DIMENSION('-1','0', '0', '1')
-    const d2 = DIMENSION('1','-2', '0', '1')
+    const d1 = Dimension('-1','0', '0', '1')
+    const d2 = Dimension('1','-2', '0', '1')
     
     const d = add(d1,d2)
     const e = add(d, d1)
