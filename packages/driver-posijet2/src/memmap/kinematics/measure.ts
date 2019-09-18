@@ -1,4 +1,11 @@
-import { DIMENSION, add as dimensionAdder, sub as dimensionSubtracter, EXP, Result as ValidStaticNumbers } from "./dimension";
+import { 
+    DIMENSION, 
+    add as dimensionAdder, 
+    sub as dimensionSubtracter, 
+    EXP, 
+    Result as ValidStaticNumbers 
+} from "./dimension";
+
 import  {
 
     Time,
@@ -14,6 +21,7 @@ import  {
     TypeUnits
 
 } from './units-core'
+
 import { mapObjectIndexed } from "@nextrobot/core-utils";
 
 
@@ -88,10 +96,10 @@ const Measure = <
 
 export type ADIMENSIONAL = Measure<'0','0','0','0','m','min','rad','kg'>
 
-export type LENGTH<L extends   TypeUnits['Space']> =   Measure<'1','0','0','0',L,'min','rad','kg'>
-export type TIME<T extends     TypeUnits['Time']>  =   Measure<'0','1','0','0','m',T,'rad','kg'>
-export type ANGLE<A extends    TypeUnits['Angle']> =   Measure<'0','0','1','0','m','min',A,'kg'>
-export type MASS<M extends     TypeUnits['Mass']>  =   Measure<'0','0','0','1','m','min','rad',M>
+export type LENGTH<L extends   TypeUnits['Space']> =   Measure<'1','0','0','0', L,'min','rad','kg'>
+export type TIME<T extends     TypeUnits['Time']>  =   Measure<'0','1','0','0','m', T,'rad','kg'>
+export type ANGLE<A extends    TypeUnits['Angle']> =   Measure<'0','0','1','0','m','min', A,'kg'>
+export type MASS<M extends     TypeUnits['Mass']>  =   Measure<'0','0','0','1','m','min','rad', M>
 
 export type LINEARVELOCITY<        L extends TypeUnits['Space'], T extends TypeUnits['Time']> = Measure<'1','-1','0','0',L,T,'rad','kg'>
 export type LINEARACCELERATION<    L extends TypeUnits['Space'], T extends TypeUnits['Time']> = Measure<'1','-2','0','0',L,T,'rad','kg'>
@@ -116,22 +124,6 @@ export const LINEARACCELERATION = <L extends TypeUnits['Space'], T extends TypeU
 
 export const ANGULARVELOCITY = <A extends TypeUnits['Angle'], T extends TypeUnits['Time']>(scalar: number, angleUnit: A, timeUnit: T): ANGULARVELOCITY<A,T> => Measure(scalar, DIMENSION('0','-1','1','0'), UNIT('m', timeUnit, angleUnit, 'kg'))
 export const ANGULARACCELERATION = <A extends TypeUnits['Angle'], T extends TypeUnits['Time']>(scalar: number, angleUnit: A, timeUnit: T): ANGULARACCELERATION<A,T> => Measure(scalar, DIMENSION('0','-2','1','0'), UNIT('m', timeUnit, angleUnit, 'kg'))
-
-
-// sumary
-
-
-export const Kinematic = {
-    ADIMENSIONAL,
-    LENGTH,
-    TIME,
-    ANGLE,
-    MASS,
-    LINEARVELOCITY,
-    LINEARACCELERATION,
-    ANGULARVELOCITY,
-    ANGULARACCELERATION,
-}
 
 
 
@@ -377,7 +369,7 @@ const Test = () => {
 
     const t0 = TIME(2, 'min')
     const t1 = TIME(5, 'min')
-    const s2 = mul(t0, t1)
+    const s2 = mul(t0)(t1)
 
     const j0 = scalarMul(2,s2)
     const j1 = scalarDiv(2,s2)
@@ -397,7 +389,7 @@ const Test = () => {
     console.table(velocity) // Measure<"1", "-1", "0", "0">
 
     const acceleration = div(velocity)(TIME(1, 'min'))
-    const acceleration2 = div(delta_s)(mul(TIME(1, 'min'), TIME(1, 'min')))
+    const acceleration2 = div(delta_s)(mul(TIME(1, 'min'))(TIME(1, 'min')))
 
     const r = sum(acceleration)(acceleration2)
 
@@ -473,7 +465,7 @@ const Test3 = () => {
 
 
     const v0 = LINEARVELOCITY(10,'inch','sec')
-    const v1 = UnitConversor(Kinematic.LINEARVELOCITY(10,'mm', 'sec'), {...getUnits(v0), length: 'inch'})
+    const v1 = UnitConversor(LINEARVELOCITY(10,'mm', 'sec'), {...getUnits(v0), length: 'inch'})
     const delta_v = sub(v1)(v0)
 
     const t0 = TIME(0, 'sec')
@@ -486,9 +478,31 @@ const Test3 = () => {
     
 }
 
+const Test4 = () => {
 
-// tslint:disable-next-line: no-expression-statement
-Test2()
+    const s0 = LENGTH(10, 'm')
+    const s1 = LENGTH(20, 'm')
+    const delta_s = sub(s1)(s0)
+
+    const t0 = TIME(10, 'min')
+    const t1 = TIME(20, 'min')
+    const delta_t = sub(t1)(t0)
+
+    const d = div(delta_s)(delta_t)
+
+
+}
+
+
+// tslint:disable: no-expression-statement
+
+const runAllTests = () => {
+    Test()
+    Test2()
+    Test3()
+    Test4()
+}
+
 
 
 
