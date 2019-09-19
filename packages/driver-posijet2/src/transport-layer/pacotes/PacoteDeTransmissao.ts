@@ -10,6 +10,7 @@ export type PacoteDeTransmissaoPadrao = {
     readonly dadoL: Byte
 }
 
+//fix: Type Direcao com be static connected with pacote de retorno (ex: PacoteDeReotnor<Direcao, Payload> ... etc) 
 export const PacoteDeTransmissaoPadrao = (direcao: Direcao, comando: Byte, word: Word): PacoteDeTransmissaoPadrao => {
     const _ = WordToByte(word)
     const dadoH = _.dadoH

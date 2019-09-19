@@ -59,11 +59,11 @@ export const UnitSystem = <
 })
 
 
-type AnyUnitSystem = UnitSystem<TypeUnits['Space'], TypeUnits['Time'], TypeUnits['Angle'], TypeUnits['Mass']>
+export type AnyUnitSystem = UnitSystem<TypeUnits['Space'], TypeUnits['Time'], TypeUnits['Angle'], TypeUnits['Mass']>
 
 
 /** Unit System: International System */
-export const InternationalSystem: UnitSystem<'m','min','rad','kg'> = {
+export const InternationalUnitSystem: UnitSystem<'m','min','rad','kg'> = {
     length: 'm',
     time: 'min',
     angle: 'rad',
@@ -71,7 +71,7 @@ export const InternationalSystem: UnitSystem<'m','min','rad','kg'> = {
 }
 
 
-type Measure<
+export type Measure<
     E extends AnyExpoent,
     U extends AnyUnitSystem,
     > = {
@@ -80,7 +80,7 @@ type Measure<
     readonly unitSystem: U
 } 
 
-const Measure = <
+export const Measure = <
     E extends AnyExpoent,
     U extends AnyUnitSystem,
     >(scalar: number, expoent: E, unitSystem: U )
@@ -104,6 +104,20 @@ export type LINEARACCELERATION<U extends AnyUnitSystem> = Measure<Expoent<'1','-
 
 export type ANGULARVELOCITY<U extends AnyUnitSystem> = Measure<Expoent<'0','-1','1','0'>, U>
 export type ANGULARACCELERATION<U extends AnyUnitSystem> = Measure<Expoent<'0','-2','1','0'>, U>
+
+
+// Any's
+
+export type ANY_LENGTH = LENGTH<AnyUnitSystem> 
+export type ANY_TIME = TIME<AnyUnitSystem> 
+export type ANY_ANGLE = ANGLE<AnyUnitSystem> 
+export type ANY_MASS = MASS<AnyUnitSystem> 
+
+export type ANY_LINEARVELOCITY = LINEARVELOCITY<AnyUnitSystem> 
+export type ANY_LINEARACCELERATION = LINEARACCELERATION<AnyUnitSystem> 
+
+export type ANY_ANGULARVELOCITY = ANGULARVELOCITY<AnyUnitSystem> 
+export type ANY_ANGULARACCELERATION = ANGULARACCELERATION<AnyUnitSystem> 
 
 
 
@@ -252,7 +266,7 @@ export const UnitSystemConversor = <
 
 const Test = () => {
 
-    const US1 = InternationalSystem 
+    const US1 = InternationalUnitSystem 
     const PO1 = UnitSystem({angle: 'rad', length: 'mm', mass: 'kg', time: 'sec'})
     const II1 = UnitSystem({angle: 'rad', length: 'inch', mass: 'kg', time: 'min'})
 
@@ -341,7 +355,7 @@ const Test = () => {
 
 const Test2 = () => {
 
-    const US0 = InternationalSystem 
+    const US0 = InternationalUnitSystem 
 
     const tt0 = TIME(10, US0)
     const tt1 = TIME(2, US0)
@@ -354,7 +368,7 @@ const Test2 = () => {
 
 const Test3 = () => {
 
-    const US0 = InternationalSystem 
+    const US0 = InternationalUnitSystem 
 
     const v0 = LINEARVELOCITY(10, US0)
     const v1 = UnitSystemConversor(LINEARVELOCITY(10, US0), US0)
@@ -372,8 +386,8 @@ const Test3 = () => {
 
 const Test4 = () => {
 
-    const US0 = InternationalSystem
-    const BR1 = UnitSystem({...InternationalSystem, time: 'sec'})
+    const US0 = InternationalUnitSystem
+    const BR1 = UnitSystem({...InternationalUnitSystem, time: 'sec'})
 
     const s0 = LENGTH(10, US0)
     const s1 = LENGTH(20, US0)
