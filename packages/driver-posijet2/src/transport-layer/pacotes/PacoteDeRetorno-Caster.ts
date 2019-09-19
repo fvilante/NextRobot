@@ -6,7 +6,7 @@ import { NACK } from "../../datalink-layer/posijet1-protocol";
 
 
 
-export const PacoteRetorno_Caster = (response: DatalinkResult, transmitedDirection: Direcao): PacoteDeRetorno => {
+export const PacoteDeRetorno_Caster = (response: DatalinkResult, transmitedDirection: Direcao): PacoteDeRetorno => {
 
     //todo: should this function be really that coupled here? Could it be extracted and decoupled ?
     const morphism = (_: DatalinkResult): PacoteRetornoPadrao => {
