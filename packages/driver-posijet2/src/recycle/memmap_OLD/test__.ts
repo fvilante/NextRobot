@@ -16,7 +16,7 @@ import {
     MilimeterPerSquareSecond, 
     Pulse 
 } from './application-types'
-import { CmppAddress } from '../transport-layer/transaction/CmppAddress';
+import { CmppAddress } from '../../transport-layer/transaction/CmppAddress';
 
 const Test = async () => {
 

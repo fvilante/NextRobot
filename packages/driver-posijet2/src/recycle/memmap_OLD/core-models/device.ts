@@ -1,7 +1,7 @@
 
 import { PhysicalArm } from './physical-arm'
 import { Memmap, AnyDriver } from '../driver/driver-core'
-import { CmppAddress } from '../../transport-layer/transaction/CmppAddress';
+import { CmppAddress } from '../../../transport-layer/transaction/CmppAddress';
 
 
 export interface Device<T extends AnyDriver> {

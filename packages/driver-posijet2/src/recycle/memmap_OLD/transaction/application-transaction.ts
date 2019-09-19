@@ -1,12 +1,12 @@
 import { AnyDriver, UserProgram } from '../driver/driver-core'
 import { Device } from '../core-models/device'
 import { mapObjectIndexed } from '@nextrobot/core-utils'
-import { transact } from '../../transport-layer/transaction/transact';
-import { Direcao } from '../../transport-layer/other-types/Direcao';
+import { transact } from '../../../transport-layer/transaction/transact';
+import { Direcao } from '../../../transport-layer/other-types/Direcao';
 import { serialPortOpenner_PC } from '@nextrobot/serialport-manager';
-import { PacoteDeTransmissaoPadrao } from '../../transport-layer/pacotes/PacoteDeTransmissao';
-import { Word } from '../../transport-layer/other-types/Word';
-import { ByteToWord } from '../../transport-layer/other-types/byteAndWordConversors';
+import { PacoteDeTransmissaoPadrao } from '../../../transport-layer/pacotes/PacoteDeTransmissao';
+import { Word } from '../../../transport-layer/other-types/Word';
+import { ByteToWord } from '../../../transport-layer/other-types/byteAndWordConversors';
 
 // tslint:disable: no-let no-if-statement no-expression-statement
 
