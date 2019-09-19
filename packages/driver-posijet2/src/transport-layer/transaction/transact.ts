@@ -4,7 +4,7 @@ import { PacoteDeTransmissaoPadrao } from '../pacotes/PacoteDeTransmissao';
 import { PacoteDeRetorno } from '../pacotes/PacoteDeRetorno';
 import { SerialPortOpener, syncTransactioner } from '@nextrobot/serialport-manager';
 import { datalinkerWrapper } from '../../datalink-layer/posijet1-protocol';
-import { PacoteRetorno_Caster } from '../pacotes/PacoteRetorno_Caster';
+import { PacoteRetorno_Caster } from '../pacotes/PacoteDeRetorno-Caster';
 
 export const transact = async (portOpener: SerialPortOpener, cmppAddr: CmppAddress, pacote: PacoteDeTransmissaoPadrao ): Promise<PacoteDeRetorno> => {
     const canal = cmppAddr.canal
