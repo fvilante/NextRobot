@@ -1,53 +1,60 @@
 
-import { UserProgram, memmap } from './CMPP00AF'
-import {  } from './CMPP00LG'
-import { AnyUserProgram, Memmap, SingleParameter, GetParameterType, SingleMemmap } from './core'
-import { CmppAddress } from '../transport-layer/transaction/CmppAddress'
+import {  } from './driver/CMPP00LG'
+import { AnyUserProgram, GetParameterType as SingleParameterResult } from './core'
 import { SerialPortOpener } from '@nextrobot/serialport-manager'
-import { LinearAxisClassic, PhysicalArm } from '../core-models/physical-arm'
 import { Direcao } from '../transport-layer/other-types/Direcao'
 import { PacoteDeTransmissaoPadrao } from '../transport-layer/pacotes/PacoteDeTransmissao'
 import { transact } from '../transport-layer/transaction/transact'
-import { PacoteDeRetorno, PacoteDeRetorno_ComErro } from '../transport-layer/pacotes/PacoteDeRetorno'
+import { ByteToWord } from '../transport-layer/other-types/byteAndWordConversors'
+import { Device } from '../core-models/device' 
 
+// f :: SerialPortOpenner -> Device -> parameterName -> Promise<ResultValue>
+export const ReadSingleParameter = 
+    (portOpenner: SerialPortOpener) => <
+    U extends AnyUserProgram>(device: Device<U>) => async <
+    K extends keyof U>
+    (parameter: K): Promise<U[K]> => {
 
-type Config = {
-    readonly cmppAddress: CmppAddress
-    readonly portOpenner: SerialPortOpener
-    readonly physicalArm : LinearAxisClassic
-}
+    // get parameter memmap
+    const memmap = device.memmap[parameter]
+    
+    // decide what transmission strategy to use
+    const bitsize = memmap.bitSize
+    const direcao: Direcao = "Solicitacao" //todo: what if bitSize is grather than 16 bits ?
 
-const SendEach = (config: Config) => async <
-    U extends AnyUserProgram, 
-    K extends keyof U,
-    >(s: SingleParameter<U,K>, memmap: SingleMemmap<U,K>): Promise<void> => {
-
-    // value to be send
-    const value = s.value
-
-    // configure transmition 
-    const direcao: Direcao = "Envio"
+    // configure package
     const comando = memmap.startWord
-    const word16 = memmap.toWave(value)
+    const word16 = 0
+    const cmppAddress = device.cmppAddress
 
     // send packet and await return data
     const pacoteDeRetorno =  await transact(
-        config.portOpenner, 
-        config.cmppAddress, 
+        portOpenner, 
+        cmppAddress, 
         PacoteDeTransmissaoPadrao(direcao, comando, word16)
     ) 
 
-    const fromWave = memmap.fromWave
-
     switch (pacoteDeRetorno.kind) {
-        case 'PacoteDeRetorno_ComErro':
+
+        case 'PacoteDeRetorno_DeSolicitacaoSemErro': {
+            const dadoL = pacoteDeRetorno.payload.dadoL
+            const dadoH = pacoteDeRetorno.payload.dadoH
+            const wave = ByteToWord(dadoL, dadoH)
+            const fromWave = memmap.fromWave
+            const value = fromWave(wave)
+            return value
+        }
+
+        case 'PacoteDeRetorno_ComErro': {
             throw new Error(`Pacote de retorno com erro ${pacoteDeRetorno.payload}`)
-        case 'PacoteDeRetornoDeEnvioSemErro':
-            return 
-        case 'PacoteDeRetorno_DeSolicitacaoSemErro':
-            throw new Error(`Erro`)
+        }
+
+        case 'PacoteDeRetornoDeEnvioSemErro': {
+            console.log(pacoteDeRetorno)
+            throw new Error(`Tipo de pacote retornado é 'PacoteDeRetornoDeEnvioSemErro' enquanto o pacote aguardado era 'PacoteDeRetorno_DeSolicitacaoSemErro' ---> ${pacoteDeRetorno.payload}`)
+        }
+
     }
 
-    // retorna pacote de transmissao
         
 }

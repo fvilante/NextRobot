@@ -1,10 +1,10 @@
 
-import { ANY_LINEARACCELERATION, UnitSystemConversor, LINEARACCELERATION } from './kinetics/measure'
-import { Memmap, US0 } from './core'
+import { ANY_LINEARACCELERATION, UnitSystemConversor, LINEARACCELERATION } from '../kinetics/measure'
+import { Memmap, US0 } from '../core'
 
 
 // test
-import { GetParameterType } from './core'
+import { GetParameterType } from '../core'
 
 type A = GetParameterType<UserProgram, 'Parametro3'>
 

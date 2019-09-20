@@ -1,7 +1,5 @@
 import { InternationalUnitSystem } from './kinetics/measure'
 
-
-
 // --------------------------------------------------------
 // DEFINITION
 // --------------------------------------------------------
@@ -32,12 +30,12 @@ export type SingleMemmap<U extends AnyUserProgram, K extends keyof U> = {
     readonly bitSize: number // tamanho do dado em bits
 
     // description
-    readonly helpMsg?: string // texto descritivo do parametro
+    //readonly helpMsg?: string // texto descritivo do parametro
 
     // memory class
     // todo: implement bellow
-    readonly memoryType: 'volatile' | 'stable'
-    readonly accessType: 'read-only' | 'read-write' | 'write-only'  
+    //readonly memoryType: 'volatile' | 'stable'
+    //readonly accessType: 'read-only' | 'read-write' | 'write-only'  
     
     // conversor
     readonly toWave: (_: GetParameterType<U,K>) => number,

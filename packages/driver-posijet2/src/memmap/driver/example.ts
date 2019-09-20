@@ -1,4 +1,6 @@
-import { Memmap } from './core'
+import { Memmap } from '../core'
+
+
 
 
 
