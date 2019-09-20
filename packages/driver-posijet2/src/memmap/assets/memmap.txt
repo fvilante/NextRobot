@@ -1,0 +1,390 @@
+
+
+
+
+;****************************************************************
+	;*		Definicao das variaveis				*
+	;****************************************************************
+	;***** Konstantes do programa
+.equ	RAMINT	=$60		;Endereco dos parametros de interrupcao
+.equ	RAMPRG	=$A0		;Endereco dos parametros do programa
+.equ	kpresc	=1		;Valor minimo do divisor da frequenca base
+.equ	Fclock	=8000000	;Frequencia de clock do processador
+.equ	Ftimer	=Fclock/1024	;Frequencia do timer 1024 ciclos por segundos
+.equ	esc	=$1B		;Tecla esc
+.equ	CNTgEPL	=$E0		;Contador low do gravador da eemprom
+.equ	CNTgEPH	=$E1		;Contador hight do gravador da eemprom
+.equ	BAUD1	=9600	;Taxa de comunicacao da com1
+.equ	PONCOM1	=$100	;Endereco do ponteiro da com1
+;
+;************************************************************************
+;			Variaveis de execucao (Index Y)			*
+;************************************************************************
+.equ	PatuaL	=$00	;Posicao atual
+.equ	PatuaH	=$01
+.equ	PexecL	=$02	;Posicao de execucao
+.equ	PexecH	=$03
+.equ	PrampL	=$04	;Posicao do inicio da rampa
+.equ	PrampH	=$05
+.equ	VmaxL	=$06	;Velocidade maxima
+.equ	VmaxH	=$07
+.equ	VminL	=$08	;Velocidade minima
+.equ	VminH	=$09
+.equ	VincL	=$0A	;Incremento de Velocidade
+.equ	VincH	=$0B
+.equ	velatuF	=$0C	;Velocidade atual (3 byte)
+.equ	velatuL	=$0D
+.equ	velatuH	=$0E
+.equ	iMensag	=$0F	;Numero da proxima mensagem a ser impressa
+;.equ	Fbase0	=$10	;(LSB) Frequencia base
+;.equ	Fbase1	=$11
+;.equ	Fbase2	=$12	;(MSB) Frequencia base (3 byte)
+.equ	FLGpis	=$13	;Flag do pistao
+	.equ	AntecipOk =7	;Indica que ja passou pela posição de antecipação
+	.equ	ImpressOk =6	;Indica que a posição atual é uma Posição de impressão
+.equ	FmaxL	=$14	;Velocidade limite superior, constante do sistema
+.equ	FmaxH	=$15
+.equ	FminL	=$16	;Velocidade limite inferior, constante do sistema
+.equ	FminH	=$17
+.equ	tmpsysL	=$18	;Contador do tempo do sistema
+.equ	tmpsysH	=$19
+.equ	ndivL	=$1A	;Novo divisor do contador para o comparador A
+.equ	ndivH	=$1B
+.equ	cntprtL	=$1C	;Contador da Largura do sinal de impressao
+.equ	cntprtH	=$1D
+.equ	PindeL	=$1E	;Posicao do zero index
+.equ	PindeH	=$1F
+.equ	prtL	=$20
+.equ	prtH	=$21
+.equ	SobraIntTmpL	=$22	;Menor tempo de sobra da rotina intTmp
+.equ	SobraIntTmpH	=$23	;Menor tempo de sobra da rotina intTmp
+;.equ	Vago1	=$22	;Vago
+;.equ	Vago2	=$23	;Vago
+;.equ	pasprtF	=$24	;Passo do sinal de impressao (3 byte)
+;.equ	pasprtL	=$25
+.equ	FlgSdoor	=$26	;Filtro do sensor de porta
+.equ	NUMmenA	=$27	;Ultimo valor do numero de mensagem a ser impressa
+.equ	nummen	=$28	;Numero de mensagem a ser impressa
+.equ	Vmotor	=$29	;Valor do divisor do motor
+.equ	masceL	=$2A	;Mascara de erro byte low
+		.Equ	eSinStaV =0 	;Sinal de start, velocidade
+		.Equ	eSinStaO =1	;Sinal de start/outro
+		.Equ	eSinIndx2=2	;Sinal do zero index
+		.Equ	eSinIndx3=3	;Sinal do zero index
+		.Equ	eSinImpr =4	;Sinal de impressao
+		.Equ	eSerCom1 =5	;Erro na com1  (Valido somente com o include "..\BIBN\CODEBOX8.bib")
+		.equ	eMudPar	=6 ;Mudanca de parametros no instante errado
+		;D7: Erro de parametros de movimento passo a passo
+.equ	masceH	=$2B			;byte high
+		.Equ	eRunTime	=0	;Erro de RunTimer da rotina inttmp
+		;D1: Nao usado
+		.Equ	ePortaBerta	=2	;Erro de porta aberta
+		;D3: Nao usado
+		;D4: Nao usado
+		;D5: Nao usado
+		;D6: Nao usado
+		;D7: Nao usado
+.equ	cntstaL	=$2C	;Contador da do sinal do start externo
+.equ	cntstaH	=$2D
+.equ	cntautL	=$2E	;Contador do sinal do start automatico
+.equ	cntautH	=$2F
+.equ	PORTCX	=$30
+.equ	PORTCY	=$31
+.equ	StatusL	=$32	;Flag de status
+	.equ	ReferenciaOk	=0	;Referenciado
+	.equ	PosExecutada	=1	;Posicao Executada (Só esta como variavel no .include "..\BIBN\serial38.bib")
+	.equ	Referenciando	=2	;Referenciando
+	.equ	sttDirPos	=3	;Direcao do movimento
+	.equ	sttAceler	=4	;Aceleracao ligada
+	.equ	sttDesacel	=5	;Desaceleracao ligada
+	;bit6: Nao usado
+	.equ	sttErro		=7	;Indicacao de erro
+.equ	StatusH	=$33	;Flag de status
+.equ	ErroSys =$34	;Byte com o cod. de erro
+.equ	tstindL	=$36	;So'para teste do zero index ???###???
+.equ	tstindH	=$37	;So'para teste do zero index ???###???
+;.equ	tstindX	=$38	;So'para teste do zero index ???###???
+.equ	flagZ	=$39	;Flags do sinal do zero index
+.equ	tmpintL	=$3A	;So'para teste de overrun da interrupcao ???###???
+.equ	tmpintH	=$3B	;So'para teste de overrun da interrupcao ???###???
+.equ	FlgStaX	=$3C	;Flags do sinal do start esterno
+	;FlgStaX,7	= Valor do sinal de start anterior
+	;FlgStaX,6	= Nao usado
+	;FlgStaX,5	= Nao usado
+	;FlgStaX,4	= Indica que o start foi entre eixos
+	;FlgStaX,3,2,1,0	= Contador de leitura do start
+.equ	FlgStaY	=$3D	;Flags do sinal do start do eixo Y
+	;FlgStaY,0,1,2,3,7 igual a flags
+	;FlgStaY,4	= Sinal de start entre eixo
+	;FlgStaY,5	= Indica saida de start entre eixo em andamento
+	;FlgStaY,6	= Indica que a saida do start entre eixo e' esterno
+	;
+;.equ	cntstYL	=$3E	;Contador do sinal do start externo
+;.equ	cntstYH	=$3F
+	;
+	;
+;************************************************************************
+;			Parametros do programa (Index Z)		*
+;************************************************************************
+.equ	posiniL	=$00	;Posicao inicial programada
+.equ	posiniH	=$01
+.equ	posfimL	=$02	;Posicao final programada
+.equ	posfimH =$03				
+.equ	AavanL	=$04	;Aceleracao de avanco programada
+.equ	AavanH	=$05
+.equ	AretoL	=$06	;Aceleracao de retorno programada
+.equ	AretoH	=$07
+.equ	VavanL	=$08	;Velocidade de avanco programada
+.equ	VavanH	=$09
+.equ	VretoL	=$0A	;Velocidade de retorno programada
+.equ	VretoH	=$0B
+.equ	nMenAv	=$0C	;Numero de mensagem no avanco
+.equ	nMenRt	=$0D	;Numero de mensagem no retorno
+.equ	pPrtAvL	=$0E	;posicao da primeira impressao no avanco
+.equ	pPrtAvH	=$0F
+.equ	pPrtRtL	=$10	;posicao da primeira impressao no retorno
+.equ	pPrtRtH	=$11
+.equ	UprtAVL	=$12	;Posicao da ultima mensagem no avanco
+.equ	UprtAVH	=$13
+.equ	UprtRTL	=$14	;Posicao da ultima mensagem no retorno
+.equ	UprtRTH	=$15
+.equ	tmpprtL	=$16	;Largura do sinal de impressao
+.equ	tmpprtH	=$17
+.equ	tmpautL	=$18	;Tempo para o start automatico
+.equ	tmpautH	=$19
+.equ	tmpextL	=$1A	;Tempo para o start externo
+.equ	tmpextH	=$1B
+.equ	AntcinL	=$1C	;Cota de antecipacao do start entre eixos (pinelmatico)
+.equ	AntcinH	=$1D
+.equ	TempPPL	=$1E	;Retardo para o start automatico passo a passo
+.equ	TempPPH	=$1F
+.equ	FLAGPL	=$20	;Flag de configuracao da programacao
+	.equ	STAUTA	=0	;Start automatico no avanco ligado
+	.equ	STAUTR	=1	;Start automatico no retorno ligado
+	.equ	SSAUTA	=2	;Saida de start no avanco ligado
+	.equ	SSAUTR	=3	;Saida de start no retorno ligado
+	.equ	HSEXTE	=4	;Start externo habilitado ??
+	.equ	LSEXTE	=5	;Logica do start externo ??
+	.equ	ESENTR	=6	;Entrada de start entre eixo habilitado ??
+	.equ	STAREF	=7	;Start externo para referenciar habilitado ??
+.equ	FLAGPH	=$21	;Flag de configuracao da programacao
+	.equ	LOGIMP	=0	;Logica do sinal de impressao
+	.equ	LOGREV	=1	;Logica do sinal de reversao
+	.equ	SELSER	=2	;Selecao de impressao via serial ligada
+	.equ	REVSER	=3	;Reversao de impressao via serial ligada
+	.equ	ZERIHP	=4	;Zero Index habilitado p/ protecao
+	.equ	ZERIHC	=5	;Zero Index habilitado p/ correcao
+	.equ	REDCOR	=6	;Reducao do nivel de corrente em repouso
+	.equ	MODPP	=7	;Modo continuo/passo a passo
+.equ	TEMPPTL	=$22	;Retardo para o sinal de impressao
+.equ	TEMPPTH	=$23
+.equ	Ptaco	=$24	;Divisor programado do taco
+.equ	Vago1	=$25	;Vago
+
+.equ	JanelaL	=$26	;(+/-) Tolerancia de Erro do zero index
+.equ	JanelaH	=$27
+.equ	npulsoL =$28	;Numero de pulsos por volta do motor
+.equ	npulsoH =$29
+.equ	valrefL	=$2A	;Valor programado da referencia
+.equ	valrefH	=$2B
+.equ	AreferL	=$2C	;Aceleracao de referencia
+.equ	AreferH	=$2D
+.equ	VreferL	=$2E	;Velocidade de referencia
+.equ	VreferH	=$2F
+.equ	FLAGPE	=$30	;Flag especial de intertravamento.
+	.equ	SstaPP		=0	;Saida de start passo a passo ?
+	.equ	STautPP		=1	;Start automatico passo a passo
+	.equ	SelPorMul	=2	;Selecao de mensagem por multipla
+	.equ	SelPorImp	=3	;Selecao de mensagem por impresão
+	.equ	SelParalela	=4	;Selecao de mensagem pela paralela
+	.equ	SelMenDecRet	=5	;Selecao de mensagem Decrementado no retorno
+.equ	Pmotor	=$31	;Divisor programado do motor
+.equ	fimprg	=FLAGPE+2	;Fim dos dados do usuario
+.equ	CTRSER	=$32	;Controle via serial
+	.equ	SerStart	=0	;Start serial
+	.equ	SerStop		=1	;Stop serial
+	.equ	SerPausa	=2	;Pausa serial
+	.equ	SerManual	=3	;Modo manual serial
+	.equ	SerTstImp	=4	;Teste de impressao serial
+	.equ	SerLeitOkBhs	=5	;Usado na bahia sul, descrito na rotina LEITOK
+	.equ	SerGrvEpr	=6	;Grava eprom2
+	;		d7=??
+.equ	CtrSerH	=$33
+;	.Equ	ModPassP	=0	;Modo passo a passo
+;	.Equ	ForProxPass	=1	;Força o proximo passo
+;	.equ	IgnSenPis	=2	;Ignora o sensor do pistão
+;	.Equ	IgnSinVac	=3	;Ignora o sinal do vacuo
+	.equ	IgnProtPor	=4	;Ignora a proteção da porta
+;	.Equ	StartAut	=5	;Start automatico
+;
+.equ	POSINDEL =$34	;O Programa salva nesta variavel a diferenca
+.equ	POSINDEH =$35	;entre a saida do fc- e o primeiro giro do zindex
+;
+.equ	FLAGC	=$36	;Valor anterior da porta C
+.equ	FlagG	=$37	;Flag de uso geral
+	.equ	FinalizRef=0	;Finalizacao da referencia
+	.equ	ZerIndInv =1	;Bit de valor do zero index invalido
+	.equ	StaAutPe  =2	;Start automatico pendente
+	.equ	StaEntEixP=3	;Start entre eixo pendente
+	;D3	Solicitacao de reversao de mensagem via serial
+	;D4	Utilizado no iclude DOMINIC para inicializar a impressora e
+	.equ	AcsEprSer =5	;Acesso a eprom via serial
+	.equ	GrvBlkEpr =6	;Gravacao de bloco na eprom2 em andamento
+	.equ	GrvEprAnd =7	;Gravacao da eprom2 em andamento
+.equ	CNTPIST	=$38	;Contador do temporizador do pistao
+.equ	CONFC	=$39	;Nivel dos sinais de fc-/fc+/ref/zindex
+	;d0=H/F		d1=Nmotor	d2=Fc+		d3=Dmotor
+	;d4=CKmotor	d5=FC-		d6=REF		d7=Emotor
+.equ	iMenAv	=$3A	;Numero de mensagem no avanco
+.equ	iMenRt	=$3B	;Numero de mensagem no avanco
+;.equ	CNTPPL	=$3A	;Contador do retardo para o start entre eixo
+;.equ	CNTPPH	=$3B
+.equ	CNTPTL	=$3C	;Contador do retardo para o sinal de impressao
+.equ	CNTPTH	=$3D	;Contador do retardo para o sinal de impressao
+;
+.equ	emg_cnt	=$3E	;carrega contador do botao de emergencia
+.equ	CNTBH	=$3F	;Contador do tempo de pulso da bahia sul
+;
+;Parametros de configuracao da uart 2
+.equ	PortRx2	=PinD	;Porta de recepcao da porta serial
+.equ	PinRx2	=4	;Pino de recepcao da porta serial
+.equ	PortTx2	=PortD	;Porta de transmisão da porta serial
+.equ	PinTx2	=5	;Pino de transmisão da porta serial
+.equ	DdrRx2	=DdrD	;Porta de configuracao da porta serial		;so para teste @@@
+;.equ	OutRx2	=PortD	;Porta de saida da recepcao da porta serial	;so para teste @@@
+.equ	nBitsCom2	=8	;Numero de bits (entre 6 e13)
+.equ	PonUart2	=$E0	;Ponteiro da com3 com 4 bytes
+.equ	PONCOM2	=$180	;Endereco do ponteiro da com2
+.equ	BAUD2	=2400	;Taxa de comunicacao da com2 (se 457 z80 =252=FCh)
+;
+;Parametros de configuracao da uart 3
+.equ	PortRx3	=PinD	;Porta de recepcao da porta serial
+.equ	PinRx3	=7	;Pino de recepcao da porta serial
+.equ	PortTx3	=PortD	;Porta de transmisão da porta serial
+.equ	PinTx3	=6	;Pino de transmisão da porta serial
+.equ	DdrRx3	=DdrD	;Porta de configuracao da porta serial		;so para teste @@@
+;.equ	OutRx3	=PortD	;Porta de saida da recepcao da porta serial	;so para teste @@@
+.equ	nBitsCom3	=8	;Numero de bits (entre 6 e13)
+;	.equ	PonUart3	=$F0	;Ponteiro da com3 com 4 bytes
+;
+;Parametros de configuracao comuns da uart
+.equ	nAmost		=6	;Numero de amostragem para cada bits (entre 3 e 15)
+.equ	ShiftRxL	=0	;Registro de deslocamento de leitura low
+.equ	ShiftRxH	=1	;Registro de deslocamento de leitura high
+.equ	ShiftTxL	=2	;Registro de deslocamento de escrita low
+.equ	ShiftTxH	=3	;Registro de deslocamento de escrita high
+.Equ	DadoRxL		=4	;Dados low recebido da serial
+.Equ	DadoRxH		=5	;Dados High recebido da serial
+.equ	DadoTxL		=6	;Dados que atualiza o shif Register
+.equ	DadoTxH		=7	;Dados que atualiza o shif Register
+.equ	cntAmostraRx	=8	;Contador de amostragem de leitura
+.equ	cntAmostraTx	=9	;Contador de amostragem de escrita
+.equ	NumBitsSer	=10	;Numero de bits da comunicacao
+.equ	SerStaStt	=11	;Status da serial do start
+	.equ UltNivPinRx=0	;Ultimo nivel lido do pino de Rx (recepcao serial)
+	.equ ErroEstBit =1	;Erro de estabilidade de nivel
+	.equ InvalBits	=2	;Bit invalido, troca de nivel na leitura do bits
+	.equ OverRunRx  =3	;Erro de overrun na recepcao
+	.equ ErroFraming=4	;Erro no dados da serial
+	.equ ModApsBits	=5	;Ouve modificacao de nivel apos o ultimo bit
+	.equ RegTxFull	=6	;Registro de transmisao cheio
+	.equ RecepcComp =RxC	;Recepção completa (Atmega8515 Rcx=7)
+.equ	CntErroSer	=12	;Contador de erro de framing
+.equ	VagoCom0	=13
+.equ	VagoCom1	=14
+.equ	VagoCom2	=15
+
+;.equ	CntErroCom	=10	;Contador de erro de comunicação
+;.equ	TempCom		=12	;Contador de tempo da serial
+;.equ	TxPendencia	=13
+;.equ	ValorTxL	=14	;So para Teste
+;.equ	ValorTxH	=15	;So para Teste
+;
+	;***** Variaveis da rotina principal de interrupcao
+.def	Cmotor	=r6	;Contador do motor
+.def	Ctaco	=r7	;Contador do taco
+.def	Vtaco	=r8	;Valor do divisor do taco
+.def	CdivL	=r9	;Contador do Divisor low para o comparador A
+.def	tmpax	=r10	;Registrador temporario auxiliar
+.def	SSreg	=r11	;Registrador para salvar o status register
+.def	VdivL	=r12	;Valor low para o contador do comparador A
+.def	VdivH	=r13	;Valor hight para o contador do comparador A
+.def	ItmpL	=r20	;Registrador temporario para interrupcao
+.def	ItmpH	=r21	;Registrador temporario para interrupcao
+.def	timerL	=r22	;Registrador low do timer
+.def	timerH	=r23	;Registrador high do timer
+.def	CdivH	=r24	;Contador do Divisor hight para o comparador A
+.def	flagI	=r25	;Registrador de flag de controle de interrupcao
+	;D0: Leitura do Zero index habilitado	D1: Ultima leitura do zero index
+	;D2: Sinal de impresao habilitado	D3: Logica do sinal de impressao
+	;D4: Aceleracao ligada			D5: motor ligado (13/09/99)
+	;D6: Iniciado a rotina do timer		D7: Fim da rotina do timer
+	;
+;
+	;****************************************************************
+	; Redifinicao dos nomes dos registradores para que possao ser	*
+	; utilizado aos pares pela macro de tratamento de word		*
+	;****************************************************************
+	;
+.def	rp0L	=R0
+.def	rp0H	=R1
+.def	rp2L	=R2
+.def	rp2H	=R3
+.def	rp4L	=R4
+.def	rp4H	=R5
+.def	rp14L	=r14	;Registrador de uso geral low	=restoL
+.def	rp14H	=r15	;Registrador de uso geral high	=restoH, resto8
+.def	rp16L	=r16	;Registrador de uso geral low	=operadorL
+.def	rp16H	=r17	;Registrador de uso geral high	=operadorH, operador8
+.def	rp18L	=r18	;Registrador de uso geral low	=operandoL
+.def	rp18H	=r19	;Registrador de uso geral high	=operandoH, operando8	
+;
+	;****************************************************************
+	;	Comentarios retirado do programa principal		*
+	;****************************************************************
+	;
+	;***** Enderecamento da porta de I/O
+	;
+	;Controle de linha
+	;PINA,0	=TACOIN	Sinal de entrada de taco
+.Equ	PorSenPorta	=Pina	;Porta de entrada do sensor da porta
+.Equ	PinSenPorta	=1	;Pino
+	;PINA,1	=STOP	Sinal de entrada do stop externo
+	;PINA,2	=INICIO	Sinal de start entre eixo
+;OK	;PINA,3	=START	Sinal de entrada do start externo
+.Equ	PorSinOk	=PortA	;Porta de saida do sinal de OK
+.Equ	PinSinOk	=4	;Pino
+;BAHIAS	;PORTA,5=AUXI	Saida do dosador para TECNILATEX e garagem para a BAHIA SUL
+;BAHIAS	;PORTA,6=PISTAO	Era saida de Erro ma usado na Bahia Sul como OK
+	;PORTA,7=EMEG	Sinal de entrada de EMERGENCIA
+
+	;Controle da impressora
+	;PINB,0 =Bysi	 Sinal de entrada que indica impressora ocupado
+.EQU	pPrtRv	=PortB		;Porta do pino do print reverso
+	.EQU	sInvMen	=1	;Pino de saida do print reverso
+	.equ	sP3	=2	;Sinal de saida P3 para selecao de mensagem
+	.equ	sPrintGo=3 	;Sinal de saida para impressao
+	.Equ	sP2	=4	;Sinal de saida P2 para selecao de mensagem
+	.equ	sTaco	=5	;Sinal de saida de taco para a impressora
+	.Equ	sP1	=6	;Sinal de saida P1 para selecao de mensagem
+	.Equ	sP0	=7	;Sinal de saida P0 para selecao de mensagem
+	;Controle do motor obs: REF era PINC,6 e passou a ser PINC,2
+	;PORTC,0=HF	 Sinal de saida   para passo simples/duplo
+;OK	;PORTC,1=Nmoto	 Sinal de saida   do nivel de corrente do motor
+;OK	;PINC,2	=REF	 Sinal de entrada do fim de curso +
+.EQU	DIRMOT	=3	 ;Sinal de saida da direcao do motor, 1=positivo
+;OK	;PORTC,4=CKmotor Sinal de saida   do Clock do motor
+;OK	;PINC,5	=FC-	 Sinal de entrada do fim de curso
+;	;PINC,6	=FC+	 Sinal de entrada do Zero index
+;OK	;PORTC,7=Emotor	 Sinal de saida   para energicacao do motor
+
+	;Controle da comunicacao serial
+;OK	;PIND,0	=RX1	Sinal de entrada da porta serial principal COM1
+;OK	;PORTD,1=TX1	Sinal de saida   da porta serial principal COM1
+	;PORTD,2=RTS1	Sinal de saida   da porta serial principal COM1
+	;PIND,3	=CTS1	Sinal de entrada da porta serial principal COM1
+;OK	;PIND,4	=RX2	Sinal de entrada da porta serial auxiliar COM2
+;OK	;PORTD,5=TX2	Sinal de saida   da porta serial auxiliar COM2
+	;PORTD,6=RTS2	Sinal de saida   da porta serial auxiliar COM2
+	;PIND,7	=CTS2	Sinal de entrada da porta serial auxiliar COM2
+	;
