@@ -31,9 +31,9 @@ export const PacoteDeRetorno_Caster = (response: DatalinkResult, transmitedDirec
         return PacoteDeRetorno_ComErro(pacotePadrao)
     } else {
         if (transmitedDirection === 'Envio') {
-            return PacoteDeRetorno_DeSolicitacaoSemErro(pacotePadrao)
-        } else {
             return PacoteDeRetorno_DeEnvioSemErro(pacotePadrao)
+        } else {
+            return PacoteDeRetorno_DeSolicitacaoSemErro(pacotePadrao)
         }
     }
     // tslint:enable: no-if-statement
