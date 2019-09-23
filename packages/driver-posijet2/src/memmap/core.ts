@@ -8,6 +8,7 @@ import { InternationalUnitSystem } from './kinetics/measure'
  * when using kinematic types
 */
 export const US0 = InternationalUnitSystem
+export type US0 = typeof US0
 
 export type AnyUserProgram = {
     [K in string]: any
