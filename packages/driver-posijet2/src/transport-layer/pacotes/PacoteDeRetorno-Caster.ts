@@ -1,12 +1,12 @@
 import { DatalinkResult } from "../../datalink-layer/datalink-result";
-import { Direcao } from "../other-types/Direcao";
+import { AnyDirecao } from "../other-types/Direcao";
 import { PacoteDeRetorno, PacoteDeRetorno_ComErro, PacoteDeRetorno_DeSolicitacaoSemErro, PacoteDeRetorno_DeEnvioSemErro } from "./PacoteDeRetorno";
 import { PacoteRetornoPadrao } from "./PacoteRetornoPadrao";
 import { NACK } from "../../datalink-layer/posijet1-protocol";
 
 
 
-export const PacoteDeRetorno_Caster = (response: DatalinkResult, transmitedDirection: Direcao): PacoteDeRetorno => {
+export const PacoteDeRetorno_Caster = (response: DatalinkResult, transmitedDirection: AnyDirecao): PacoteDeRetorno => {
 
     //todo: should this function be really that coupled here? Could it be extracted and decoupled ?
     const morphism = (_: DatalinkResult): PacoteRetornoPadrao => {

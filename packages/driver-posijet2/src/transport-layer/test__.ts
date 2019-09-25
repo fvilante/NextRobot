@@ -6,7 +6,7 @@ import { transact } from "./transaction/transact";
 import { CmppAddress } from "./transaction/CmppAddress";
 import { PacoteDeTransmissaoPadrao } from "./pacotes/PacoteDeTransmissao";
 import { ByteToWord } from "./other-types/byteAndWordConversors";
-import { Direcao } from "./other-types/Direcao";
+import { AnyDirecao } from "./other-types/Direcao";
 
 
 // tslint:disable: no-if-statement
@@ -14,7 +14,7 @@ import { Direcao } from "./other-types/Direcao";
 const Test = async () => {
   
     const portName = 'COM3'
-    const direcao: Direcao = 'Solicitacao'
+    const direcao: AnyDirecao = 'Solicitacao'
     const channel = 1
     const baudRate = 9600
     const comando = 69 //COMANDO_MASCARA_DE_ERRO

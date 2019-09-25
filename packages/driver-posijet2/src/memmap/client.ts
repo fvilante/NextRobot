@@ -2,7 +2,7 @@
 import {  } from './driver/CMPP00LG'
 import { AnyUserProgram, GetParameterType as SingleParameterResult } from './core'
 import { SerialPortOpener } from '@nextrobot/serialport-manager'
-import { Direcao } from '../transport-layer/other-types/Direcao'
+import { AnyDirecao } from '../transport-layer/other-types/Direcao'
 import { PacoteDeTransmissaoPadrao } from '../transport-layer/pacotes/PacoteDeTransmissao'
 import { transact } from '../transport-layer/transaction/transact'
 import { ByteToWord } from '../transport-layer/other-types/byteAndWordConversors'
@@ -20,7 +20,7 @@ export const ReadSingleParameter =
     
     // decide what transmission strategy to use
     const bitsize = memmap.bitSize
-    const direcao: Direcao = "Solicitacao" //todo: what if bitSize is grather than 16 bits ?
+    const direcao: AnyDirecao = "Solicitacao" //todo: what if bitSize is grather than 16 bits ?
 
     // configure package
     const comando = memmap.startWord

@@ -7,8 +7,8 @@ const __direcao = {
     'MascaraResetarBits': 192,
 } as const
 
-export type Direcao = keyof typeof __direcao
+export type AnyDirecao = keyof typeof __direcao
 
-export const direcaoToNumber = (_: Direcao): number => __direcao[_]
+export const direcaoToNumber = (_: AnyDirecao): number => __direcao[_]
 
    
