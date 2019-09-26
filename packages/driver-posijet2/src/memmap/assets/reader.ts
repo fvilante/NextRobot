@@ -117,11 +117,11 @@ const Test2 = () => {
     type Service1 = {
 
 
-        readonly run: <A>(w: Work<A>) => A | undefined
+        readonly run: <A>(w: Work<A>) => A | void
 
         readonly put: (msg: string) => Work<MachineState>
 
-        readonly get: (addr: number) => Work<'oi' | 'juca'> 
+        readonly get: (addr: number) => Work<'oi'> 
 
 
     }
@@ -141,7 +141,7 @@ const Test2 = () => {
 
             put: msg => getPortConfig().map( config => ({status: Number(config.baudRate)})),
 
-            get: addr => getPortConfig().map( config => 'oi'),
+            get: addr => getPortConfig().map( (config):'oi' => 'oi'),
 
         }
 

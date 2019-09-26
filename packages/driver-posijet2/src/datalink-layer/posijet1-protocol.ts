@@ -155,7 +155,7 @@ export const datalinkerWrapper: DatalinkWrapper = (data: Bytes): Datalinker<Data
 
     return {
         toWrite: makeFrame(data),
-        receptionHandler: getReceptionHandler() ,
+        receptionHandler: getReceptionHandler(),
     }
 
 

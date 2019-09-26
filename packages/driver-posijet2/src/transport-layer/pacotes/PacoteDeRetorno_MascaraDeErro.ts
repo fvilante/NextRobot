@@ -1,7 +1,8 @@
 import { Byte } from "@nextrobot/serialport-manager";
 import { MascaraDeErro } from "../bitmask/MascaraDeErro";
-import { PacoteRetornoPadrao } from "./PacoteRetornoPadrao";
+import { PacoteDeRetorno_Uncasted } from "./PacoteDeRetorno_Uncasted";
 import { ByteToWord } from "../other-types/byteAndWordConversors";
+import { AnyDirecao } from "../other-types/Direcao";
 
 
 export type PacoteDeRetorno_MascaraDeErro = {
@@ -13,7 +14,7 @@ export type PacoteDeRetorno_MascaraDeErro = {
     }
 }
 
-export const PacoteDeRetorno_MascaraDeErro = (_: PacoteRetornoPadrao): PacoteDeRetorno_MascaraDeErro => 
+export const PacoteDeRetorno_MascaraDeErro = <D extends AnyDirecao>(_: PacoteDeRetorno_Uncasted<D>): PacoteDeRetorno_MascaraDeErro => 
     ({kind: 'PacoteDeRetorno_MascaraDeErro', 
         payload: { 
             canal: _.canal, 

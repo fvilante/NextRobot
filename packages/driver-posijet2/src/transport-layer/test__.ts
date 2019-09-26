@@ -4,7 +4,7 @@ import { MascaraDeErro } from "./bitmask/MascaraDeErro";
 import { PortReference, serialPortOpenner_PC } from "@nextrobot/serialport-manager";
 import { transact } from "./transaction/transact";
 import { CmppAddress } from "./transaction/CmppAddress";
-import { PacoteDeTransmissaoPadrao } from "./pacotes/PacoteDeTransmissao";
+import { PacoteDeTransmissao } from "./pacotes/PacoteDeTransmissao";
 import { ByteToWord } from "./other-types/byteAndWordConversors";
 import { AnyDirecao } from "./other-types/Direcao";
 

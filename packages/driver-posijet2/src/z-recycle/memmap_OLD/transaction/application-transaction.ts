@@ -4,7 +4,7 @@ import { mapObjectIndexed } from '@nextrobot/core-utils'
 import { transact } from '../../../transport-layer/transaction/transact';
 import { AnyDirecao } from '../../../transport-layer/other-types/Direcao';
 import { serialPortOpenner_PC } from '@nextrobot/serialport-manager';
-import { PacoteDeTransmissaoPadrao } from '../../../transport-layer/pacotes/PacoteDeTransmissao';
+import { PacoteDeTransmissao } from '../../../transport-layer/pacotes/PacoteDeTransmissao';
 import { Word } from '../../../transport-layer/other-types/Word';
 import { ByteToWord } from '../../../transport-layer/other-types/byteAndWordConversors';
 
@@ -30,7 +30,7 @@ export const SendCmppProgram = async <T extends AnyDriver>(program: UserProgram<
         const comando = device.memmap[parameter].StartWord
 
         const bitSize = memmap.BitSize
-        let packet: PacoteDeTransmissaoPadrao;
+        let packet: PacoteDeTransmissao;
 
         if (bitSize===16) {
             packet = PacoteDeTransmissaoPadrao('Envio', comando, wavedValue.waved)

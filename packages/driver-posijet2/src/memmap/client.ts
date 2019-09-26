@@ -3,7 +3,7 @@ import {  } from './driver/CMPP00LG'
 import { AnyUserProgram, GetParameterType as SingleParameterResult } from './core'
 import { SerialPortOpener } from '@nextrobot/serialport-manager'
 import { AnyDirecao } from '../transport-layer/other-types/Direcao'
-import { PacoteDeTransmissaoPadrao } from '../transport-layer/pacotes/PacoteDeTransmissao'
+import { PacoteDeTransmissao } from '../transport-layer/pacotes/PacoteDeTransmissao'
 import { transact } from '../transport-layer/transaction/transact'
 import { ByteToWord } from '../transport-layer/other-types/byteAndWordConversors'
 import { Device } from '../core-models/device' 
@@ -31,7 +31,7 @@ export const ReadSingleParameter =
     const pacoteDeRetorno =  await transact(
         portOpenner, 
         cmppAddress, 
-        PacoteDeTransmissaoPadrao(direcao, comando, word16)
+        PacoteDeTransmissao(direcao, comando, word16)
     ) 
 
     switch (pacoteDeRetorno.kind) {
