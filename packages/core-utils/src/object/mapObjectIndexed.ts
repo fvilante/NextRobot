@@ -44,4 +44,4 @@ const Test = () => {
 }
 
 // tslint:disable-next-line: no-expression-statement
-Test()
+//Test()
