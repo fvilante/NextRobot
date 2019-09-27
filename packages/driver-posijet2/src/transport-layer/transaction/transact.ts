@@ -2,7 +2,7 @@
 import { SerialPortOpener, syncTransactioner, serialPortOpenner_PC } from "@nextrobot/serialport-manager"
 import { Reader } from "../../memmap/assets/reader"
 // TransactResult
-import { AnyDirecao, direcaoToNumber } from "../other-types/Direcao"
+import { AnyDirecao, direcaoToNumber } from "./pacotes/base-model/Direcao"
 import { PacoteDeRetorno } from "./pacotes/PacoteDeRetorno"
 import { PacoteDeTransmissao } from "./pacotes/PacoteDeTransmissao"
 import { DatalinkResult } from "../../datalink-layer/datalink-result"
@@ -122,7 +122,8 @@ const Test2 = async () => {
     console.log(retorno)
     console.log(retorno.diagnostics.datalinkResult.payload)
 
-    const a = retorno.pacoteRetornado.payload.statusL
+    const statusL = retorno.pacoteRetornado.payload.statusL
+    console.table(statusL)
 
 
 }

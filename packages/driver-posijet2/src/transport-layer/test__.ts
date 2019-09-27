@@ -1,12 +1,12 @@
-import { StatusL } from "./bitmask/StatusL";
-import { StatusH } from "./bitmask/StatusH";
-import { MascaraDeErro } from "./bitmask/MascaraDeErro";
+import { StatusL } from "./transaction/pacotes/bitmask/StatusL";
+import { StatusH } from "./transaction/pacotes/bitmask/StatusH";
+import { MascaraDeErro } from "./transaction/pacotes/bitmask/MascaraDeErro";
 import { PortReference, serialPortOpenner_PC } from "@nextrobot/serialport-manager";
 import { transact } from "./transaction/transact";
 import { CmppAddress } from "./transaction/CmppAddress";
 import { PacoteDeTransmissao } from "./transaction/pacotes/PacoteDeTransmissao";
-import { ByteToWord } from "./other-types/byteAndWordConversors";
-import { AnyDirecao } from "./other-types/Direcao";
+import { ByteToWord } from "./transaction/pacotes/base-model/byteAndWordConversors";
+import { AnyDirecao } from "./transaction/pacotes/base-model/Direcao";
 
 
 // tslint:disable: no-if-statement

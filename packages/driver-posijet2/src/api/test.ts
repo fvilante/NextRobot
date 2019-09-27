@@ -1,9 +1,10 @@
 import { serialPortOpenner_PC } from "@nextrobot/serialport-manager"
 import { CmppAddress } from "../transport-layer/transaction/CmppAddress"
-import { AnyDirecao } from "../transport-layer/other-types/Direcao"
+import { AnyDirecao } from "../transport-layer/transaction/pacotes/base-model/Direcao"
 import { PacoteDeTransmissao } from "../transport-layer/transaction/pacotes/PacoteDeTransmissao"
 import { transact } from "../transport-layer/transaction/transact"
-import { ByteToWord } from "../transport-layer/other-types/byteAndWordConversors"
+import { ByteToWord } from "../transport-layer/transaction/pacotes/base-model/byteAndWordConversors"
+import { exhaustiveSwitch } from "@nextrobot/core-utils"
 
 // serial port manager
 const getPortOpener = () => {
@@ -20,11 +21,11 @@ const getCmppAddress = () => {
 
 
 // user program def
-const getPacoteDeTransmissao = () => {
+const getPacoteDeTransmissao_Solicitacao = () => {
     const direcao: AnyDirecao = 'Solicitacao'
     const comando = 69 //COMANDO_MASCARA_DE_ERRO
     const word16 = 0
-    return PacoteDeTransmissaoPadrao(direcao, comando, word16)
+    return PacoteDeTransmissao(direcao, comando, word16)
 }
 
 // send user program def and promise response
@@ -32,23 +33,21 @@ const getPacoteDeTransmissao = () => {
 
 const Test = async () => {
 
-    const pacoteRetornado =  await transact(
-                                    getPortOpener(), 
-                                    getCmppAddress(), 
-                                    getPacoteDeTransmissao()
-                                ) 
+    // resultado solicitacao
+    const r =  await transact(
+                                getCmppAddress(), 
+                                getPacoteDeTransmissao_Solicitacao()
+                                ).run( { portOpener: getPortOpener() }) 
                                                                   
 
     console.log(`Resultado...`)
-    console.log(pacoteRetornado)
+    console.log(r)
 
-    switch (pacoteRetornado.kind) {
-        case 'PacoteDeRetornoDeEnvioSemErro': 
-            console.table(pacoteRetornado.payload.statusL); break;
+    switch (r.pacoteRetornado.kind) {
         case 'PacoteDeRetorno_ComErro': 
-            console.table(pacoteRetornado.payload.statusL); break;
+            console.table(r.pacoteRetornado.payload.statusL); break;
         case 'PacoteDeRetorno_DeSolicitacaoSemErro': 
-            console.log(`Word recebida: ${ByteToWord(pacoteRetornado.payload.dadoL, pacoteRetornado.payload.dadoH)}`); break;
+            console.table(r.pacoteRetornado.payload.dadoL); break;
     }
     
    

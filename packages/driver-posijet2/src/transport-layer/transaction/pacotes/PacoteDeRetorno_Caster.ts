@@ -1,5 +1,5 @@
 import { PacoteDeRetorno_ComErro } from "./PacoteDeRetorno_ComErro"
-import { AnyDirecao } from "../../other-types/Direcao"
+import { AnyDirecao } from "./base-model/Direcao"
 import { PacoteDeRetorno_Uncasted } from "./PacoteDeRetorno_Uncasted"
 import { PacoteDeRetorno } from "./PacoteDeRetorno"
 import { PacoteDeRetorno_DeEnvioSemErro } from "./PacoteDeRetorno_DeEnvioSemErro"

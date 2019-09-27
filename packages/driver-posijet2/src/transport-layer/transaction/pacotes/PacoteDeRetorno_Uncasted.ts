@@ -1,5 +1,5 @@
 import { Byte } from '@nextrobot/serialport-manager'
-import { AnyDirecao } from '../../other-types/Direcao'
+import { AnyDirecao } from './base-model/Direcao'
 
 export type PacoteDeRetorno_Uncasted<D extends AnyDirecao> = {
     readonly kind: 'PacoteDeRetorno_Uncasted'

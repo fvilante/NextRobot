@@ -1,5 +1,5 @@
 import { DatalinkResult } from "../../datalink-layer/datalink-result";
-import { AnyDirecao } from "../other-types/Direcao";
+import { AnyDirecao } from "./pacotes/base-model/Direcao";
 import { PacoteDeRetorno_Uncasted } from "./pacotes/PacoteDeRetorno_Uncasted";
 
 const NACK = 0x15

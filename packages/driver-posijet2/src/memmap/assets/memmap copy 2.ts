@@ -1,4 +1,4 @@
-import { ByteToWord } from "../../transport-layer/other-types/byteAndWordConversors";
+import { ByteToWord } from "../../transport-layer/transaction/pacotes/base-model/byteAndWordConversors";
 import { LENGTH, ANY_LENGTH } from "../kinetics/measure";
 
 /*
