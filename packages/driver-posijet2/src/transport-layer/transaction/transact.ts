@@ -2,26 +2,19 @@
 import { SerialPortOpener, syncTransactioner, serialPortOpenner_PC } from "@nextrobot/serialport-manager"
 import { Reader } from "../../memmap/assets/reader"
 // TransactResult
-import { AnyDirecao, direcaoToNumber } from "./models/base-model/Direcao"
-import { PacoteDeRetorno } from "./models/PacoteDeRetorno"
-import { PacoteDeTransmissao } from "./models/PacoteDeTransmissao"
+import { AnyDirecao, direcaoToNumber } from "./pacote-models/base-model/Direcao"
+import { PacoteDeRetorno } from "./pacote-models/PacoteDeRetorno"
+import { PacoteDeTransmissao } from "./pacote-models/PacoteDeTransmissao"
 import { DatalinkResult } from "../../datalink-layer/datalink-result"
-import { PacoteDeRetorno_Uncasted } from "./models/PacoteDeRetorno_Uncasted"
+import { PacoteDeRetorno_Uncasted } from "./pacote-models/PacoteDeRetorno_Uncasted"
 // transact
 import { CmppAddress } from "./CmppAddress"
 import { datalinkerWrapper } from "../../datalink-layer/posijet1-protocol"
 import { DatalinkResult_Lifter } from "./DatalinkResult_Lifter"
+import { Env, getEnv } from './Env'
 // test
-import { pacoteDeRetorno_Caster } from "./models/PacoteDeRetorno_Caster"
+import { pacoteDeRetorno_Caster } from "./pacote-models/PacoteDeRetorno_Caster"
 
-
-
-
-type Env = {
-    readonly portOpener: SerialPortOpener
-}
-
-const getEnv = ():Reader<Env,Env> => Reader( (x:Env) => x)
 
 
 //

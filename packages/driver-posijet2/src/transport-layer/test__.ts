@@ -1,40 +1,33 @@
-import { StatusL } from "./transaction/models/bitmask/StatusL";
-import { StatusH } from "./transaction/models/bitmask/StatusH";
-import { MascaraDeErro } from "./transaction/models/bitmask/MascaraDeErro";
-import { PortReference, serialPortOpenner_PC } from "@nextrobot/serialport-manager";
+
+import { serialPortOpenner_PC } from "@nextrobot/serialport-manager";
 import { transact } from "./transaction/transact";
 import { CmppAddress } from "./transaction/CmppAddress";
-import { PacoteDeTransmissao } from "./transaction/models/PacoteDeTransmissao";
-import { ByteToWord } from "./transaction/models/base-model/byteAndWordConversors";
-import { AnyDirecao } from "./transaction/models/base-model/Direcao";
+import { PacoteDeTransmissao } from "./transaction/pacote-models/PacoteDeTransmissao";
+import { AnyDirecao } from "./transaction/pacote-models/base-model/Direcao";
 
 
 // tslint:disable: no-if-statement
 
 const Test = async () => {
-  
-    const portName = 'COM3'
-    const direcao: AnyDirecao = 'Solicitacao'
-    const channel = 1
-    const baudRate = 9600
+
     const comando = 69 //COMANDO_MASCARA_DE_ERRO
     const word16 = 0
-    const portOpener = serialPortOpenner_PC
 
-    const pacoteRetornado = 
-        await transact(portOpener, CmppAddress({channel, portName, baudRate}), PacoteDeTransmissao(direcao, comando, word16)) 
+    const r = 
+        await transact(
+            CmppAddress({channel: 0, portName: 'COM3', baudRate: 9600}), 
+            PacoteDeTransmissao('Solicitacao', comando, word16))
+            .run({ portOpener: serialPortOpenner_PC })
     
 
     console.log(`Resultado...`)
-    console.log(pacoteRetornado)
+    console.log(r)
 
-    switch (pacoteRetornado.kind) {
-        case 'PacoteDeRetornoDeEnvioSemErro': 
-            console.table(pacoteRetornado.payload.statusL); break;
+    switch (r.pacoteRetornado.kind) {
         case 'PacoteDeRetorno_ComErro': 
-            console.table(pacoteRetornado.payload.statusL); break;
+            console.table(r.pacoteRetornado.payload.statusL); break;
         case 'PacoteDeRetorno_DeSolicitacaoSemErro': 
-            console.log(`Word recebida: ${ByteToWord(pacoteRetornado.payload.dadoL, pacoteRetornado.payload.dadoH)}`); break;
+            console.table(r.pacoteRetornado.payload.dadoL); break;
     }
     
    

@@ -2,10 +2,10 @@
 import {  } from './driver/CMPP00LG'
 import { AnyUserProgram, GetParameterType as SingleParameterResult } from './core'
 import { SerialPortOpener } from '@nextrobot/serialport-manager'
-import { AnyDirecao } from '../transport-layer/transaction/models/base-model/Direcao'
-import { PacoteDeTransmissao } from '../transport-layer/transaction/models/PacoteDeTransmissao'
+import { AnyDirecao } from '../transport-layer/transaction/pacote-models/base-model/Direcao'
+import { PacoteDeTransmissao } from '../transport-layer/transaction/pacote-models/PacoteDeTransmissao'
 import { transact } from '../transport-layer/transaction/transact'
-import { ByteToWord } from '../transport-layer/transaction/models/base-model/byteAndWordConversors'
+import { ByteToWord } from '../transport-layer/transaction/pacote-models/base-model/byteAndWordConversors'
 import { Device } from '../core-models/device' 
 
 // f :: SerialPortOpenner -> Device -> parameterName -> Promise<ResultValue>
