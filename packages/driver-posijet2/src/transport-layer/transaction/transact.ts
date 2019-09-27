@@ -2,17 +2,17 @@
 import { SerialPortOpener, syncTransactioner, serialPortOpenner_PC } from "@nextrobot/serialport-manager"
 import { Reader } from "../../memmap/assets/reader"
 // TransactResult
-import { AnyDirecao, direcaoToNumber } from "./pacotes/base-model/Direcao"
-import { PacoteDeRetorno } from "./pacotes/PacoteDeRetorno"
-import { PacoteDeTransmissao } from "./pacotes/PacoteDeTransmissao"
+import { AnyDirecao, direcaoToNumber } from "./models/base-model/Direcao"
+import { PacoteDeRetorno } from "./models/PacoteDeRetorno"
+import { PacoteDeTransmissao } from "./models/PacoteDeTransmissao"
 import { DatalinkResult } from "../../datalink-layer/datalink-result"
-import { PacoteDeRetorno_Uncasted } from "./pacotes/PacoteDeRetorno_Uncasted"
+import { PacoteDeRetorno_Uncasted } from "./models/PacoteDeRetorno_Uncasted"
 // transact
 import { CmppAddress } from "./CmppAddress"
 import { datalinkerWrapper } from "../../datalink-layer/posijet1-protocol"
 import { DatalinkResult_Lifter } from "./DatalinkResult_Lifter"
 // test
-import { pacoteDeRetorno_Caster } from "./pacotes/PacoteDeRetorno_Caster"
+import { pacoteDeRetorno_Caster } from "./models/PacoteDeRetorno_Caster"
 
 
 
