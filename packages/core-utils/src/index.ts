@@ -21,11 +21,15 @@ export { foldLeftArray, FoldLeftArray, FoldLeftCallback } from './array/foldLeft
 export { findRangesOnArray, FixedSizeSearchFromLeft } from './List/find-ranges'
 export { hasValueInArray } from './array/hasValueInArray'
 
-// functional - mondas
+// functional - monads
 export { Maybe, Just, Nothing } from './monads/maybe'
 export { Either, Left, Right, filterByLeft, filterByRight, matchEither} from './monads/either'
 export { Reader } from './monads/reader'
-export { Writter } from './monads/writer'
+export { Writer } from './monads/writer'
+
+// functional - tools
+export { zipWith, ZipWithFn } from './functional/zipWith'
+
 
 // Generators
 export { Observed, StartEnd, StartEndStep, ZeroToEnd } from './Generators/core-types'
