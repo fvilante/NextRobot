@@ -22,7 +22,7 @@ export { findRangesOnArray, FixedSizeSearchFromLeft } from './List/find-ranges'
 export { hasValueInArray } from './array/hasValueInArray'
 
 // functional - mondas
-export { Maybe, Just, Nothing } from './maybe'
+export { Maybe, Just, Nothing } from './monads/maybe'
 export { Either, Left, Right, filterByLeft, filterByRight, matchEither} from './monads/either'
 
 // Generators
