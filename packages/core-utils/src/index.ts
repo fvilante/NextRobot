@@ -23,6 +23,7 @@ export { hasValueInArray } from './array/hasValueInArray'
 
 // functional - mondas
 export { Maybe, Just, Nothing } from './maybe'
+export { Either, Left, Right, filterByLeft, filterByRight, matchEither} from './monads/either'
 
 // Generators
 export { Observed, StartEnd, StartEndStep, ZeroToEnd } from './Generators/core-types'
