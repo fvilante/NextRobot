@@ -47,6 +47,7 @@ const Test = () => {
     }
     const Printer = ():Printer => ({ kind: 'printer', sendMsg: msg => {}, getStatus: () => 'oi'})
 
+    /** enviroment variable */
     type Env = {
         readonly p1: number,
         readonly p2: string, 
@@ -60,16 +61,16 @@ const Test = () => {
     const configurePrinter = (name: string): Printer => Printer()
 
 
-    const getEnviroment = () => Reader(Env)
+    const getEnv = () => Reader(Env)
 
-    const getPrinter = () => getEnviroment().map( env => {
+    const getPrinter = () => getEnv().map( env => {
 
         return configurePrinter(env.p2)
 
-    })
+3    })
 
     const printMsg = (n: number ) => 
-        getEnviroment().fmap( env => 
+        getEnv().fmap( env => 
                 getPrinter().map( printer => 
                         printer.sendMsg(env.p1 + n)) )
 
@@ -80,7 +81,7 @@ const Test = () => {
            
     
     
-    const executeScript = () => getEnviroment().map( env => {
+    const executeScript = () => getEnv().map( env => {
 
         const a = printMsg(2).run(env)
         const b = getStatus().run(env)
