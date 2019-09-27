@@ -1,6 +1,6 @@
 import { Byte } from "@nextrobot/serialport-manager"
 import { PacoteDeRetorno_Uncasted } from "./PacoteDeRetorno_Uncasted"
-import { AnyDirecao } from "../other-types/Direcao"
+import { AnyDirecao } from "../../other-types/Direcao"
 
 export type PacoteDeRetorno_DeSolicitacaoSemErro = {
     readonly kind: 'PacoteDeRetorno_DeSolicitacaoSemErro'

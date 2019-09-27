@@ -1,7 +1,7 @@
 import { PacoteDeRetorno_DeSolicitacaoSemErro } from "./PacoteDeRetorno_DeSolicitacaoSemErro"
 import { PacoteDeRetorno_DeEnvioSemErro } from "./PacoteDeRetorno_DeEnvioSemErro"
 import { PacoteDeRetorno_ComErro } from "./PacoteDeRetorno_ComErro"
-import { AnyDirecao } from "../other-types/Direcao"
+import { AnyDirecao } from "../../other-types/Direcao"
 
 // Static casting of Returned Packet
 

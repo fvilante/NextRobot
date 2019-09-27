@@ -1,7 +1,7 @@
 import { Byte } from "@nextrobot/serialport-manager"
 import { ByteDeErro } from "./ByteDeErro"
-import { AnyDirecao } from "../other-types/Direcao"
-import { StatusL } from "../bitmask/StatusL"
+import { AnyDirecao } from "../../other-types/Direcao"
+import { StatusL } from "../../bitmask/StatusL"
 import { PacoteDeRetorno_Uncasted } from "./PacoteDeRetorno_Uncasted"
 
 export type PacoteDeRetorno_ComErro = {

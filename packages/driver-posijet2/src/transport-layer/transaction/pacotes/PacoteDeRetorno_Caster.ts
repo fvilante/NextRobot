@@ -1,9 +1,9 @@
-import { PacoteDeRetorno_ComErro } from "../pacotes/PacoteDeRetorno_ComErro"
-import { AnyDirecao } from "../other-types/Direcao"
-import { PacoteDeRetorno_Uncasted } from "../pacotes/PacoteDeRetorno_Uncasted"
-import { PacoteDeRetorno } from "../pacotes/PacoteDeRetorno"
-import { PacoteDeRetorno_DeEnvioSemErro } from "../pacotes/PacoteDeRetorno_DeEnvioSemErro"
-import { PacoteDeRetorno_DeSolicitacaoSemErro } from "../pacotes/PacoteDeRetorno_DeSolicitacaoSemErro"
+import { PacoteDeRetorno_ComErro } from "./PacoteDeRetorno_ComErro"
+import { AnyDirecao } from "../../other-types/Direcao"
+import { PacoteDeRetorno_Uncasted } from "./PacoteDeRetorno_Uncasted"
+import { PacoteDeRetorno } from "./PacoteDeRetorno"
+import { PacoteDeRetorno_DeEnvioSemErro } from "./PacoteDeRetorno_DeEnvioSemErro"
+import { PacoteDeRetorno_DeSolicitacaoSemErro } from "./PacoteDeRetorno_DeSolicitacaoSemErro"
 import { exhaustiveSwitch } from "@nextrobot/core-utils"
 
 

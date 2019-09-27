@@ -1,8 +1,8 @@
 import { Byte } from "@nextrobot/serialport-manager"
-import { StatusH } from "../bitmask/StatusH"
-import { StatusL } from "../bitmask/StatusL"
+import { StatusH } from "../../bitmask/StatusH"
+import { StatusL } from "../../bitmask/StatusL"
 import { PacoteDeRetorno_Uncasted } from "./PacoteDeRetorno_Uncasted"
-import { AnyDirecao } from "../other-types/Direcao"
+import { AnyDirecao } from "../../other-types/Direcao"
 
 export type PacoteDeRetorno_DeEnvioSemErro = {
     readonly kind: 'PacoteDeRetornoDeEnvioSemErro'

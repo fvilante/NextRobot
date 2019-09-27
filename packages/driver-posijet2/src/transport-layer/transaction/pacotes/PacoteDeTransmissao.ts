@@ -1,7 +1,7 @@
 import { Byte } from '@nextrobot/serialport-manager'
-import { AnyDirecao } from '../other-types/Direcao'
-import { Word } from '../other-types/Word';
-import { WordToByte } from '../other-types/byteAndWordConversors';
+import { AnyDirecao } from '../../other-types/Direcao'
+import { Word } from '../../other-types/Word';
+import { WordToByte } from '../../other-types/byteAndWordConversors';
 
 export type PacoteDeTransmissao<D extends AnyDirecao> = {
     readonly kind: 'PacoteDeTransmissao'

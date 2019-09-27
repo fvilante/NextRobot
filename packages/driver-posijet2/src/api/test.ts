@@ -1,7 +1,7 @@
 import { serialPortOpenner_PC } from "@nextrobot/serialport-manager"
 import { CmppAddress } from "../transport-layer/transaction/CmppAddress"
 import { AnyDirecao } from "../transport-layer/other-types/Direcao"
-import { PacoteDeTransmissao } from "../transport-layer/pacotes/PacoteDeTransmissao"
+import { PacoteDeTransmissao } from "../transport-layer/transaction/pacotes/PacoteDeTransmissao"
 import { transact } from "../transport-layer/transaction/transact"
 import { ByteToWord } from "../transport-layer/other-types/byteAndWordConversors"
 

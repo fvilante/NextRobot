@@ -4,7 +4,7 @@ import { MascaraDeErro } from "./bitmask/MascaraDeErro";
 import { PortReference, serialPortOpenner_PC } from "@nextrobot/serialport-manager";
 import { transact } from "./transaction/transact";
 import { CmppAddress } from "./transaction/CmppAddress";
-import { PacoteDeTransmissao } from "./pacotes/PacoteDeTransmissao";
+import { PacoteDeTransmissao } from "./transaction/pacotes/PacoteDeTransmissao";
 import { ByteToWord } from "./other-types/byteAndWordConversors";
 import { AnyDirecao } from "./other-types/Direcao";
 
@@ -22,7 +22,7 @@ const Test = async () => {
     const portOpener = serialPortOpenner_PC
 
     const pacoteRetornado = 
-        await transact(portOpener, CmppAddress({channel, portName, baudRate}), PacoteDeTransmissaoPadrao(direcao, comando, word16)) 
+        await transact(portOpener, CmppAddress({channel, portName, baudRate}), PacoteDeTransmissao(direcao, comando, word16)) 
     
 
     console.log(`Resultado...`)

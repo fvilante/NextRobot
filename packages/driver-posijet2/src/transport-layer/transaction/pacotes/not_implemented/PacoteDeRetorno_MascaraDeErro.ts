@@ -1,8 +1,8 @@
 import { Byte } from "@nextrobot/serialport-manager";
-import { MascaraDeErro } from "../bitmask/MascaraDeErro";
-import { PacoteDeRetorno_Uncasted } from "./PacoteDeRetorno_Uncasted";
-import { ByteToWord } from "../other-types/byteAndWordConversors";
-import { AnyDirecao } from "../other-types/Direcao";
+import { MascaraDeErro } from "../../../bitmask/MascaraDeErro";
+import { PacoteDeRetorno_Uncasted } from "../PacoteDeRetorno_Uncasted";
+import { ByteToWord } from "../../../other-types/byteAndWordConversors";
+import { AnyDirecao } from "../../../other-types/Direcao";
 
 
 export type PacoteDeRetorno_MascaraDeErro = {

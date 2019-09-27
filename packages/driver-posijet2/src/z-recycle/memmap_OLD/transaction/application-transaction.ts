@@ -4,7 +4,7 @@ import { mapObjectIndexed } from '@nextrobot/core-utils'
 import { transact } from '../../../transport-layer/transaction/transact';
 import { AnyDirecao } from '../../../transport-layer/other-types/Direcao';
 import { serialPortOpenner_PC } from '@nextrobot/serialport-manager';
-import { PacoteDeTransmissao } from '../../../transport-layer/pacotes/PacoteDeTransmissao';
+import { PacoteDeTransmissao } from '../../../transport-layer/transaction/pacotes/PacoteDeTransmissao';
 import { Word } from '../../../transport-layer/other-types/Word';
 import { ByteToWord } from '../../../transport-layer/other-types/byteAndWordConversors';
 

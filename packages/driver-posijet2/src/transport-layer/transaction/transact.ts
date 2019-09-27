@@ -3,16 +3,16 @@ import { SerialPortOpener, syncTransactioner, serialPortOpenner_PC } from "@next
 import { Reader } from "../../memmap/assets/reader"
 // TransactResult
 import { AnyDirecao, direcaoToNumber } from "../other-types/Direcao"
-import { PacoteDeRetorno } from "../pacotes/PacoteDeRetorno"
-import { PacoteDeTransmissao } from "../pacotes/PacoteDeTransmissao"
+import { PacoteDeRetorno } from "./pacotes/PacoteDeRetorno"
+import { PacoteDeTransmissao } from "./pacotes/PacoteDeTransmissao"
 import { DatalinkResult } from "../../datalink-layer/datalink-result"
-import { PacoteDeRetorno_Uncasted } from "../pacotes/PacoteDeRetorno_Uncasted"
+import { PacoteDeRetorno_Uncasted } from "./pacotes/PacoteDeRetorno_Uncasted"
 // transact
 import { CmppAddress } from "./CmppAddress"
 import { datalinkerWrapper } from "../../datalink-layer/posijet1-protocol"
 import { DatalinkResult_Lifter } from "./DatalinkResult_Lifter"
 // test
-import { pacoteDeRetorno_Caster } from "./PacoteDeRetorno_Caster"
+import { pacoteDeRetorno_Caster } from "./pacotes/PacoteDeRetorno_Caster"
 
 
 
@@ -116,13 +116,13 @@ const Test2 = async () => {
 
     }
 
-    const pacoteTransmissao = PacoteDeTransmissao('Solicitacao', 0, 0)
+    const pacoteTransmissao = PacoteDeTransmissao('Envio', 0, 0)
     const retorno = await transact(cmppAddr, pacoteTransmissao).run(env)
 
     console.log(retorno)
     console.log(retorno.diagnostics.datalinkResult.payload)
 
-    const a = retorno.diagnostics.bytesTransmidos
+    const a = retorno.pacoteRetornado.payload.statusL
 
 
 }
