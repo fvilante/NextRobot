@@ -24,6 +24,8 @@ export { hasValueInArray } from './array/hasValueInArray'
 // functional - mondas
 export { Maybe, Just, Nothing } from './monads/maybe'
 export { Either, Left, Right, filterByLeft, filterByRight, matchEither} from './monads/either'
+export { Reader } from './monads/reader'
+export { Writter } from './monads/writer'
 
 // Generators
 export { Observed, StartEnd, StartEndStep, ZeroToEnd } from './Generators/core-types'
