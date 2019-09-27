@@ -1,36 +1,18 @@
 // env
-import { SerialPortOpener, syncTransactioner, serialPortOpenner_PC } from "@nextrobot/serialport-manager"
+import { syncTransactioner, serialPortOpenner_PC } from "@nextrobot/serialport-manager"
 import { Reader } from "../../memmap/assets/reader"
-// TransactResult
-import { AnyDirecao, direcaoToNumber } from "./pacote-models/base-model/Direcao"
-import { PacoteDeRetorno } from "./pacote-models/PacoteDeRetorno"
-import { PacoteDeTransmissao } from "./pacote-models/PacoteDeTransmissao"
-import { DatalinkResult } from "../../datalink-layer/datalink-result"
-import { PacoteDeRetorno_Uncasted } from "./pacote-models/PacoteDeRetorno_Uncasted"
+
 // transact
 import { CmppAddress } from "./CmppAddress"
 import { datalinkerWrapper } from "../../datalink-layer/posijet1-protocol"
 import { DatalinkResult_Lifter } from "./DatalinkResult_Lifter"
+import { PacoteDeTransmissao } from "./pacote-models/PacoteDeTransmissao"
+import { TransactResult } from "./TransactResult"
 import { Env, getEnv } from './Env'
 // test
 import { pacoteDeRetorno_Caster } from "./pacote-models/PacoteDeRetorno_Caster"
-
-
-
-//
-
-
-type TransactResult<D extends AnyDirecao> = {
-    readonly pacoteRetornado: PacoteDeRetorno<D>
-    readonly diagnostics: {
-        readonly pacoteTransmitido: PacoteDeTransmissao<D>
-        readonly bytesTransmidos: readonly number[]
-        readonly datalinkResult: DatalinkResult
-        readonly pacoteRetornadoUncasted: PacoteDeRetorno_Uncasted<D> 
-    }
-}
-
-const TransactResult = <D extends AnyDirecao>(_: TransactResult<D>):TransactResult<D> => _
+import { direcaoToNumber, AnyDirecao } from "./pacote-models/base-model/Direcao"
+import { PacoteDeRetorno_Uncasted } from "./pacote-models/PacoteDeRetorno_Uncasted"
 
 
 // 
