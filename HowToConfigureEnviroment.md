@@ -11,11 +11,11 @@ Follow this link to do that and come back to this tutorial. [Link](https://docs.
 
 -- NodeJS
 
-Install NodeJS on your operational system: (link)[https://nodejs.org/en/]
+Install NodeJS on your operational system: [link](https://nodejs.org/en/)
 
 
 -- git
-install git on your operational system. (link)[https://git-scm.com/]
+install git on your operational system. [link](https://git-scm.com/)
 
 
 -- vscode
