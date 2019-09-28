@@ -8,9 +8,13 @@ Nota> Help this file to improved. Update it with more updated and datailed infom
 Follow this link to do that and come back to this tutorial. (Link)[https://docs.microsoft.com/pt-br/skypeforbusiness/set-up-your-computer-for-windows-powershell/download-and-install-windows-powershell-5-1]
 
 - Install:
--- NodeJS
--- git
 
+-- NodeJS
+Install NodeJS on your operational system: (link)[https://nodejs.org/en/]
+
+
+-- git
+install git on your operational system. (link)[https://git-scm.com/]
 
 -- vscode
 note: if you want to automatic configure all plugins install: "Settings Sync"
