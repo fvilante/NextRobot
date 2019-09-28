@@ -10,11 +10,19 @@ Follow this link to do that and come back to this tutorial. [Link](https://docs.
 - Install:
 
 -- NodeJS
+<<<<<<< HEAD
 Install NodeJS on your operational system: [link](https://nodejs.org/en/)
 
 
 -- git
 install git on your operational system. [link](https://git-scm.com/)
+=======
+Install NodeJS on your operational system: (link)[https://nodejs.org/en/]
+
+
+-- git
+install git on your operational system. (link)[https://git-scm.com/]
+>>>>>>> f7a126b9bbe03252bd246fb54df0016e31cbcc7b
 
 -- vscode
 note: if you want to automatic configure all plugins install: "Settings Sync"
