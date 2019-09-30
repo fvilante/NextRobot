@@ -66,6 +66,8 @@ export type Either<A, B> = {
 
     readonly getValue: () => A | B
 
+    readonly match: <C>(leftFn: (a:A) => C, rightFn: (b:B) => C ) => C
+
  
 }
 
@@ -87,7 +89,9 @@ export const Either = <A,B>(value: _Left<A> | _Right<B>): Either<A,B> => {
 
         fromRight: (defaultValue: B): B => _isRight(value) ? value.value : defaultValue,
 
-        getValue: (): A | B => _isLeft(value) ? value.value : value.value
+        getValue: (): A | B => _isLeft(value) ? value.value : value.value,
+
+        match: <C>(leftFn: (a:A) => C, rightFn: (b:B) => C ):C => value.kind === 'Left' ? leftFn(value.value) : rightFn(value.value)
 
     })
 
