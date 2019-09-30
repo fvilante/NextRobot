@@ -26,6 +26,7 @@ export { Maybe, Just, Nothing } from './monads/maybe'
 export { Either, Left, Right, filterByLeft, filterByRight, matchEither} from './monads/either'
 export { Reader } from './monads/reader'
 export { Writer } from './monads/writer'
+export { IO, Lazy, IOConstructor } from './monads/IO'
 
 // functional - tools
 export { zipWith, ZipWithFn } from './functional/zipWith'
