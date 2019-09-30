@@ -1,5 +1,3 @@
-import SerialPort = require("serialport")
-
 
 
 
