@@ -48,7 +48,7 @@ const _isLeft = <A,B>(data:  _Left<A> | _Right<B> ): data is _Left<A> =>
 
 export type Either<A, B> = {
 
-    //readonly kind: 'Either'
+    readonly kind: 'Either'
 
     readonly map: <C>(f: (_:B) => C) => Either<A,C>
 
@@ -74,6 +74,8 @@ export type Either<A, B> = {
 export const Either = <A,B>(value: _Left<A> | _Right<B>): Either<A,B> => {
 
     const main = (): Either<A,B> => ({
+
+        kind: 'Either',
 
         map: <C>(f: (_:B) => C):Either<A,C> => 
             _isLeft(value) ? Either<A,C>(value) : Either<A,C>(_Right(f(value.value))),
