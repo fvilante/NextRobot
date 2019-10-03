@@ -1,9 +1,27 @@
-import { Message } from './message'
-
-
-import { MessageMorphism } from './morphism'
+import { Message, AnyMessage } from './message'
 import { exhaustiveSwitch } from '../type-utils/exhaustiveSwitch';
 import { Observed } from '../Generators/core-types';
+
+
+export type MessageMorphism<A extends AnyMessage, B extends AnyMessage> = (_: A) => B 
+
+
+
+// todo: Update this example 
+
+
+
+/**
+ * Make a API type to create Messages using functions. T is an interface where 'properties names' represents 
+ * function names and 'properties types' represents function parameters. Name of function is transfered to 
+ * 'message kind property' and function parameter is transfered to message payload.
+ */
+//Note: I think this type is out-to-date, see: Message -> PatternMatchd
+export type MessagesFactory<T> = {
+    [Kind in Extract<keyof T, string>]: T[Kind] extends undefined
+        ? (payload?: undefined) => Message<Kind, undefined>
+        : (payload: T[Kind]) => Message<Kind,T[Kind]>
+}
 
 
 

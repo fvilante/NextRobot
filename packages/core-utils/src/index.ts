@@ -50,7 +50,7 @@ export { isArrayEqual } from './type-utils/isEqual'
 export { min, max, average } from './statistics'
 
 // Message
-export { Message, MessagesFactory, MessageMorphism, AnyMessage } from './message'
+export { Message, AnyMessage, PatternMatchFnObject, Match } from './message/message'
 
 // delay
 export { delay } from './delay'

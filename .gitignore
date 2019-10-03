@@ -5,3 +5,4 @@ packages/*/lib
 .idea
 .vscode/
 
+packages/core-utils/src/dependencies.png
