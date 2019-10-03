@@ -5,11 +5,17 @@ Nota> Help this file to improved. Update it with more updated and datailed infom
 = How to configure enviroment
 
 - Install Windows Powershell 5.1 or higher on your machine.
-Follow this link to do that and come back to this tutorial. (Link)[https://docs.microsoft.com/pt-br/skypeforbusiness/set-up-your-computer-for-windows-powershell/download-and-install-windows-powershell-5-1]
+Follow this link to do that and come back to this tutorial. [Link](https://docs.microsoft.com/pt-br/skypeforbusiness/set-up-your-computer-for-windows-powershell/download-and-install-windows-powershell-5-1)
 
 - Install:
+
 -- NodeJS
+
+Install NodeJS on your operational system: [link](https://nodejs.org/en/)
+
+
 -- git
+install git on your operational system. [link](https://git-scm.com/)
 
 
 -- vscode
