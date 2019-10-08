@@ -1,4 +1,4 @@
-import { Reader } from "../../memmap/assets/reader"
+import { Reader } from "@nextrobot/core-utils"
 import { SerialPortOpener } from "@nextrobot/serialport-manager"
 
 /** Enviroment */

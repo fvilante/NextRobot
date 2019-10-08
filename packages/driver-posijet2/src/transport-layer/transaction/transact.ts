@@ -1,6 +1,6 @@
 // env
 import { syncTransactioner, serialPortOpenner_PC } from "@nextrobot/serialport-manager"
-import { Reader } from "../../memmap/assets/reader"
+import { Reader } from "@nextrobot/core-utils"
 
 // transact
 import { CmppAddress } from "./CmppAddress"
