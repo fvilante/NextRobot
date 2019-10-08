@@ -1,6 +1,6 @@
 {
   "name": "@nextrobot/driver-posijet2",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "todo: put a description here",
   "author": "Flavio <fvilante1@gmail.com>",
   "homepage": "https://github.com/fvilante/NextRobot#readme",
@@ -44,9 +44,9 @@
     "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@nextrobot/core-utils": "^0.0.8",
-    "@nextrobot/driver-posijet": "^0.0.8",
-    "@nextrobot/kinematics": "^0.0.8",
-    "@nextrobot/serialport-manager": "0.0.8"
+    "@nextrobot/core-utils": "^0.0.9",
+    "@nextrobot/driver-posijet": "^0.0.9",
+    "@nextrobot/kinematics": "^0.0.9",
+    "@nextrobot/serialport-manager": "^0.0.9"
   }
 }
