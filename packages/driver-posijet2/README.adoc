@@ -1,0 +1,41 @@
+# Introduction
+
+This module is used to control each aspect of the cmpp board. The intention is to offer a high-level interface to interact with, but also to allow fine-control if necessary.
+
+The assincronicity is reached using _Promises_ constructs.
+
+
+# Modules: 
+
+- API
+- Core-Models
+- Datalink Layer
+- Memory Map
+- Transport Layer
+
+Bellow bref description of how each module works
+
+## API
+
+Here we concentrate all public interface with the parts of this module.
+
+## Core-Models
+
+Base models are stored here
+
+## Datalink Layer
+
+It's the cmpp low-level layer. Here is contempled things like ESC+STX+ _____ +ESC+ETX+CHECKSUM. The '___' in this level is considered a uncasted payload. The payload will be dealed in higher's abstractions layers.
+
+Datalink is a protocol implementation responsible to transmmit a _any data payload_ from point A to point B _with error detection_ (expressed through the checksum byte).
+
+## Memory Map
+
+
+Specifies what each of the cmpp memaddress position refers. For example, where is the parameter `initial position` in the memory of cmpp, and what kind of type that information is (ie: `mm`, `mm/s`, etc)
+
+## Transport Layer
+
+In this layer is assumed that `Datalink Layer` was garanteed to happen. It works as an higher abstraction layer.
+
+While Datalink layer is ocupied of correctly send and receive _any data payload_ from A to B. Transport layer is responsible to interpret (cast) the payload. 
