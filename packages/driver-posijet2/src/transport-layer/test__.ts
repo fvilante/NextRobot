@@ -3,7 +3,6 @@ import { serialPortOpenner_PC } from "@nextrobot/serialport-manager";
 import { transact } from "./transaction/transact";
 import { CmppAddress } from "./transaction/CmppAddress";
 import { PacoteDeTransmissao } from "./transaction/pacote-models/PacoteDeTransmissao";
-import { AnyDirecao } from "./transaction/pacote-models/base-model/Direcao";
 
 
 // tslint:disable: no-if-statement
@@ -13,12 +12,14 @@ const Test = async () => {
     const comando = 69 //COMANDO_MASCARA_DE_ERRO
     const word16 = 0
 
-    const r = 
-        await transact(
-            CmppAddress({channel: 0, portName: 'COM3', baudRate: 9600}), 
-            PacoteDeTransmissao('Solicitacao', comando, word16))
-            .run({ portOpener: serialPortOpenner_PC })
-    
+    const env = { 
+        portOpener: serialPortOpenner_PC, 
+        cmppAddress: CmppAddress({channel: 0, portName: 'COM3', baudRate: 9600}),
+    }
+
+    const _transact = transact(PacoteDeTransmissao('Solicitacao', comando, word16))
+
+    const r = await _transact.run(env)
 
     console.log(`Resultado...`)
     console.log(r)
@@ -34,4 +35,4 @@ const Test = async () => {
 }
 
 // tslint:disable-next-line: no-expression-statement
-Test()
+// Test()

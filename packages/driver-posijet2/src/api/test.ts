@@ -3,8 +3,7 @@ import { CmppAddress } from "../transport-layer/transaction/CmppAddress"
 import { AnyDirecao } from "../transport-layer/transaction/pacote-models/base-model/Direcao"
 import { PacoteDeTransmissao } from "../transport-layer/transaction/pacote-models/PacoteDeTransmissao"
 import { transact } from "../transport-layer/transaction/transact"
-import { ByteToWord } from "../transport-layer/transaction/pacote-models/base-model/byteAndWordConversors"
-import { exhaustiveSwitch } from "@nextrobot/core-utils"
+
 
 // serial port manager
 const getPortOpener = () => {
@@ -33,11 +32,10 @@ const getPacoteDeTransmissao_Solicitacao = () => {
 
 const Test = async () => {
 
+    const env =  { portOpener: getPortOpener(), cmppAddress: getCmppAddress() }
+
     // resultado solicitacao
-    const r =  await transact(
-                                getCmppAddress(), 
-                                getPacoteDeTransmissao_Solicitacao()
-                                ).run( { portOpener: getPortOpener() }) 
+    const r =  await transact( getPacoteDeTransmissao_Solicitacao() ).run(env) 
                                                                   
 
     console.log(`Resultado...`)
@@ -50,7 +48,6 @@ const Test = async () => {
             console.table(r.pacoteRetornado.payload.dadoL); break;
     }
     
-   
 }
 
 

@@ -25,7 +25,8 @@ type Connection<U extends AnyUserProgram> = {
 const Connect = <U extends AnyUserProgram>(memmap: Memmap<U>, device: Device<U>):Connection<U> => {
 
     const cmppAddress = device.cmppAddress
-    
+    const env = { portOpener: serialPortOpenner_PC, cmppAddress }
+
     return {
         GetParameter: parameterName => new Promise( async (resolve, reject) => {
 
@@ -37,9 +38,8 @@ const Connect = <U extends AnyUserProgram>(memmap: Memmap<U>, device: Device<U>)
     
                 const r = 
                     await transact(
-                        cmppAddress, 
                         PacoteDeTransmissao('Solicitacao', comando, word16))
-                        .run({ portOpener: serialPortOpenner_PC })
+                        .run(env)
     
                 const pacoteDeRetorno = r.pacoteRetornado
                 const kind = pacoteDeRetorno.kind
@@ -77,9 +77,8 @@ const Connect = <U extends AnyUserProgram>(memmap: Memmap<U>, device: Device<U>)
     
                 const r = 
                     await transact(
-                        cmppAddress, 
                         PacoteDeTransmissao('Envio', comando, word16))
-                        .run({ portOpener: serialPortOpenner_PC })
+                        .run(env)
 
     
                 const pacoteDeRetorno = r.pacoteRetornado

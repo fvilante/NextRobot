@@ -13,7 +13,7 @@ type WordValue = number
 type ServiceWork<D extends AnyDirecao> = Reader<Env, Promise<TransactResult<D>>>
 
 
-export type Service = {
+export type TransportService = {
 
     readonly run: <D extends AnyDirecao>(w: ServiceWork<D>, env: Env) => Promise<TransactResult<D>>
     
@@ -30,15 +30,15 @@ export type Service = {
 }
 
 //helpers
-const runTransaction_Helper = <D extends AnyDirecao>(env: Env, pacote: PacoteDeTransmissao<D>) => transact(env.cmppAddress, pacote).run(env)
+const runTransaction_Helper = <D extends AnyDirecao>(env: Env, pacote: PacoteDeTransmissao<D>) => transact(pacote).run(env)
 const makeErrorMsg = <E extends Error>(err: E) => `Erro no service Cmpp de transport-layer. Detalhe: ${err}`
 
 
 // ----- implementations ------------
 
-const run: Service['run'] = (work, env) => work.run(env)
+const run: TransportService['run'] = (work, env) => work.run(env)
 
-const Set16BitsValue: Service['Set16BitsValue'] = (waddr, value) => Reader( env => { 
+const Set16BitsValue: TransportService['Set16BitsValue'] = (waddr, value) => Reader( env => { 
 
     const pacote = PacoteDeTransmissao('Envio', waddr, value)
 
@@ -51,7 +51,7 @@ const Set16BitsValue: Service['Set16BitsValue'] = (waddr, value) => Reader( env 
     } )
 })
 
-const Get16BitsValue: Service['Get16BitsValue'] = (waddr) => Reader( env => { 
+const Get16BitsValue: TransportService['Get16BitsValue'] = (waddr) => Reader( env => { 
 
     const pacote = PacoteDeTransmissao('Solicitacao', waddr, 0)
 
@@ -65,7 +65,7 @@ const Get16BitsValue: Service['Get16BitsValue'] = (waddr) => Reader( env => {
 })
 
 
-const Set16BitsBitmask: Service['Set16BitsBitmask'] = (waddr, bitmask) => Reader( env => { 
+const Set16BitsBitmask: TransportService['Set16BitsBitmask'] = (waddr, bitmask) => Reader( env => { 
 
     const pacote = PacoteDeTransmissao('MascaraSetarBits', waddr, bitmask)
 
@@ -79,7 +79,7 @@ const Set16BitsBitmask: Service['Set16BitsBitmask'] = (waddr, bitmask) => Reader
 })
 
 
-const Reset16BitsBitmask: Service['Reset16BitsBitmask'] = (waddr, bitmask) => Reader( env => { 
+const Reset16BitsBitmask: TransportService['Reset16BitsBitmask'] = (waddr, bitmask) => Reader( env => { 
 
     const pacote = PacoteDeTransmissao('MascaraResetarBits', waddr, bitmask)
 
@@ -93,7 +93,7 @@ const Reset16BitsBitmask: Service['Reset16BitsBitmask'] = (waddr, bitmask) => Re
 })
 
 
-export const GetService = ():Service => ({
+export const GetTransportService = ():TransportService => ({
 
     run,
 

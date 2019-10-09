@@ -17,10 +17,11 @@ import { PacoteDeRetorno_Uncasted } from "./pacote-models/PacoteDeRetorno_Uncast
 
 // 
 
-export const transact = <D extends AnyDirecao>(cmppAddr: CmppAddress, pacote: PacoteDeTransmissao<D>): Reader<Env, Promise<TransactResult<D>>> => {
+export const transact = <D extends AnyDirecao>(pacote: PacoteDeTransmissao<D>): Reader<Env, Promise<TransactResult<D>>> => {
 
     const main = async (env: Env):Promise<TransactResult<D>> => {
 
+        const cmppAddr = env.cmppAddress
         const canal = cmppAddr.canal
         const direcaoTexto = pacote.direcao
         const direcaoNumero = direcaoToNumber(direcaoTexto)
@@ -79,20 +80,19 @@ const Test1 = () => {
 
 const Test2 = async () => {
 
-    const cmppAddr = CmppAddress({
-        channel: 0,
-        portName: 'COM3',
-        baudRate: 9600
-    }) 
-
     const env: Env = {
 
-        portOpener: serialPortOpenner_PC
+        portOpener: serialPortOpenner_PC,
+        cmppAddress: CmppAddress({
+            channel: 0,
+            portName: 'COM3',
+            baudRate: 9600
+        }) 
 
     }
 
     const pacoteTransmissao = PacoteDeTransmissao('Envio', 0, 0)
-    const retorno = await transact(cmppAddr, pacoteTransmissao).run(env)
+    const retorno = await transact(pacoteTransmissao).run(env)
 
     console.log(retorno)
     console.log(retorno.diagnostics.datalinkResult.payload)
@@ -104,5 +104,5 @@ const Test2 = async () => {
 }
 
 // tslint:disable-next-line: no-expression-statement
-Test2()
+//Test2()
 
