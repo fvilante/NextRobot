@@ -66,7 +66,7 @@ export type Memmap<U extends AnyUserProgram> = {
 
 // helpers
 
-const GetParameterMemmap = <U extends AnyUserProgram>(memmap:Memmap<U>, paramName: keyof U) => memmap[paramName]
+export const GetParameterMemmap = <U extends AnyUserProgram>(memmap:Memmap<U>, paramName: keyof U) => memmap[paramName]
 
 
 
