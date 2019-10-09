@@ -17,12 +17,12 @@ import { UnitConversor } from "../memmap/kinetics/units-core";
 
  // tslint:disable: no-if-statement 
 
-type Transfer<U extends AnyUserProgram> = {
+type Connection<U extends AnyUserProgram> = {
     readonly GetParameter: <K extends keyof U>(parameterName: K) => Promise<U[K]>
     readonly SetParameter: <K extends keyof U>(parameterName: K, value: U[K]) => Promise<void>
 }
 
-const Connect = <U extends AnyUserProgram>(memmap: Memmap<U>, device: Device<U>):Transfer<U> => {
+const Connect = <U extends AnyUserProgram>(memmap: Memmap<U>, device: Device<U>):Connection<U> => {
 
     const cmppAddress = device.cmppAddress
     

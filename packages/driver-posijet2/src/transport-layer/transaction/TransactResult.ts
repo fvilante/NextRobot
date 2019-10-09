@@ -16,5 +16,7 @@ export type TransactResult<D extends AnyDirecao> = {
     }
 }
 
+export type AnyTransactResult = TransactResult<AnyDirecao> 
+
 export const TransactResult = <D extends AnyDirecao>(_: TransactResult<D>):TransactResult<D> => _
 
