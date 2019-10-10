@@ -35,11 +35,10 @@ const Connect = <U extends AnyUserProgram>(memmap: Memmap<U>, device: Device<U>)
             
                 const comando = paramMemmap.startWord
                 const word16 = 0
+
+                const pacote = PacoteDeTransmissao('Solicitacao', comando, word16)
     
-                const r = 
-                    await transact(
-                        PacoteDeTransmissao('Solicitacao', comando, word16))
-                        .run(env)
+                const r = await transact( pacote ).run(env)
     
                 const pacoteDeRetorno = r.pacoteRetornado
                 const kind = pacoteDeRetorno.kind
