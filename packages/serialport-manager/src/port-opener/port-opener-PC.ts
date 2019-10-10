@@ -3,7 +3,7 @@
 
 import { OpendedSerialPort } from './opened-serial-port'
 import { SerialPortOpener } from './port-opener-core'
-import { Bytes } from '../core-models/bytes'
+import { Bytes } from '../data-models/bytes'
 
 
 // === implementation imports ===

@@ -1,7 +1,7 @@
 // tslint:disable: no-let no-expression-statement no-if-statement
 
-import { Datalinker, ResultError, ReceptionHandlerResult, ResultProcessing, ResultSucessful } from '../core-models/datalinker-sync'
-import { Byte, Bytes } from '../core-models/bytes'
+import { Datalinker, ResultError, ReceptionHandlerResult, ResultProcessing, ResultSucessful } from '../data-models/datalinker-sync'
+import { Byte, Bytes } from '../data-models/bytes'
 import { flattenDeep } from '@nextrobot/core-utils'
 
 
