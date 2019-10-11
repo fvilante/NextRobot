@@ -27,7 +27,7 @@ export const syncTransactioner: SyncTransactioner = async <T>(portOpener: Serial
 
     /** Opens and returns the serial port */
     const getPort = async () => {
-        await delay(150) // fix: remove this delay. This delay is to give time to concrete port to close and open again (see serial driver implementation)
+        await delay(200) // fix: remove this delay. This delay is to give time to concrete port to close and open again (see serial driver implementation)
         const openedPort = await portOpener(portReference)
         return openedPort
     }
