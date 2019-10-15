@@ -26,6 +26,7 @@ export { Maybe, Just, Nothing } from './monads/maybe'
 export { Either, Left, Right, filterByLeft, filterByRight, matchEither} from './monads/either'
 export { Reader } from './monads/reader'
 export { Lens, LensComposer } from './monads/lens'
+export { State } from './monads/state'
 //export { Writer } from './monads/writer'
 //export { IO, Lazy, IOConstructor } from './monads/IO'
 
