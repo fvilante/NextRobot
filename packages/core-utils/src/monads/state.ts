@@ -1,7 +1,5 @@
-import { S, B, A } from "ts-toolbelt"
+
 import { Reader } from "./reader"
-import { Maybe } from "./maybe"
-import { Either } from "./either"
 import { Lens } from "./lens"
 /** 
  * inspired in Cats, the Scala language's library, and in Haskell language.
@@ -85,7 +83,7 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
     }
 
     const inspect: State<S,A>['inspect'] = fn => {
-        return State( (s0:S) => [s0, fn(s0)] )
+        return State( (s0:S) => [runS(s0), fn(runS(s0))] )
     }
 
     const get: State<S,A>['get'] = () => {
@@ -164,6 +162,8 @@ const Test1 = () => {
 
     console.log( s4.run({input: [ 80,90 ] }))
 
+
+    
 
 }
 
