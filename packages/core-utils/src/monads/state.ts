@@ -230,3 +230,90 @@ const Test2 = () => {
 
 }
 
+
+// This test is not Finished (draft only, where just for provisory documentation)
+const Test3 = () => {
+
+    // internal state type
+
+    type Comparator = {
+        readonly buffer: readonly number[]
+    } 
+
+    // monad instantiation constructor 
+
+    const getState = ():State<Comparator, undefined> => State( s => [s, undefined] )
+
+    // ----- state transitions --------
+
+    type Modifier<S> = (s:S) => S
+
+    const pushSymbol = (symbol: number): Modifier<Comparator> => s => ({...s, buffer: [...s.buffer, symbol ]})
+    const resetBuffer: Modifier<Comparator> = s => ({...s, buffer: [] })
+
+
+    // ------- state inspector --------
+
+    type Inspector<S,T> = (s: S) => T
+
+    const compareTo = (symbols: readonly number[]): Inspector<Comparator, Maybe<boolean>> => s => { 
+        //attention unsafe: change Maybe to Either<Error,..>. 
+        //todo: make this function safe
+        const r = symbols.length 
+        const b = s.buffer.length
+        const isError = b > r
+        const cannotCompareYet = b < r
+        const doCompare = () => isArrayEqual(s.buffer, symbols)
+        return isError || cannotCompareYet 
+            ? Nothing<boolean>()    // r !== b
+            : Just( doCompare() )   // r === b
+
+    }
+
+    
+    // fmapers 
+
+    type Msgs = Message<'ESC', readonly number[]> | Message<'UNKNOWN', readonly number[]>
+
+    const castBoolToMsg = (mb: Maybe<boolean>): State<Comparator, Maybe<Msgs>> => State( s => {
+        const msgs = mb.map( b => 
+                b ? Message('ESC', s.buffer) : Message('UNKNOWN', s.buffer)
+            )
+        return [s, msgs]
+    })
+
+    const resetBufferWhenDone = (mb: Maybe<Msgs>): State<Comparator, Maybe<Msgs>> => State (s => {
+        const newS = mb.isJust ? resetBuffer(s) : s
+        return [newS, mb]
+    })
+
+    // state operations finals
+
+    const tokenComparator  = (token: readonly number[]) => (symbol: number): State<Comparator, Maybe<Msgs>> => 
+                getState()
+                .modify(  pushSymbol( symbol ) )
+                .monitor( compareTo( token ) )
+                .fmap( castBoolToMsg )
+                .fmap( resetBufferWhenDone )
+
+   
+
+    
+    const s0: Comparator = { buffer:[ ] } 
+
+    const input = [1,2,3,4,5]
+
+    type S2 = {
+        readonly ms: State<Comparator, Maybe<Msgs>>
+        readonly out: readonly Msgs[]
+
+    }
+
+   
+    // This test is not Finished
+
+
+}
+
+// tslint:disable-next-line: no-expression-statement
+//Test3()
