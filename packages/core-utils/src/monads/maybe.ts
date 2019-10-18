@@ -10,7 +10,7 @@ const ThrowError = <E extends Error> (err: E): never => {
     throw err
 }
 
-type MaybeMatcherFn<A,R> = {
+export type MaybeMatcherFn<A,R> = {
     readonly Just: (a:A) => R
     readonly Nothing: R
 }
