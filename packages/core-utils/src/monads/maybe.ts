@@ -10,6 +10,10 @@ const ThrowError = <E extends Error> (err: E): never => {
     throw err
 }
 
+type MaybeMatcherFn<A,R> = {
+    readonly Just: (a:A) => R
+    readonly Nothing: R
+}
 
 // Maybe
 
@@ -88,6 +92,11 @@ export class Maybe<A> {
             : (this.value as _Just<A>).value
 
 
+    readonly match = <R>(matcher: MaybeMatcherFn<A,R>):R => {
+        return this.isJust ? matcher.Just(this._fromJust()) : matcher.Nothing
+    }
+
+
     // fromMaybe :: b -> Maybe b -> b 
     readonly fromMaybe = (default_: A) => Maybe.fromMaybe(default_)(this)
     static readonly fromMaybe = <B>(default_: B) => (mb: Maybe<B>):B =>
@@ -117,6 +126,8 @@ export class Maybe<A> {
         [...arr]
             .filter( m => m.isJust )
             .map( m => m._fromJust() )
+
+        
 
 }
 
