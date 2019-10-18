@@ -46,6 +46,11 @@ const _isLeft = <A,B>(data:  _Left<A> | _Right<B> ): data is _Left<A> =>
 //  MAIN EITHER MONAD
 // ----------------------------------------------------------------
 
+export type EitherMatcherFn<A,B,R> = {
+    readonly Left: (_:A) => R
+    readonly Right: (_:B) => R
+}
+
 export type Either<A, B> = {
 
     readonly kind: 'Either'
@@ -66,7 +71,7 @@ export type Either<A, B> = {
 
     readonly getValue: () => A | B
 
-    readonly match: <C>(leftFn: (a:A) => C, rightFn: (b:B) => C ) => C
+    readonly match: <R>(_: EitherMatcherFn<A,B,R>) => R
 
  
 }
@@ -93,7 +98,7 @@ export const Either = <A,B>(value: _Left<A> | _Right<B>): Either<A,B> => {
 
         getValue: (): A | B => _isLeft(value) ? value.value : value.value,
 
-        match: <C>(leftFn: (a:A) => C, rightFn: (b:B) => C ):C => value.kind === 'Left' ? leftFn(value.value) : rightFn(value.value)
+        match: matcher => _isLeft(value) ? matcher.Left(value.value) : matcher.Right(value.value)
 
     })
 
@@ -145,11 +150,11 @@ export const filterByRight = <A,B>(es: readonly Either<A,B>[]): readonly B[] => 
 
 
 /** Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b. */
-export const matchEither = <A,B,C>(_: Either<A,B>, leftFn: (a:A) => C, rightFn: (b:B) => C): C => {
+export const matchEither = <A,B,R>(e: Either<A,B>, matcher: EitherMatcherFn<A,B,R>): R => {
 
-    return _.isLeft()
-        ? leftFn( (_.getValue() as A) )
-        : rightFn( (_.getValue() as B) )
+    return e.isLeft()
+        ? matcher.Left( (e.getValue() as A) )
+        : matcher.Right( (e.getValue() as B) )
 
 }
 
@@ -199,5 +204,17 @@ const Test2 = () => {
 
 }
 
+const Teste3 = () => {
+
+    const e = Left<number,string>(10)
+
+    //It's highly recommended to insert result type explicitly as type-parameter on match function (eg: like <number> bellow)
+    const s = e.match<number>( {
+        Left: n => 0,
+        Right: s => 0,
+    })
+
+}
+
 // tslint:disable-next-line: no-expression-statement
-//Test2()
+Teste3()
