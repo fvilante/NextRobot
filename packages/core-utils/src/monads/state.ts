@@ -1,6 +1,11 @@
 
 import { Reader } from "./reader"
 import { Lens } from "./lens"
+import comparator from "ramda/es/comparator"
+import { Maybe, Nothing, Just } from "./maybe"
+import { isArrayEqual } from "../type-utils/isEqual"
+import { foldLeftArray } from "../array/foldLeftArray"
+import { Message } from "../message/message"
 /** 
  * inspired in Cats, the Scala language's library, and in Haskell language.
  * 
@@ -34,7 +39,7 @@ export type State<S,A> = {
     /**
     * Inspect a value from the input state, without modifying the state.
     */
-    readonly inspect: <T>(fn: (_:S) => T) => State<S, T>
+    readonly monitor: <T>(fn: (_:S) => T) => State<S, T>
 
     /**
     * Return the input state without modifying it.
@@ -60,8 +65,6 @@ export type State<S,A> = {
 
 export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
 
-    const identity = <T>(x:T) => x
-
     const run: State<S,A>['run'] = initialState => {
         return nextState(initialState)
     }
@@ -82,12 +85,18 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
         return State( (s0:S) => [fn(runS(s0)), undefined] )
     }
 
-    const inspect: State<S,A>['inspect'] = fn => {
-        return State( (s0:S) => [runS(s0), fn(runS(s0))] )
+    const monitor: State<S,A>['monitor'] = fn => {
+        return State( (s0:S) => { 
+            const s1 = runS(s0)
+            return [s1, fn(s1)] 
+        })
     }
 
     const get: State<S,A>['get'] = () => {
-        return inspect( identity )
+        return State( (s0:S) => {
+            const s1 = runS(s0)
+            return [s1, s1] 
+        })
     }
 
     const put: State<S,A>['put'] = newS0 => {
@@ -95,7 +104,6 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
     }
 
     const map: State<S,A>['map'] = fn => {
-
         return State( (s0:S) => {
             const [sa, a] = run(s0)
             return [sa, fn(a)]
@@ -103,7 +111,7 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
 
     }
 
-    const fmap: State<S,A>['fmap'] = fn =>  {
+    const fmap: State<S,A>['fmap'] = fn => {
         
         const f = (s0:S) => {
             const [sa, a] = run(s0)
@@ -124,7 +132,7 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
         runS,
         pure,
         modify,
-        inspect,
+        monitor,
         get,
         put,
         map,
@@ -222,5 +230,3 @@ const Test2 = () => {
 
 }
 
-// tslint:disable-next-line: no-expression-statement
-//Test2()
