@@ -217,4 +217,4 @@ const Teste3 = () => {
 }
 
 // tslint:disable-next-line: no-expression-statement
-Teste3()
+//Teste3()

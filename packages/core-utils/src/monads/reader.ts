@@ -1,28 +1,50 @@
 
 
+/** NOTE: 'E' stands for Enviroment */
+export type Reader<E,A> = {
 
-export type Reader<R,A> = {
-
-    readonly run: (_: R) => A
+    readonly run: (enviroment: E) => A
     
-    readonly map: <B>(fn: (_:A) => B) => Reader<R,B> 
+    readonly map: <B>(fn: (_:A) => B) => Reader<E,B> 
 
-    readonly fmap: <B>(fn: (_:A) => Reader<R,B>) => Reader<R,B> 
+    readonly fmap: <B>(fn: (_:A) => Reader<E,B>) => Reader<E,B> 
 
 }
 
 
-export const Reader = <R,A>(fr: (_:R) => A): Reader<R,A> => {
+export const Reader = <E,A>(fn: (enviroment: E) => A): Reader<E,A> => {
 
+    const run: Reader<E,A>['run'] = env => {
+
+        return fn(env)
+
+    }
+
+    const map: Reader<E,A>['map'] = f => {
+
+        return Reader( env => {
+            const a = run(env)
+            const b = f(a)
+            return b
+        })
+
+    }
+
+    const fmap: Reader<E,A>['fmap'] = f => {
+        
+        return Reader( (env:E) => {
+            const a = run(env)
+            const mb = f(a)
+            const b = mb.run(env)
+            return b
+        })
+   
+    }
 
     return {
-
-        run: r => fr(r),
-
-        map: fn => Reader( (r:R) => fn(fr(r)) ),
-
-        fmap: fn => Reader((r:R) => fn(fr(r)).run(r) ),
-
+        run,
+        map,
+        fmap,
     }
 
 }
@@ -35,6 +57,8 @@ export const Reader = <R,A>(fr: (_:R) => A): Reader<R,A> => {
 // --------------------------------------------
 
 // todo: extract this test to other file
+
+// todo: Refactor this tests (they were the first I did and probably are over complicated)
 
 const Test = () => {
 
@@ -65,7 +89,7 @@ const Test = () => {
 
         return configurePrinter(env.p2)
 
-3    })
+    })
 
     const printMsg = (n: number ) => 
         getEnv().fmap( env => 
