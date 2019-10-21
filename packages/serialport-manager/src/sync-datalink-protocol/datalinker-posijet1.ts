@@ -17,7 +17,9 @@ const NACK = 21
 
 // Checksum
 
-const calcChecksum = (undupedData: Bytes, start_byte: Byte): number => {
+const calcChecksum = (_undupedData: Bytes, _start_byte: Byte): number => {
+    const undupedData = _undupedData.bytes
+    const start_byte = _start_byte.byte
     const sum = [...undupedData, ...[start_byte, ETX]].reduce((acc,cur) => acc+cur)
     const sumNormalized = sum % 256
     const twosComplimented = 256 - sumNormalized
@@ -26,9 +28,10 @@ const calcChecksum = (undupedData: Bytes, start_byte: Byte): number => {
 
 // === Transmission ===
 
-const makeFrame = (data: Bytes) => ():Bytes => {    
-    const dup_esc = (data: Bytes): Bytes => flattenDeep(data.map( byte => byte===ESC ? [ESC, ESCDUP] : [byte] ))
-    return [ESC, STX, ...dup_esc(data), ESC, ETX, calcChecksum(data, STX)]
+const makeFrame = (_data: Bytes) => ():Bytes => {    
+    const data = _data.bytes
+    const dup_esc = (data: Bytes['bytes']): Bytes['bytes'] => flattenDeep(data.map( byte => byte===ESC ? [ESC, ESCDUP] : [byte] ))
+    return Bytes([ESC, STX, ...dup_esc(data), ESC, ETX, calcChecksum(Bytes(data), Byte(STX))])
 }
 
 
@@ -40,8 +43,8 @@ type FinalResult = {
 
 const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
 
-    let rawFrame: Bytes = []
-    let unDupedData: Bytes = []
+    let rawFrame: Bytes = Bytes([])
+    let unDupedData: Bytes = Bytes([])
     let startByte: Byte
     let checksum: number
 
@@ -86,12 +89,12 @@ const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
     const receptionHandler = (_: Byte): ReceptionHandlerResult<FinalResult> => {
 
         //save raw_frame
-        rawFrame = [...rawFrame, _]
+        rawFrame = Bytes([...rawFrame.bytes, _.byte])
 
         // run machine state
         switch (state) {
             case 'NOT_INITIATED':
-                if (_===ESC) {
+                if (_.byte===ESC) {
                     setState('INITIAL_ESC')
                     return ResultProcessing()
                 } else {
@@ -99,7 +102,7 @@ const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
                 } 
                
             case 'INITIAL_ESC':
-                if (_===STX || _===ACK || _===NACK) {
+                if (_.byte===STX || _.byte===ACK || _.byte===NACK) {
                     startByte = _
                     setState('START_BYTE')
                     return ResultProcessing()
@@ -108,20 +111,20 @@ const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
                 }
 
             case 'START_BYTE':
-                if (_===ESC) {
+                if (_.byte===ESC) {
                     setState('DESAMBIGUATE')
                 } else {
-                    unDupedData = [...unDupedData, _]
+                    unDupedData = Bytes([...unDupedData.bytes, _.byte])
                 }
                 return ResultProcessing()
                 
 
             case 'DESAMBIGUATE':
-                if (_===ESCDUP) {
+                if (_.byte===ESCDUP) {
                     setState('START_BYTE')
-                    unDupedData = [...unDupedData, ESC]
+                    unDupedData = Bytes([...unDupedData.bytes, ESC])
                     return ResultProcessing()
-                } else if(_===ETX) { 
+                } else if(_.byte===ETX) { 
                     setState('CHECKSUM')
                     return ResultProcessing()
                 } else {
@@ -129,7 +132,7 @@ const getReceptionHandler = (): Datalinker<FinalResult>['receptionHandler'] => {
                 }
 
             case 'CHECKSUM':
-                checksum = _
+                checksum = _.byte
                 
                 if (isChecksumOk()) {
                     setState('SUCESSFUL')
@@ -156,6 +159,5 @@ export const datalinker = (data: Bytes): Datalinker<FinalResult> => {
         toWrite: makeFrame(data),
         receptionHandler: getReceptionHandler(),
     }
-
 
 }

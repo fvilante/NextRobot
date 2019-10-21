@@ -1,7 +1,7 @@
 // tslint:disable: no-expression-statement
 // tslint:disable: typedef
 
-import { PortInfo } from '../data-models/port-info'
+import { _Port } from '../data-models/port'
 
 import * as SerialPort  from 'serialport';
 
@@ -27,8 +27,8 @@ const __detectSerialPorts = (): Promise<readonly ConcretePortInfo[]> => serialPo
 
 
 /** Adapt concrete port-info data to our abstract-data-model port-info*/
-const adaptData = (_: ConcretePortInfo): PortInfo => ({
-    comName: _.comName,
+const adaptData = (_: ConcretePortInfo): _Port['Info'] => ({
+    name: _.comName,
     detail: { 
         kind: 'LocalPCPortInfo', 
         manufacturer:  _.manufacturer,
@@ -46,7 +46,7 @@ const adaptData = (_: ConcretePortInfo): PortInfo => ({
 
 /** Abstracted function 
  * Todo: incorporate Remote Serial Port Detection algoritm*/
-export const detectSerialPorts = (): Promise<readonly PortInfo[]> => __detectSerialPorts().then( ports => ports.map( port => adaptData(port) ))
+export const detectSerialPorts = (): Promise<readonly _Port['Info'][]> => __detectSerialPorts().then( ports => ports.map( port => adaptData(port) ))
 
 
 
@@ -57,4 +57,4 @@ const test = async () => {
     console.log(a)
 }
 
-test()
+//test()

@@ -1,11 +1,12 @@
 
-// tslint:disable: no-expression-statement no-if-statement no-let readonly-array
 
 import { delay } from '@nextrobot/core-utils' 
-import { OpendedSerialPort } from '../port-opener/opened-serial-port'
-import { SerialPortOpener } from '../port-opener/port-opener-core'
-import { PortReference } from '../port-opener/port-reference'
+
 import { Datalinker } from '../data-models/datalinker-sync'
+import { _Port } from '../data-models/port'
+import { Byte } from '../data-models/bytes'
+
+// tslint:disable: no-expression-statement no-if-statement no-let readonly-array
 
 
 // === Serial-port creator (Driver) ===
@@ -13,7 +14,7 @@ import { Datalinker } from '../data-models/datalinker-sync'
 
 // === Effect Runner ===
 
-type SyncTransactioner = <T>(portOpener: SerialPortOpener, port: PortReference, datalinker:Datalinker<T>) => Promise<T>
+type SyncTransactioner = <T>(opener: _Port['Opener'], port: _Port['Reference'], datalinker:Datalinker<T>) => Promise<T>
 
 
 // =======================================
@@ -23,7 +24,7 @@ type SyncTransactioner = <T>(portOpener: SerialPortOpener, port: PortReference, 
 /** Reception buffer */
 let receptionByteBuffer: number[] = []
 
-export const syncTransactioner: SyncTransactioner = async <T>(portOpener: SerialPortOpener, portReference: PortReference, datalinker: Datalinker<T>): Promise<T> => {
+export const syncTransactioner: SyncTransactioner = async <T>(portOpener: _Port['Opener'], portReference: _Port['Reference'], datalinker: Datalinker<T>): Promise<T> => {
 
     /** Opens and returns the serial port */
     const getPort = async () => {
@@ -38,7 +39,7 @@ export const syncTransactioner: SyncTransactioner = async <T>(portOpener: Serial
     return new Promise( (resolve, reject) => {
 
         /** Helper*/
-        type Callback<T extends keyof OpendedSerialPort> = Parameters<OpendedSerialPort[T]>[0]
+        type Callback<T extends keyof _Port['Openned']> = Parameters<_Port['Openned'][T]>[0]
     
         // --- call-backs ---
 
@@ -53,9 +54,10 @@ export const syncTransactioner: SyncTransactioner = async <T>(portOpener: Serial
             reject(error)
         }
 
-        const onData: Callback<'onData'> = data => {
+        const onData: Callback<'onData'> = _data => {
             //console.log(`Receiving data: ${data}`)
 
+            const data = _data.bytes
             // fill reception buffer
             data.map(each => receptionByteBuffer.push(each))
 
@@ -68,7 +70,7 @@ export const syncTransactioner: SyncTransactioner = async <T>(portOpener: Serial
                 const nextByte = receptionByteBuffer.shift()
                 if (nextByte === undefined) break
 
-                const r = datalinker.receptionHandler(nextByte) 
+                const r = datalinker.receptionHandler(Byte(nextByte)) 
 
                 switch (r.kind) {
                     case 'Error':
