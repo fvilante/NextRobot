@@ -149,7 +149,7 @@ export const filterByRight = <A,B>(es: readonly Either<A,B>[]): readonly B[] => 
 }
 
 
-/** Case analysis for the Either type. If the value is Left a, apply the first function to a; if it is Right b, apply the second function to b. */
+/** TODO: DEPRECATE THIS VERSION. Use instead Either.match(...) */
 export const matchEither = <A,B,R>(e: Either<A,B>, matcher: EitherMatcherFn<A,B,R>): R => {
 
     return e.isLeft()
