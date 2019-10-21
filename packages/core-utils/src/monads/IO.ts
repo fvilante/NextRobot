@@ -1,4 +1,4 @@
-import { Either, Right, Left, matchEither } from "./either";
+import { Either, Right, Left } from "./either";
 
 
 
@@ -10,16 +10,23 @@ export type IO<A> = {
 
     readonly map: <B>(f: (_:A) => B) => IO<B>
 
+    readonly fmap: <B>(f: (_:A) => IO<B>) => IO<B>
+
 }
 
-/** todo: extract Lazy<T> to a file named CommonTypes.ts ? */
-export type Lazy<T> = () => T
+/** just an interface (do not instantiate) */
+type _IO<A> = {
+    readonly Lazy: () => A
+    readonly Constructor: (fn: _IO<A>['Lazy']) => IO<A> 
+} & IO<A>
 
-export type IOConstructor = <A>( fn: Lazy<A>) => IO<A>
 
-export const IO: IOConstructor = <A>( fn: Lazy<A>):IO<A> => {
+/** pure container for side-effects 
+ * NOTE: It's highly recommended to type explicity the IO when constructing it
+ */
+export const IO = <A>( fn: _IO<A>['Lazy']): IO<A> => {
 
-    const run = ():Either<Error,A> => {
+    const run: _IO<A>['run'] = () => {
 
         try {
             return Right(fn()) 
@@ -57,37 +64,37 @@ export const IO: IOConstructor = <A>( fn: Lazy<A>):IO<A> => {
 
     } 
 
-    const map = <B>(f: (_:A) => B): IO<B> => {
+    const map = <B>(f: (_:A) => B): IO<B> => 
+        IO<B>( () => {
+            // tslint:disable-next-line: no-expression-statement
+            return run()
+            .match<B>({
+                Left: err => { throw err },
+                Right: a => f(a)
+            })
+        }) 
 
-        // tslint:disable: no-if-statement
-
-        const newIO = ():IO<B> => IO( () => {
-
-            const previous = run()
-            
-            if (previous.isLeft()) 
-                throw (previous.getValue() as Error)
-            else {
-                const current = IO(() => f(previous.getValue() as A)).run()
-                if (current.isLeft())
-                    throw (current.getValue() as Error)
-                else {
-                    return (current.getValue() as B)
-                }
-
-
-            } 
-                
+    const fmap = <B>(f: (_:A) => IO<B>): IO<B> => IO<B> ( () => {
+         // tslint:disable-next-line: no-expression-statement
+        return run()
+        .match({
+            Left: err => { throw err },
+            Right: a => f(a), 
+        })
+        .run()
+        .match({
+            Left: err => { throw err },
+            Right: b => b
         })
 
-        return newIO()
-
-    }
+    })
+    
 
     return { 
         kind: 'IO',
         run,
         map,
+        fmap,
     }
 
 }
@@ -95,74 +102,31 @@ export const IO: IOConstructor = <A>( fn: Lazy<A>):IO<A> => {
 
 // --------------- Informal Test ---------------------------------------------------
 
-// tslint:disable: no-expression-statement no-expression-statement
 
-const Test = () => {
+// testing effect map and effect evaluation
+const Test1 = () => {
 
-    type MakeLazy= <A>(_:A) => Lazy<A>
-    const MakeLazy: MakeLazy = value => () => { 
-        console.log(`Running Effect... Done! Returning value =`, value)
-        return value
-    } 
+    console.log(`lazy creating the IO effect`)
+    const a = IO( () => { console.log(`-- Inside 'A' effect. Executing it. (throwing error!)--`); throw new Error(`Hi Artificial Error Here!`)} )
+    console.log(`Effect 'A' created`)
 
-    const lazy = MakeLazy('Hello')
+    console.log(`lazy mapping effect a to a -> b`)
+    const b = a.map( () => `-- Inside 'B' effect: This msg was gererated inside effect B--`) 
+    const c = b.map( msg => { console.log(`--Inside 'C': Here is the output from effect 'B'-> ${msg}`)})
 
-    const a = IO(lazy)
+    console.log(`running the effects`)
+    const d = c.run()
 
-    const b = a.map( s => `${s} world`)
+    console.log(`catching errors`)
 
-    const c = b.map( s => { throw new TypeError('Err juca'); return s.toUpperCase(); } )
-
-    const d = c.map( s => s.length)
-
-    const effects = [a,b,c,d]
-
-    console.log(`Os efeitos foram criados, porem nao-executados`)
-    console.log(effects)
-
-    console.log(`Iniciando executador de efeitos.`)
-
-    const runEffects = () => effects.map( effect => {
-        
-        const r = effect.run() as Either<Error, string | number>
-        const value = r.match<string | Error>(err => err, value => String(value))
-
-        return `V=` + value
-
+    const e = d.match({
+        Right: () => { console.log(`Finished: Sucessfull`)},
+        Left: err => { console.log(`Finished: Error! This is the Error => ${err}`)}
     })
 
-    console.log(`Resultado dos efeitos processados`)
-    console.log(runEffects())
-
-
-}
-
-const Test2 = () => {
-
-    const log = (recado:string) => () => console.log(`Meu recado: ${recado}`) 
-    console.log(`Criando efeito...:`)
-    const efeito =  
-        IO(     log('PASSO 1'))
-        .map(   log('PASSO 2'))
-        // error introduced
-        .map(   () => {throw new TypeError('Uma msg de erro qualquer!'); return log('PASSO 3')()} )
-        .map(   log('PASSO 4'))
-        .map(   () => 5)
-        .map(   n => { log(`PASSO 5 (retroativo!) e PASSO ${n+1}`)(); return n+1;} )
-
-    console.log(`Efeito criado =`, efeito)
-
-
-    console.log(`** Rodando efeito...: ** `)
-    
-    const r = efeito.run()
-    console.log(`** Fim da execucao do efeito: ** `)
-
-    const final = r.match<number | string>( err => ` Deu Erro, veja msg:` + err.message, n => n)
-    console.log(`Resultado final da execucao do efeito:`, final)
-
 
 }
 
 
-//Test2()
+// tslint:disable-next-line: no-expression-statement
+Test1()
