@@ -1,8 +1,6 @@
 
 // tslint:disable: no-expression-statement no-if-statement no-let
 
-import { OpendedSerialPort } from './opened-serial-port'
-import { SerialPortOpener } from './port-opener-core'
 import { Bytes } from '../data-models/bytes'
 
 
@@ -12,6 +10,7 @@ import * as Stream from 'stream'
 const a = Stream.Readable
 
 import * as serial_port from 'serialport';
+import { _Port } from '../data-models/port';
 type SerialPort = unknown //typeof serial_port.default
 const SerialPort = serial_port.default
 
@@ -26,7 +25,7 @@ const NodeBufferToBytes = (buffer: any): Bytes => {
     for (let k=0; k<buffer.length; k++) {
         bytes = [...bytes, buffer.readUInt8(k)]
     }
-    return bytes
+    return Bytes(bytes)
 }
 
 
@@ -37,58 +36,54 @@ const NodeBufferToBytes = (buffer: any): Bytes => {
  * 
  * Opens serial ports on PC running windows or linux
  * 
- * Fix: If a concrete port is already open, don't close and open it again (it takes about 100ms to perform this task)
+ * ATTENTION: Throw exception on Error (ie: port open error, writing/reading data error, etc...)
+ * 
+ * Todo: make throwing errors safe through monads
+ * Todo: implement a timeout error on openning 
+ * Todo: If a concrete port is already open, don't close and open it again (it takes about 100ms to perform this task)
  * 
  * @param portName 
  * @param portConfig 
  */
-export const serialPortOpenner: SerialPortOpener = (portReference) => {
+export const serialPortOpenner: _Port['Opener'] = (port: _Port['Reference']): Promise<_Port['Openned']> => {
 
-    const portName = portReference.portName
-    const portConfig = portReference.portConfig
-
-    return new Promise( async (resolve, reject) => {
-
-        // error on openening port
-        const openError = (err?: Error | null): void => {
-            if (err === undefined || err === null)
-                reject(new Error(`Error: Cannot open serial port ${portName}`))
-            else
-                reject(err)
-        }
-
-        const runMainProcess = ():void => {
+    return new Promise( async ( resolve, reject ) => {
 
             // create concrete port
-            const cPort = new SerialPort(portName, {...portConfig, ...{ autoOpen: false }})
+            const aPort = new SerialPort(port.name, {...port.config, ...{ autoOpen: false }})
             
-  
+
             // open handler
             const onOpen = ():void => {
                 
                 // port interface
-                const openedPort: OpendedSerialPort = {
-                    write: bytes => cPort.write([...bytes]),
-                    close: () => {cPort.close()},
-                    onClose: callback => {cPort.on('close', callback)},
-                    onData: callback => cPort.on('data', (data: unknown) => callback(NodeBufferToBytes(data))),
-                    onError: callback => cPort.on('error', callback),
+                const openedPort: _Port['Openned'] = {
+                    write: data => aPort.write([...data.bytes]),
+                    close: () => { aPort.close() },
+                    onClose: callback => { aPort.on('close', callback) },
+                    onData: callback => aPort.on('data', (data: unknown) => callback(NodeBufferToBytes(data))),
+                    onError: callback => aPort.on('error', callback),
                     // todo: add onWrite 
                 }
                 resolve(openedPort)
             }
 
-            // set handlers and try to open
-            cPort.on('open', onOpen)
-            cPort.on('error', openError) //fix: check if 'openError' is as expected overwritted when iPort.onError is called
+            // error handler for port opening
+            const openError = (err?: Error | null): void => 
+                (err === undefined || err === null)
+                    ? reject(new Error(`Error: Cannot open serial port ${port.name}`))
+                    : reject(err)
             
-            cPort.open() 
-            
-        }
 
-        runMainProcess() 
-       
-    })
+            // set handlers and open
+            aPort.on('open', onOpen)
+            aPort.on('error', openError) //todo: check if 'openError' is as expected overwritted when iPort.onError is called
+            
+            // do try to open
+            aPort.open() 
+            
+        
+        })
         
         
 }

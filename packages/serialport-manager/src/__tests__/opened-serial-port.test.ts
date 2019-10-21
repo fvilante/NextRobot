@@ -1,40 +1,34 @@
 import { serialPortOpenner as serialPortOpenner_Loopback  } from '../port-opener/port-opener-loopback'
 import { serialPortOpenner as serialPortOpenner_PC } from '../port-opener/port-opener-PC'
-import { PortReference } from '../port-opener/port-reference'
+
 import { delay } from '@nextrobot/core-utils'
 import { Bytes} from '../data-models/bytes'
+import { _Port, defaultPortConfig, PortReference } from '../data-models/port'
+
+
 
 // tslint:disable: no-expression-statement no-let
 
-// just a example how to write a test: arrange / assert / act (TDD)
-describe('Can open an emulated serial port', () => { 
 
-    const portConfig: PortReference['portConfig'] = {
-        baudRate: 9600,
-        dataBits: 8,
-        stopBits: 1,
-        parity: 'none',
-        rtscts: false,
-        xon: false,
-        xoff: false,
-    }
+describe('Can open a serial port and transact data', () => { 
+
 
     it('can send and receive data through emulated loop-backed serial-port', async () => {     
 
         // configure
 
-        let receptionBuffer: Bytes = []
+        let receptionBuffer: Bytes['bytes'] = []
         const dataMsg = [0x1B, 0x02, 0xC2, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x86]
 
         try {
             //sendData()
-            const port = await serialPortOpenner_Loopback(PortReference('Fake-Loopback', portConfig))
-            port.onData( bytes => receptionBuffer = [...receptionBuffer, ...bytes])
-            port.onClose( () => {} )
-            port.onError( error => {})
-            port.write(dataMsg)
+            const aPort = await serialPortOpenner_Loopback(PortReference('Fake-Loopback', defaultPortConfig ))
+            aPort.onData( data => { receptionBuffer = [...receptionBuffer, ...data.bytes] } )
+            aPort.onClose( () => {} )
+            aPort.onError( error => {})
+            aPort.write(Bytes(dataMsg))
             await delay(1000)
-            port.close()
+            aPort.close()
         } catch (err) {
             console.log(`erro ao abrir porta: ${err}`)
         }
@@ -51,18 +45,21 @@ describe('Can open an emulated serial port', () => {
 
         /** Port where real cmpp is connected */
         const CMPP_PORT = 'COM6'
+		// ATTENTION: This test only works in COM2 at 2400 configured as Channel 2!!
+        const baudRate = 2400 
 
         // configure
 
-        let receptionBuffer: Bytes = []
+        let receptionBuffer: readonly number[] = []
         const dataMsg = [0x1B, 0x02, 0xC2, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x86]
             
         try {
-            const port = await serialPortOpenner_PC(PortReference(CMPP_PORT, portConfig))
-            port.onData( bytes => receptionBuffer = [...receptionBuffer, ...bytes])
-            port.onClose( () => {} )
-            port.onError( error => {})
-            port.write(dataMsg)
+            const portReference = { ...defaultPortConfig, baudRate } as const
+            const port = await serialPortOpenner_PC(PortReference(CMPP_PORT, portReference))
+            port.onData( data => { receptionBuffer = [...receptionBuffer, ...data.bytes]} )
+            port.onClose( () => { console.log(`fechando porta`) } )
+            port.onError( error => { console.log(error) })
+            port.write(Bytes(dataMsg))
             await delay(500)
             port.close()
         } catch (err) {
