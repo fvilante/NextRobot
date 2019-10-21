@@ -10,7 +10,7 @@ import { Bytes} from '../data-models/bytes'
 describe('Can open an emulated serial port', () => { 
 
     const portConfig: PortReference['portConfig'] = {
-        baudRate: 2400,
+        baudRate: 9600,
         dataBits: 8,
         stopBits: 1,
         parity: 'none',
@@ -50,7 +50,7 @@ describe('Can open an emulated serial port', () => {
         /** NOTE: This test will fail if there is no real CMPP connected on the specified serial port */
 
         /** Port where real cmpp is connected */
-        const CMPP_PORT = 'COM3'
+        const CMPP_PORT = 'COM6'
 
         // configure
 
