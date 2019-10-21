@@ -1,10 +1,8 @@
 
 import { Reader } from "./reader"
 import { Lens } from "./lens"
-import comparator from "ramda/es/comparator"
 import { Maybe, Nothing, Just } from "./maybe"
 import { isArrayEqual } from "../type-utils/isEqual"
-import { foldLeftArray } from "../array/foldLeftArray"
 import { Message } from "../message/message"
 /** 
  * inspired in Cats, the Scala language's library, and in Haskell language.
