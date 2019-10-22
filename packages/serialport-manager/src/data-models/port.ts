@@ -28,9 +28,13 @@ export type _Port = {
     // Note: It's not case sensitive
     readonly Name: string
 
+    /** NOTE: Concrete driver valid baudrates are listed in comment bellow. This type narrows for what we are using at moment (you can wide it if necessary)
+     *  //115200|57600|38400|19200|9600|4800|2400|1800|1200|600|300|200|150|134|110|75|50 //|number; 
+     */
+    readonly BaudRate:  9600 | 2400 
+
     // expect by its name, this parameters can be defined when you open a port
     readonly Config: {
-        readonly baudRate: 115200|57600|38400|19200|9600|4800|2400|1800|1200|600|300|200|150|134|110|75|50 //|number;
         readonly dataBits: 8|7|6|5;
         //readonly highWaterMark: number;
         //readonly lock: boolean;
@@ -47,12 +51,15 @@ export type _Port = {
         readonly detail: LocalPCPortInfo | RemotePortInfo
     }
 
+    readonly PortsList: readonly _Port['Info'][]
+
     // type of data that flow thrugh port
     readonly DataFlow: Bytes  
 
     // references a port inequivally so we can cause effects through it
     readonly Reference: {
         readonly name: _Port['Name']
+        readonly baudRate: _Port['BaudRate']
         readonly config: _Port['Config']
     }
 
@@ -76,7 +83,6 @@ export type _Port = {
 
 // to be used in case of no data informed
 export const defaultPortConfig: _Port['Config'] = {
-    baudRate: 2400,
     dataBits: 8,
     stopBits: 1,
     parity: 'none',
@@ -85,4 +91,4 @@ export const defaultPortConfig: _Port['Config'] = {
     xoff: false,
 }
 
-export const PortReference = (name: _Port['Name'], config: _Port['Config']):_Port['Reference'] => ({name, config})
+export const PortReference = (name: _Port['Name'], baudRate: _Port['BaudRate'], config: _Port['Config']): _Port['Reference'] => ({name, baudRate, config})

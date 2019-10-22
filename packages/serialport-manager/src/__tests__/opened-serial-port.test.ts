@@ -22,7 +22,7 @@ describe('Can open a serial port and transact data', () => {
 
         try {
             //sendData()
-            const aPort = await serialPortOpenner_Loopback(PortReference('Fake-Loopback', defaultPortConfig ))
+            const aPort = await serialPortOpenner_Loopback(PortReference('Fake-Loopback', 9600,defaultPortConfig ))
             aPort.onData( data => { receptionBuffer = [...receptionBuffer, ...data.bytes] } )
             aPort.onClose( () => {} )
             aPort.onError( error => {})
@@ -54,8 +54,8 @@ describe('Can open a serial port and transact data', () => {
         const dataMsg = [0x1B, 0x02, 0xC2, 0x50, 0x61, 0x02, 0x1B, 0x03, 0x86]
             
         try {
-            const portReference = { ...defaultPortConfig, baudRate } as const
-            const port = await serialPortOpenner_PC(PortReference(CMPP_PORT, portReference))
+            const portReference = { ...defaultPortConfig } 
+            const port = await serialPortOpenner_PC(PortReference(CMPP_PORT, baudRate, portReference))
             port.onData( data => { receptionBuffer = [...receptionBuffer, ...data.bytes]} )
             port.onClose( () => { console.log(`fechando porta`) } )
             port.onError( error => { console.log(error) })
