@@ -7,44 +7,82 @@ import { Either, Left, Right, EitherMatcherFn } from './either'
 
 // version 1 => 2 type parameters and runP returns a promisse 
 
-export type Future<A,E> = {
+export type Future<A> = {
 
     readonly kind: 'Future'
 
-    readonly runP: () => Promise<Either<E,A>>
+    readonly runP: () => Promise<Either<Error,A>>
 
-    readonly map: <B>(f: (_:A) => B) => Future<B,E>
+    readonly map: <B>(f: (_:A) => B) => Future<B>
 
-    readonly fmap: <B>(f: (_:A) => Future<B,E>) => Future<B,E>
+    readonly fmap: <B>(f: (_:A) => Future<B>) => Future<B>
 
-    readonly match: <R>(_: EitherMatcherFn<E, A, R>) => Future<R,undefined>
+    readonly match: <R>(_: EitherMatcherFn<Error, A, R>) => Future<R>
 
 }
 
 // interface only (not instantiate it)
-type _Future<A,E> = {
-    readonly Resolver: (_:Either<E,A>) => void
-    readonly Callback: (resolver: _Future<A,E>['Resolver']) => void
-} & Future<A,E>
+type _Future<A> = {
+    readonly Resolver: (_:Either<Error,A>) => void
+    readonly Callback: (resolver: _Future<A>['Resolver']) => void
+} & Future<A>
 
 
 
 
 
 /** Attention: It's Highly recommended to explicitly type your Future constructions  */
-export const Future = <A,E>(callback: _Future<A,E>['Callback']): Future<A,E> => {
+export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
 
-    const runP: _Future<A,E>['runP'] = async () => {
-        return new Promise( (resolve, reject) => { 
-            const resolver: _Future<A,E>['Resolver'] = e => { 
-                resolve(e)     // resolve promise
+    const runP: _Future<A>['runP'] = async () => {
+        return new Promise<Either<Error,A>>( (resolve, reject) => { 
+            
+            const resolver: _Future<A>['Resolver'] = ma => { 
+                //all resolutions pass here (including any throw)
+                resolve(ma)     // resolve promise
             }
-            callback(resolver) // run effect
+            
+            try {
+                effect(resolver) // run effect
+            } catch (err) {
+                    // tslint:disable: no-if-statement
+                    if(err instanceof Error) {
+                        // IDE type hinting now available
+                        // properly handle Error e
+                        return resolver(Left(err))
+                    }
+                    else if(typeof err === 'string' || err instanceof String) {
+                        // IDE type hinting now available
+                        // properly handle e or...stop using libraries that throw naked strings
+                        return resolver(Left(new Error(String(err)))) 
+                    }
+                    else if(typeof err === 'number' || err instanceof Number) {
+                        // IDE type hinting now available
+                        // properly handle e or...stop using libraries that throw naked numbers
+                        return resolver(Left(new Error(String(err))))
+                    }
+                    else if(typeof err === 'boolean' || err instanceof Boolean) {
+                        // IDE type hinting now available
+                        // properly handle e or...stop using libraries that throw naked booleans
+                        return resolver(Left(new Error(String(err))))
+                    }
+                    else {
+                        // if we can't figure out what what we are dealing with then
+                        // probably cannot recover...therefore, rethrow
+                        // Note to Self: Rethink my life choices and choose better libraries to use.
+                        return resolver(Left(new Error(String(err))))
+                    }
+                    // tslint:enable: no-if-statement
+            }    
+       
+            
+
+
         } )
 
     }
 
-    const map: _Future<A,E>['map'] = f => {
+    const map: _Future<A>['map'] = f => {
         return Future( resolver => { 
             runP()
                 .then( a => a.map(f))
@@ -52,14 +90,14 @@ export const Future = <A,E>(callback: _Future<A,E>['Callback']): Future<A,E> => 
         })
     }
 
-    const fmap: _Future<A,E>['fmap'] = <B>(f:(_: A) => Future<B, E>):Future<B,E> => {
+    const fmap: _Future<A>['fmap'] = <B>(f:(_: A) => Future<B>): Future<B> => {
 
         return Future( resolver => {
             runP()
             .then( ma => 
                 ma.match({
                     Right: a => f(a),
-                    Left: err => Future<B,E>( errResolver => errResolver( Left(err)))
+                    Left: err => Future<B>( errResolver => errResolver( Left(err)))
                 }) 
             )
             .then( mmb => mmb.runP().then( e => resolver(e)))          
@@ -67,8 +105,8 @@ export const Future = <A,E>(callback: _Future<A,E>['Callback']): Future<A,E> => 
 
     }
 
-    const match: _Future<A,E>['match'] = <R>(matcher: EitherMatcherFn<E, A, R>) => {
-        return Future<R,undefined>( resolver => {
+    const match: _Future<A>['match'] = <R>(matcher: EitherMatcherFn<Error, A, R>) => {
+        return Future<R>( resolver => {
             runP()
             .then( ma => ma.match(matcher) )
             .then( r => resolver(Right(r)) )
@@ -95,14 +133,15 @@ export const Future = <A,E>(callback: _Future<A,E>['Callback']): Future<A,E> => 
 
 const Test1 = async () => {
 
-    const f1 = Future<number,string>( resolve => {
+    const f1 = Future<number>( resolve => {
         console.log(`--I'm inside the 'F1' the Future--`)
         resolve(Right(20))
     }).map( n => n * 100)
 
-    const f2 = (n:number) => Future<string,string>( resolve => {
+    const f2 = (n:number) => Future<string>( resolve => {
         console.log(`--I'm inside the 'F2' the Future--`)
         resolve(Right(`Yey Mrs Number '${n}'. Hello `))
+        //resolve(Left(Error(`ERROR:Yey Mrs Number '${n}'. Hello `)))
     }).map( s => s + ` World !`)
 
 
@@ -123,4 +162,4 @@ const Test1 = async () => {
 }
 
 
-//Test1()
+Test1()
