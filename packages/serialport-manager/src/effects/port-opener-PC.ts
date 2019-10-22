@@ -50,7 +50,7 @@ export const serialPortOpenner: _Port['Opener'] = (port: _Port['Reference']): Pr
     return new Promise( async ( resolve, reject ) => {
 
             // create concrete port
-            const aPort = new SerialPort(port.name, {...port.config, ...{ autoOpen: false }})
+            const aPort = new SerialPort(port.name, {...port.config, baudRate: port.baudRate, ...{ autoOpen: false }})
             
 
             // open handler
