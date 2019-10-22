@@ -1,4 +1,4 @@
-import { Either, Left, Right, EitherMatcherFn } from './either'
+import { Either, Left, Right, EitherMatcherFn, filterByRight, filterByLeft } from './either'
 
 
 // tslint:disable: no-expression-statement 
@@ -41,6 +41,26 @@ export const join = <A>(ffa:Future<Future<A>>):Future<A> => {
 
     })
 
+}
+
+/** Same as Promise.all() */
+export const all = <A>(fas: readonly Future<A>[]): Future<readonly A[]> => {
+    
+    return Future<readonly A[]>( resolver => {
+
+        const s0 = () => fas.map( fa => fa.runP())
+        const s1 = () => Promise.all(s0())
+            .then( eis => { 
+                const as = filterByRight(eis)
+                const errs = filterByLeft(eis) // todo: probably'll be just one error. or not ? Check it.
+                return errs.length === 0 
+                    ? resolver( Right(as) ) 
+                    : resolver( Left(errs[0]) ) //takes first error -> ok, safe.
+
+            
+            })
+        return s1()
+    })
 }
 
 
