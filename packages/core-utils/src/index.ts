@@ -32,7 +32,7 @@ export { Lens, LensComposer } from './monads/lens'
 export { State } from './monads/state'
 export { Writer } from './monads/writer'
 export { IO } from './monads/IO'
-export { Future } from './monads/future'
+export { Future, join } from './monads/future'
 
 // functional - tools
 export { zipWith, ZipWithFn } from './functional/zipWith'

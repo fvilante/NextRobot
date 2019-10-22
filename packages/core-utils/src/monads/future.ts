@@ -1,5 +1,6 @@
 import { Either, Left, Right, EitherMatcherFn } from './either'
 
+
 // tslint:disable: no-expression-statement 
 
 // ------------------------ FUTURE ----------------------------------------------
@@ -19,6 +20,7 @@ export type Future<A> = {
 
     readonly match: <R>(_: EitherMatcherFn<Error, A, R>) => Future<R>
 
+
 }
 
 // interface only (not instantiate it)
@@ -28,7 +30,18 @@ type _Future<A> = {
 } & Future<A>
 
 
+export const join = <A>(ffa:Future<Future<A>>):Future<A> => {
 
+    return Future<A>( resolver => {
+
+        ffa.runP().then( ef => ef.match({
+            Left: err => resolver(Left(err)),
+            Right: fa => fa.runP().then( ea => resolver(ea) )
+        }))
+
+    })
+
+}
 
 
 /** Attention: It's Highly recommended to explicitly type your Future constructions  */
@@ -112,7 +125,8 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
             .then( r => resolver(Right(r)) )
         })
     }
- 
+
+
 
     return { 
         kind: 'Future',
@@ -124,6 +138,7 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
 
 
 }
+
 
 
 
@@ -161,5 +176,16 @@ const Test1 = async () => {
 
 }
 
+// join
+const Test2 = () => {
 
-//Test1()
+    const fa = Future<number>( resolver => resolver(Right(10)))
+    const ffa = fa.map( num => Future<number>( resolver => resolver(Right(num))))
+    const r = join(ffa)
+
+    r.runP().then( ma => ma.map( num => console.log(num) ) )
+
+}
+
+
+//Test2()
