@@ -1,4 +1,5 @@
 import { Bytes } from "./bytes"
+import { Future } from "@nextrobot/core-utils"
 
 
 /** Port info of a local port into a PC (Windows/Linux) */
@@ -60,10 +61,12 @@ export type PortOpened = {
     readonly onClose: (callback: () => void) => void
     readonly onData: (callback: (_: Bytes) => void) => void
     readonly onError: (callback: (error?: Error) => void) => void
+    readonly info: () => PortInfo
+    readonly reference: () => PortReference
 }
 
 // Represents a concrete effectful Driver that knows how to open a port on the system
-export type PortOpenner = (port: PortReference) => Promise<PortOpened>
+export type PortOpenner = (port: PortReference) => Future<PortOpened>
 
 
 
