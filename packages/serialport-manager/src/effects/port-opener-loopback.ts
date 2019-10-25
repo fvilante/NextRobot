@@ -1,6 +1,7 @@
 
 import { Bytes } from '../data-models/bytes'
-import { _Port } from '../data-models/port';
+import { _Port, defaultPortConfig } from '../data-models/port';
+import { Right, Future } from '@nextrobot/core-utils';
 
 // tslint:disable: no-expression-statement no-let
 
@@ -18,11 +19,11 @@ import { _Port } from '../data-models/port';
  * @param portName 
  * @param portConfig 
  */
-export const serialPortOpenner: _Port['Opener'] = (port: _Port['Reference']): Promise<_Port['Openned']> => {
+export const serialPortOpenner: _Port['Opener'] = portReference => {
 
     type Callback<K extends keyof _Port['Openned']> = Parameters<_Port['Openned'][K]>[0]
 
-    return new Promise( async (resolve, reject) => {
+    return Future( resolver => {
 
         let onClose: Callback<'onClose'>;
         let onData: Callback<'onData'>;
@@ -43,10 +44,21 @@ export const serialPortOpenner: _Port['Opener'] = (port: _Port['Reference']): Pr
             onClose: callback => { onClose = callback},
             onData: callback => { onData = callback},
             onError: callback => { onError = callback},
+            info: () => ({
+                name: 'loopback-test-mockup-port',
+                detail: {kind: 'RemotePortInfo'}
+            }),
+            reference: () => ({
+                name: 'loopback-test-mockup-port',
+                baudRate: 9600,
+                config: defaultPortConfig,
+
+            })
+
             // todo: add onWrite 
         }
         
-        resolve(openedPort)
+        resolver(Right(openedPort))
        
     })
         
