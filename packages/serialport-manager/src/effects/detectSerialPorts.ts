@@ -4,6 +4,7 @@
 import { _Port } from '../data-models/port'
 
 import * as SerialPort  from 'serialport';
+import { Future, Right } from '@nextrobot/core-utils';
 
 const serialPort = SerialPort.default
 
@@ -24,7 +25,7 @@ type ConcretePortInfo = {
 
 /** concrete function */
 const __detectSerialPorts = (): Promise<readonly ConcretePortInfo[]> => serialPort.list()
-
+const _____detectSerialPorts__Promised = (): Promise<readonly _Port['Info'][]> => __detectSerialPorts().then( ports => ports.map( port => adaptData(port) ))
 
 /** Adapt concrete port-info data to our abstract-data-model port-info*/
 const adaptData = (_: ConcretePortInfo): _Port['Info'] => ({
@@ -46,14 +47,16 @@ const adaptData = (_: ConcretePortInfo): _Port['Info'] => ({
 
 /** Abstracted function 
  * Todo: incorporate Remote Serial Port Detection algoritm*/
-export const detectSerialPorts = (): Promise<readonly _Port['Info'][]> => __detectSerialPorts().then( ports => ports.map( port => adaptData(port) ))
+export const detectSerialPorts = (): Future<readonly _Port['Info'][]> => Future( resolver => _____detectSerialPorts__Promised().then( data => resolver(Right(data))) )
 
 
 
 // informal test 
 
 const test = async () => {
-    const a = await detectSerialPorts()
+    const a = detectSerialPorts()
+        .map( ps => console.log(ps))
+    const b = a.runP()
     console.log(a)
 }
 
