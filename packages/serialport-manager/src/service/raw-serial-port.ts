@@ -18,12 +18,8 @@ export type Service = {
 export const GetService = (): Future<Service> => {
     
     const detect: Service['detect'] = () => 
-        Future( resolver => {
-            const r = detectSerialPorts()
-                .then( list => resolver( Right(list)) )
-            return r
-    })
-
+        detectSerialPorts()
+        
     const opener: Service['opener'] = (portName, baudRate, config = defaultPortConfig) => 
         serialPortOpenner_PC({name: portName, baudRate, config})
       
@@ -70,9 +66,9 @@ const Test2 = () => {
         }))
 
     // tslint:disable-next-line: no-expression-statement
-    const b = a.runP()
+    a.runP()
 
 }
 
 // tslint:disable-next-line: no-expression-statement
-// Test2()
+ Test2()

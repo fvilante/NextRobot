@@ -30,24 +30,6 @@ const NodeBufferToBytes = (buffer: any): Bytes => {
     return Bytes(bytes)
 }
 
-const __getPortInfo_PC = (port: _Port['Name']): Future<_Port['Info']> => Future( resolver => {
-    const f = async () => {
-        const portInfos = await detectSerialPorts()
-        await delay(250).runP()
-        const hasFound = portInfos.find( _port => _port.name === port )
-        if (hasFound)
-            return hasFound
-            throw new Error(`Cannot find port information for serial port number ${port}`) 
-
-    }
-    f().then( info => resolver(Right( info )))
-})
- 
-
-        
-
-    
-
 
 // === implementation ====
 
@@ -74,16 +56,16 @@ export const serialPortOpenner: _Port['Opener'] = port => {
             // create concrete port
             const getAPort = () => new SerialPort(port.name, {...port.config, baudRate: port.baudRate, ...{ autoOpen: false }})
             
-            const aPort = getAPort()
+            const _port = getAPort()
 
             // open handler
-            const createPort = ():_Port['Openned'] => {
+            const createPortHandler = ():_Port['Openned'] => {
                         return {
-                            write: data => aPort.write([...data.bytes]),
-                            close: () => { aPort.close() },
-                            onClose: callback => { aPort.on('close', callback) },
-                            onData: callback => aPort.on('data', (data: unknown) => callback(NodeBufferToBytes(data))),
-                            onError: callback => aPort.on('error', callback),
+                            write: data => _port.write([...data.bytes]),
+                            close: () => { _port.close() },
+                            onClose: callback => { _port.on('close', callback) },
+                            onData: callback => _port.on('data', (data: unknown) => callback(NodeBufferToBytes(data))),
+                            onError: callback => _port.on('error', callback),
                             info: () => ({
                                 name: 'loopback-test-mockup-port',
                                 detail: {kind: 'RemotePortInfo'}
@@ -103,11 +85,11 @@ export const serialPortOpenner: _Port['Opener'] = port => {
             
 
             // set handlers and open
-            aPort.on('open', () => resolver(Right(createPort())))
-            aPort.on('error', openError) //todo: check if 'openError' is as expected overwritted when iPort.onError is called
+            _port.on('open', () => resolver(Right(createPortHandler())))
+            _port.on('error', openError) //todo: check if 'openError' is as expected overwritted when iPort.onError is called
             
             // do try to open
-            aPort.open() 
+            _port.open() 
             
           
 
@@ -146,5 +128,5 @@ const Test1 = async () => {
 }
 
 
-//Test1()
+Test1()
 
