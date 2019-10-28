@@ -138,6 +138,7 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
 
     }
 
+    // todo: Test it! Not tested yet
     const match: _Future<A>['match'] = <R>(matcher: EitherMatcherFn<Error, A, R>) => {
         return Future<R>( resolver => {
             runP()
