@@ -1,4 +1,5 @@
-import { Either, Left, Right, EitherMatcherFn, filterByRight, filterByLeft } from './either'
+
+import { Result, ResultMatcher, filterByOk, filterByError } from './result' 
 
 
 // tslint:disable: no-expression-statement 
@@ -12,54 +13,64 @@ export type Future<A> = {
 
     readonly kind: 'Future'
 
-    readonly runP: () => Promise<Either<Error,A>>
+    readonly runP: () => Promise<Result<A>>
 
     readonly map: <B>(f: (_:A) => B) => Future<B>
 
     readonly fmap: <B>(f: (_:A) => Future<B>) => Future<B>
 
-    readonly match: <R>(_: EitherMatcherFn<Error, A, R>) => Future<R>
+    readonly match: <R>(_: ResultMatcher<A, R>) => Future<R>
 
 
 }
 
 // interface only (not instantiate it)
 type _Future<A> = {
-    readonly Resolver: (_:Either<Error,A>) => void
-    readonly Callback: (resolver: _Future<A>['Resolver']) => void
+    //readonly Resolver: (_:Either<Error,A>) => void
+    readonly OkResolver: (_: A) => void
+    readonly ErrorResolver: (_: Error) => void
+    readonly Callback: ( ok: _Future<A>['OkResolver'], err: _Future<A>['ErrorResolver']) => void
 } & Future<A>
 
 
 export const join = <A>(ffa:Future<Future<A>>):Future<A> => {
 
-    return Future<A>( resolver => {
+    return Future<A>( (ok, error) => {
 
-        ffa.runP().then( ef => ef.match({
-            Left: err => resolver(Left(err)),
-            Right: fa => fa.runP().then( ea => resolver(ea) )
-        }))
+        ffa
+            .runP()
+            .then( rfa => rfa.match<void>({
+                Ok:     fa => fa
+                    .runP()
+                    .then( ra => ra.match({ 
+                        Ok: val => ok(val), 
+                        Error: err => error(err)
+                    })),
+                Error:  err => error(err),
+            }))
 
     })
+
 
 }
 
 /** Same as Promise.all() */
 export const all = <A>(fas: readonly Future<A>[]): Future<readonly A[]> => {
     
-    return Future<readonly A[]>( resolver => {
+    return Future<readonly A[]>( (ok, error) => {
 
-        const s0 = () => fas.map( fa => fa.runP())
-        const s1 = () => Promise.all(s0())
-            .then( eis => { 
-                const as = filterByRight(eis)
-                const errs = filterByLeft(eis) // todo: probably'll be just one error. or not ? Check it.
-                return errs.length === 0 
-                    ? resolver( Right(as) ) 
-                    : resolver( Left(errs[0]) ) //takes first error -> ok, safe.
+        const f0 = () => fas.map( fa => fa.runP())
+        const s1 = () => Promise.all(f0())
+            .then( ras => { 
+                const as = filterByOk(ras)
+                const es = filterByError(ras) // todo: probably'll be just one error. or not ? Check it.
+                return es.length === 0 
+                    ? ok(as)
+                    : error(es[0]) //takes first error -> ok, safe. //todo: what to do if it has more than just one errors ? What to do with other errors ?
 
             
             })
-        return s1()
+        s1() //run effect
     })
 }
 
@@ -67,43 +78,47 @@ export const all = <A>(fas: readonly Future<A>[]): Future<readonly A[]> => {
 /** Attention: It's Highly recommended to explicitly type your Future constructions  */
 export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
 
+    /** runP aways resolves to a Promise<Result<A>> even if an error hapens it will be manipulated inside Result and not inside Promise ) */
     const runP: _Future<A>['runP'] = async () => {
-        return new Promise<Either<Error,A>>( (resolve, reject) => { 
+        return new Promise<Result<A>>( (resolve, reject) => { 
             
-            const resolver: _Future<A>['Resolver'] = ma => { 
-                //all resolutions pass here (including any throw)
-                resolve(ma)     // resolve promise
+            const ok: _Future<A>['OkResolver'] = value => { 
+                resolve(Result(value))     // resolve promise
+            }
+
+            const err:  _Future<A>['ErrorResolver'] = err => {
+                resolve(Result(err as unknown as A))
             }
             
             try {
-                effect(resolver) // run effect
-            } catch (err) {
+                effect( ok, err ) // run effect
+            } catch (catched) {
                     // tslint:disable: no-if-statement
-                    if(err instanceof Error) {
+                    if(catched instanceof Error) {
                         // IDE type hinting now available
                         // properly handle Error e
-                        return resolver(Left(err))
+                        return err(catched)
                     }
-                    else if(typeof err === 'string' || err instanceof String) {
+                    else if(typeof catched === 'string' || catched instanceof String) {
                         // IDE type hinting now available
                         // properly handle e or...stop using libraries that throw naked strings
-                        return resolver(Left(new Error(String(err)))) 
+                        return err(new Error(String(catched)))
                     }
-                    else if(typeof err === 'number' || err instanceof Number) {
+                    else if(typeof catched === 'number' || catched instanceof Number) {
                         // IDE type hinting now available
                         // properly handle e or...stop using libraries that throw naked numbers
-                        return resolver(Left(new Error(String(err))))
+                        return err(new Error(String(catched)))
                     }
-                    else if(typeof err === 'boolean' || err instanceof Boolean) {
+                    else if(typeof catched === 'boolean' || catched instanceof Boolean) {
                         // IDE type hinting now available
                         // properly handle e or...stop using libraries that throw naked booleans
-                        return resolver(Left(new Error(String(err))))
+                        return err(new Error(String(catched)))
                     }
                     else {
                         // if we can't figure out what what we are dealing with then
                         // probably cannot recover...therefore, rethrow
                         // Note to Self: Rethink my life choices and choose better libraries to use.
-                        return resolver(Left(new Error(String(err))))
+                        return err(new Error(String(catched)))
                     }
                     // tslint:enable: no-if-statement
             }    
@@ -116,34 +131,44 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
     }
 
     const map: _Future<A>['map'] = f => {
-        return Future( resolver => { 
+        return Future( (ok, error) => { 
             runP()
-                .then( a => a.map(f))
-                .then( b => resolver(b))
+                .then( r => r.match({
+                    Ok:     val => ok( f(val) ),
+                    Error:  err => error(err),
+                }))
         })
     }
 
     const fmap: _Future<A>['fmap'] = <B>(f:(_: A) => Future<B>): Future<B> => {
 
-        return Future( resolver => {
+        return Future<B>( (ok, error) => {
             runP()
-            .then( ma => 
-                ma.match({
-                    Right: a => f(a),
-                    Left: err => Future<B>( errResolver => errResolver( Left(err)))
-                }) 
-            )
-            .then( mmb => mmb.runP().then( e => resolver(e)))          
+            .then( ra => ra.match({
+                            Ok:     valA => f(valA),
+                            Error:  err => Future<B>( (_,_e) => _e(err) ) ,
+                        }))
+            .then( fb => fb.runP()
+                .then( rb => 
+                    rb.match({
+                            Ok:     valB => ok(valB),
+                            Error:  err => error(err),
+                        })))
+            
+       
         })
 
     }
 
     // todo: Test it! Not tested yet
-    const match: _Future<A>['match'] = <R>(matcher: EitherMatcherFn<Error, A, R>) => {
-        return Future<R>( resolver => {
+    const match: _Future<A>['match'] = <R>(matcher: ResultMatcher<A, R>) => {
+        return Future<R>( (ok, _) => {
             runP()
-            .then( ma => ma.match(matcher) )
-            .then( r => resolver(Right(r)) )
+                .then( r => r.match({
+                    Ok:     val => ok( matcher.Ok(val) ),
+                    Error:  err => ok( matcher.Error(err) ),
+                }))
+
         })
     }
 
@@ -169,28 +194,28 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
 
 const Test1 = async () => {
 
-    const f1 = Future<number>( resolve => {
+    const f1 = Future<number>( (ok, error) => {
         console.log(`--I'm inside the 'F1' the Future--`)
-        resolve(Right(20))
+        ok(20)
     }).map( n => n * 100)
 
-    const f2 = (n:number) => Future<string>( resolve => {
+    const f2 = (n:number) => Future<string>( (ok, error) => {
         console.log(`--I'm inside the 'F2' the Future--`)
-        resolve(Right(`Yey Mrs Number '${n}'. Hello `))
-        //resolve(Left(Error(`ERROR:Yey Mrs Number '${n}'. Hello `)))
+        ok(`Yey Mrs Number '${n}'. Hello `)
+        // error(Error(`ERROR:Yey Mrs Number '${n}'. Hello `))
     }).map( s => s + ` World !`)
 
 
     const f3 = f1.match({
-        Left: err => `Finished: Throw this error --> ${err}`,
-        Right: value => `Finished: Successful, value --> ${ value }`,
+        Ok: err => `Finished: Throw this error --> ${err}`,
+        Error: value => `Finished: Successful, value --> ${ value }`,
     })
 
 
     const f4 = f1.fmap( n => f2(n))
 
-    const r1 = (await f3.runP()).fromRight(``)
-    const r2 = (await f4.runP()).fromRight(`If you're looking this an left happned`)
+    const r1 = (await f3.runP()).fromValue(``)
+    const r2 = (await f4.runP()).fromValue(`If you're looking this an left happned`)
 
     console.log(r1)
     console.log(r2)
@@ -200,8 +225,8 @@ const Test1 = async () => {
 // join
 const Test2 = () => {
 
-    const fa = Future<number>( resolver => resolver(Right(10)))
-    const ffa = fa.map( num => Future<number>( resolver => resolver(Right(num))))
+    const fa = Future<number>( ok => ok(10))
+    const ffa = fa.map( num => Future<number>( ok => ok(num) ) )
     const r = join(ffa)
 
     r.runP().then( ma => ma.map( num => console.log(num) ) )
