@@ -15,11 +15,14 @@ export type Future<A> = {
 
     readonly runP: () => Promise<Result<A>>
 
+    /** run and match an effectful result */
+    readonly runE: (m: ResultMatcher<A,void>) => void
+
     readonly map: <B>(f: (_:A) => B) => Future<B>
 
     readonly fmap: <B>(f: (_:A) => Future<B>) => Future<B>
 
-    readonly match: <R>(_: ResultMatcher<A, R>) => Future<R>
+    readonly match: <R>(m: ResultMatcher<A, R>) => Future<R>
 
 
 }
@@ -38,21 +41,16 @@ export const join = <A>(ffa:Future<Future<A>>):Future<A> => {
     return Future<A>( (ok, error) => {
 
         ffa
-            .runP()
-            .then( rfa => rfa.match<void>({
-                Ok:     fa => fa
-                    .runP()
-                    .then( ra => ra.match({ 
-                        Ok: val => ok(val), 
-                        Error: err => error(err)
-                    })),
+            .runE({
                 Error:  err => error(err),
-            }))
+                Ok:     val => val.runE({
+                    Error:  err => error(err),
+                    Ok:     val => ok(val),
+                }),
+            })
 
-    })
 
-
-}
+})}
 
 /** Same as Promise.all() */
 export const all = <A>(fas: readonly Future<A>[]): Future<readonly A[]> => {
@@ -68,7 +66,6 @@ export const all = <A>(fas: readonly Future<A>[]): Future<readonly A[]> => {
                     ? ok(as)
                     : error(es[0]) //takes first error -> ok, safe. //todo: what to do if it has more than just one errors ? What to do with other errors ?
 
-            
             })
         s1() //run effect
     })
@@ -130,6 +127,11 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
 
     }
 
+    const runE: _Future<A>['runE'] = matcher => {
+        runP()
+            .then( ra => ra.match(matcher))
+    }
+
     const map: _Future<A>['map'] = f => {
         return Future( (ok, error) => { 
             runP()
@@ -177,6 +179,7 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
     return { 
         kind: 'Future',
         runP,
+        runE,
         map,
         fmap,
         match,
@@ -229,7 +232,14 @@ const Test2 = () => {
     const ffa = fa.map( num => Future<number>( ok => ok(num) ) )
     const r = join(ffa)
 
-    r.runP().then( ma => ma.map( num => console.log(num) ) )
+    //verbose
+    const x = r.runP().then( ma => ma.map( num => console.log(num) ) )
+
+    //better
+    r.runE({
+        Error:  err => console.log(`error happened: ${err}`),
+        Ok:     val => console.log(`Good value: ${val}`),
+    })
 
 }
 
