@@ -1,9 +1,7 @@
 import { Future } from "./monads/future"
-import { Right } from "./monads/either"
 
 export const delay = (ms:number):Future<undefined> =>
-    Future( resolver => {
+    Future( ok => {
         // tslint:disable-next-line: no-expression-statement
-        new Promise( (resolve) => { setTimeout( () => resolve(), ms) })
-            .then( () => resolver(Right(undefined)) )
+        setTimeout( () => ok(undefined), ms)
     })
