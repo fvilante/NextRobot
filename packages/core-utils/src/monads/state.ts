@@ -30,9 +30,9 @@ export type State<S,A> = {
     readonly pure: <B>(valueB: B) => State<S,B>
 
     /**
-    * Modify the input state and return undefined.
+    * Modify the input state but preserves the current value.
     */
-    readonly modify: (fn: (_:S) => S) => State<S, undefined>
+    readonly modify: (fn: (_:S) => S) => State<S, A>
 
     /**
     * Inspect a value from the input state, without modifying the state.
@@ -80,7 +80,10 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
     }
 
     const modify: State<S,A>['modify'] = fn => {
-        return State( (s0:S) => [fn(runS(s0)), undefined] )
+        return State( (s0:S) => { 
+            const currentValue = runA(s0) 
+            return [ fn(runS(s0)), currentValue ]
+        })
     }
 
     const monitor: State<S,A>['monitor'] = fn => {
