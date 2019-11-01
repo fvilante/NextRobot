@@ -1,5 +1,5 @@
 
-import { Result, ResultMatcher, filterByOk, filterByError } from './result' 
+import { Result, ResultMatcher, Result_ } from './result' 
 
 
 // tslint:disable: no-expression-statement 
@@ -60,8 +60,8 @@ export const all = <A>(fas: readonly Future<A>[]): Future<readonly A[]> => {
         const f0 = () => fas.map( fa => fa.runP())
         const s1 = () => Promise.all(f0())
             .then( ras => { 
-                const as = filterByOk(ras)
-                const es = filterByError(ras) // todo: probably'll be just one error. or not ? Check it.
+                const as = Result_.filterByOk(ras)
+                const es = Result_.filterByError(ras) // todo: probably'll be just one error. or not ? Check it.
                 return es.length === 0 
                     ? ok(as)
                     : error(es[0]) //takes first error -> ok, safe. //todo: what to do if it has more than just one errors ? What to do with other errors ?

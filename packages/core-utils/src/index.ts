@@ -33,6 +33,7 @@ export { State } from './monads/state'
 export { Writer } from './monads/writer'
 export { IO } from './monads/IO'
 export { Future, join, all } from './monads/future'
+export { Result, Result_ } from './monads/result'
 
 // functional - tools
 export { zipWith, ZipWithFn } from './functional/zipWith'

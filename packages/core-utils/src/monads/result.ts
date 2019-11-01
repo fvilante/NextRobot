@@ -85,12 +85,21 @@ export const Result = <A>( data: A | Error ): Result<A> => {
 
 }
 
+// --- Static Part ---
+
+// constructors
+
+
+const Result_Ok = <A>(val:A):Result<A> => Result(val)
+
+const Result_Error = <A>(err: Error):Result<A> => Result<A>(err)  
+
 
 // operations
 
 
-/** Extracts from a list of 'Result' all the 'Ok' elements. All elements are extracted in order */
-export const filterByOk = <A>(es: readonly Result<A>[]): readonly A[] => {
+
+const filterByOk = <A>(es: readonly Result<A>[]): readonly A[] => {
     return foldLeftArray(es, [] as readonly A[], (acc, cur) => {
         return cur.match({
             Error:  _   => acc,
@@ -100,8 +109,8 @@ export const filterByOk = <A>(es: readonly Result<A>[]): readonly A[] => {
     
 }
 
-/** Extracts from a list of 'Result' all the 'Error' elements. All elements are extracted in order */
-export const filterByError = <A>(es: readonly Result<A>[]): readonly Error[] => {
+
+const filterByError = <A>(es: readonly Result<A>[]): readonly Error[] => {
     return foldLeftArray(es, [] as readonly Error[], (acc, cur) => {
         return cur.match({
             Error:  err => [...acc, err],
@@ -110,6 +119,35 @@ export const filterByError = <A>(es: readonly Result<A>[]): readonly Error[] => 
     })
     
 }
+
+
+// static interface
+
+
+/** Static part of the 'Result' monad */
+export type Result_ = {
+    /** Ok construcor */
+    readonly Ok: <A>(val: A) => Result<A>
+
+    /** Error constructor */
+    readonly Error: <A>(err: Error) => Result<A>
+
+    /** Extracts from a list of 'Result' all the 'Ok' elements. All elements are extracted in order */
+    readonly filterByOk: <A>(es: readonly Result<A>[]) => readonly A[]
+
+    /** Extracts from a list of 'Result' all the 'Error' elements. All elements are extracted in order */
+    readonly filterByError: <A>(es: readonly Result<A>[]) => readonly Error[]
+}
+
+export const Result_: Result_ = {
+    Ok: Result_Ok,
+    Error: Result_Error,
+    filterByOk,
+    filterByError,
+}
+
+
+
 
 // informal test
 
