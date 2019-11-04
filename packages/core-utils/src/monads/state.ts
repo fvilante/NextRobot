@@ -47,7 +47,7 @@ export type State<S,A> = {
     /**
     * Set the state to `s` and return Unit.
     */
-    readonly put: (_: S) => State<S, undefined>
+    readonly set: (_: S) => State<S, undefined>
 
     /**
     * Maps the return value
@@ -100,7 +100,7 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
         })
     }
 
-    const put: State<S,A>['put'] = newS0 => {
+    const put: State<S,A>['set'] = newS0 => {
         return State( (otherS0:S) => [newS0,undefined] )
     }
 
@@ -135,7 +135,7 @@ export const State = <S,A>(nextState: (_:S) => readonly [S, A]): State<S,A> => {
         modify,
         monitor,
         get,
-        put,
+        set: put,
         map,
         fmap,
     }
@@ -165,7 +165,7 @@ const Test1 = () => {
 
     const s0 = addToStore( [1,2,3] )
     const s1 = s0.modify( clearStore )
-    const s2 = s1.put( { input: [1,2,3,4] as const } )
+    const s2 = s1.set( { input: [1,2,3,4] as const } )
     const s3 = s2.get()
     const s4 = s3.fmap( s => addToStore([10,20,30,99, ...s.input]) )
 
