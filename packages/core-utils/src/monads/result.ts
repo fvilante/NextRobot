@@ -1,4 +1,5 @@
 import { foldLeftArray } from "../array/foldLeftArray"
+import { Maybe } from "./maybe"
 
 
 export type ResultMatcher<A,R> = {
@@ -90,6 +91,32 @@ export const Result = <A>( data: A | Error ): Result<A> => {
 // constructors
 
 
+// static interface
+
+
+/** Static part of the 'Result' monad */
+export type Result_ = {
+    /** Ok construcor */
+    readonly Ok: <A>(val: A) => Result<A>
+
+    /** Error constructor */
+    readonly Error: <A>(err: Error) => Result<A>
+
+    /** Extracts from a list of 'Result' all the 'Ok' elements. All elements are extracted in order */
+    readonly filterByOk: <A>(es: readonly Result<A>[]) => readonly A[]
+
+    /** Extracts from a list of 'Result' all the 'Error' elements. All elements are extracted in order */
+    readonly filterByError: <A>(es: readonly Result<A>[]) => readonly Error[]
+
+    readonly fromMaybe: <A>(ma: Maybe<A>) => Result<A> 
+
+    //readonly fromLoading: <A>(ma: Loading<A>) => Result<A>
+
+}
+
+
+// implemantations
+
 const Result_Ok = <A>(val:A):Result<A> => Result(val)
 
 const Result_Error = <A>(err: Error):Result<A> => Result<A>(err)  
@@ -120,30 +147,21 @@ const filterByError = <A>(es: readonly Result<A>[]): readonly Error[] => {
     
 }
 
-
-// static interface
-
-
-/** Static part of the 'Result' monad */
-export type Result_ = {
-    /** Ok construcor */
-    readonly Ok: <A>(val: A) => Result<A>
-
-    /** Error constructor */
-    readonly Error: <A>(err: Error) => Result<A>
-
-    /** Extracts from a list of 'Result' all the 'Ok' elements. All elements are extracted in order */
-    readonly filterByOk: <A>(es: readonly Result<A>[]) => readonly A[]
-
-    /** Extracts from a list of 'Result' all the 'Error' elements. All elements are extracted in order */
-    readonly filterByError: <A>(es: readonly Result<A>[]) => readonly Error[]
+const fromMaybe: Result_['fromMaybe'] = ma => {
+    type A = ReturnType<typeof ma._fromJust>
+    return ma.match({
+        Just:       val =>  Result(val),
+        Nothing:            Result<A>(Error(`Unknown error. Note: An 'Result' monad was converted from an 'Maybe' monad, so there is no error description`))
+    })
 }
+
 
 export const Result_: Result_ = {
     Ok: Result_Ok,
     Error: Result_Error,
     filterByOk,
     filterByError,
+    fromMaybe,
 }
 
 
