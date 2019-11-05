@@ -3,6 +3,8 @@
 /** NOTE: 'E' stands for Enviroment */
 export type Reader<E,A> = {
 
+    readonly kind: 'Reader'
+
     readonly run: (enviroment: E) => A
     
     readonly map: <B>(fn: (_:A) => B) => Reader<E,B> 
@@ -42,6 +44,7 @@ export const Reader = <E,A>(fn: (enviroment: E) => A): Reader<E,A> => {
     }
 
     return {
+        kind: 'Reader',
         run,
         map,
         fmap,

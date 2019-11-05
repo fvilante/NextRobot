@@ -7,6 +7,8 @@ import { Monoid } from '../algebraic-structures/monoid'
 // todo: discuss -> eager or lazy evaluated ?
 export type Writer<A, M> = {
 
+    readonly kind: 'Writer'
+
     readonly run: () => readonly [M, A] // [message, value]
 
     readonly map: <B>(fn: (_:A) => B) => Writer<B,M> 
@@ -37,6 +39,7 @@ export const Writer = <M>(monoid: Monoid<M>) => <A>(message: M, value:A ): Write
     }
 
     return {
+        kind: 'Writer',
         run,
         map,
         fmap,

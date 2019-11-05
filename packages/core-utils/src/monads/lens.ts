@@ -9,6 +9,7 @@ import { Either } from "./either"
  * A lens can be thought of as a first class getter/setter. A Lens[S, A] 
  * is a data type that knows how to get an A out of an S, or set an A in an S. */
 export type Lens<S,A> = {
+    readonly kind: 'Lens'
     readonly get: (s:S) => A
     readonly set: (s:S, a:A) => S
     readonly modify: (s:S) => (f: (_:A) => A) => S
@@ -33,6 +34,7 @@ export const Lens = <S,A>(get: Lens<S,A>['get'], set: Lens<S,A>['set']): Lens<S,
     }
 
     return {
+        kind: 'Lens',
         get,
         set,
         modify,
