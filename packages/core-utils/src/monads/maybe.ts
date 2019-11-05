@@ -3,6 +3,9 @@
 // Haskell Maybe
 // ================================================
 
+
+
+
 type Func<A,B> = (_:A) => B
 
 // ThrowError :: Error e => e -> absurd
@@ -132,6 +135,16 @@ export class Maybe<A> {
 }
 
 // Helper constructors
+
+// todo: I think a better construction process would be use Maybe as the constructor and construct it with undefined being the Nothing case and 'T' type parameter being the Just
+//       i think the advantage is to reduce verbosity and matches the 'Loading Monad' interface
+//
+//       Instead of this:
+//          const a = predicate ? Just<number>( n ) : Nothing<number>()
+//       This:
+//          const a = Maybe<number>( predicate ? n : undefined )
+//
+//       I don't know if both scenarios are desirable, or only one of them. Check it!
 
 export const Just = <A>(a: A): Maybe<A> => Maybe.Just(a)
 // ATTENTION: You WOULD enter the type parameter explicitly when invoking Nothing (ie: Nothing<number>() )
