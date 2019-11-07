@@ -34,6 +34,7 @@ export { Writer } from './monads/writer'
 export { IO } from './monads/IO'
 export { Future, join, all } from './monads/future'
 export { Result, Result_ } from './monads/result'
+export { List, List_ } from './monads/list'
 
 // functional - tools
 export { zipWith, ZipWithFn } from './functional/zipWith'
