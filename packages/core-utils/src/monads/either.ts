@@ -59,6 +59,8 @@ export type Either<A, B> = {
 
     readonly fmap: <C>(f: (_:B) => Either<A,C>) => Either<A,C>
 
+    readonly mapLeft: <C>(f: (_:A) => C) => Either<C,B>
+
     //readonly join: <C>(mmc: Either<A,Either<A,C>>) => Either<A,C>
 
     readonly isLeft: () => boolean
@@ -76,29 +78,39 @@ export type Either<A, B> = {
  
 }
 
-export const Either = <A,B>(value: _Left<A> | _Right<B>): Either<A,B> => {
+export const Either = <A,B>(data: _Left<A> | _Right<B>): Either<A,B> => {
+
+    const mapLeft: Either<A,B>['mapLeft'] = f => {
+        type C = ReturnType<typeof f>
+        return _isLeft(data) ? Either<C,B>(_Left(f(data.value))) : Either<C,B>(data) 
+    }
+    
 
     const main = (): Either<A,B> => ({
 
         kind: 'Either',
 
         map: <C>(f: (_:B) => C):Either<A,C> => 
-            _isLeft(value) ? Either<A,C>(value) : Either<A,C>(_Right(f(value.value))),
+            _isLeft(data) ? Either<A,C>(data) : Either<A,C>(_Right(f(data.value))),
 
         fmap: <C>(f: (_:B) => Either<A,C>): Either<A,C> =>
-            _isLeft(value) ? Either<A,C>(value) : f(value.value),
+            _isLeft(data) ? Either<A,C>(data) : f(data.value),
 
-        isLeft: ():boolean => _isLeft(value),
+            
+        mapLeft, 
 
-        isRight: ():boolean => _isRight(value),
+        isLeft: ():boolean => _isLeft(data),
 
-        fromLeft: (defaultValue: A): A => _isLeft(value) ? value.value : defaultValue,
+        isRight: ():boolean => _isRight(data),
 
-        fromRight: (defaultValue: B): B => _isRight(value) ? value.value : defaultValue,
+        fromLeft: (defaultValue: A): A => _isLeft(data) ? data.value : defaultValue,
 
-        getValue: (): A | B => _isLeft(value) ? value.value : value.value,
+        fromRight: (defaultValue: B): B => _isRight(data) ? data.value : defaultValue,
 
-        match: matcher => _isLeft(value) ? matcher.Left(value.value) : matcher.Right(value.value)
+        getValue: (): A | B => _isLeft(data) ? data.value : data.value,
+
+        match: matcher => _isLeft(data) ? matcher.Left(data.value) : matcher.Right(data.value),
+
 
     })
 
