@@ -1,4 +1,5 @@
 import { Either, Right, Left } from "./either";
+import { Try } from "./try";
 
 
 
@@ -26,42 +27,8 @@ type _IO<A> = {
  */
 export const IO = <A>( fn: _IO<A>['Lazy']): IO<A> => {
 
-    const run: _IO<A>['run'] = () => {
-
-        try {
-            return Right(fn()) 
-        }
-        catch(e) {
-            // tslint:disable: no-if-statement
-            if(e instanceof Error) {
-                // IDE type hinting now available
-                // properly handle Error e
-                return Left(e) 
-            }
-            else if(typeof e === 'string' || e instanceof String) {
-                // IDE type hinting now available
-                // properly handle e or...stop using libraries that throw naked strings
-                return Left(new Error(String(e))) 
-            }
-            else if(typeof e === 'number' || e instanceof Number) {
-                // IDE type hinting now available
-                // properly handle e or...stop using libraries that throw naked numbers
-                return Left(new Error(String(e)))
-            }
-            else if(typeof e === 'boolean' || e instanceof Boolean) {
-                // IDE type hinting now available
-                // properly handle e or...stop using libraries that throw naked booleans
-                return Left(new Error(String(e)))
-            }
-            else {
-                // if we can't figure out what what we are dealing with then
-                // probably cannot recover...therefore, rethrow
-                // Note to Self: Rethink my life choices and choose better libraries to use.
-                return Left(new Error(String(e)))
-            }
-            // tslint:enable: no-if-statement
-        }
-
+    const run: _IO<A>['run'] = () => {  
+        return Try(fn) 
     } 
 
     const map = <B>(f: (_:A) => B): IO<B> => 

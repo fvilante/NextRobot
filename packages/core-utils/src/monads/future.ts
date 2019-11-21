@@ -1,5 +1,6 @@
 
 import { Result, ResultMatcher, Result_ } from './result' 
+import { Try } from './try'
 
 
 // tslint:disable: no-expression-statement 
@@ -86,45 +87,15 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
             const err:  _Future<A>['ErrorResolver'] = err => {
                 resolve(Result(err as unknown as A))
             }
-            
-            try {
-                effect( ok, err ) // run effect
-            } catch (catched) {
-                    // tslint:disable: no-if-statement
-                    if(catched instanceof Error) {
-                        // IDE type hinting now available
-                        // properly handle Error e
-                        return err(catched)
-                    }
-                    else if(typeof catched === 'string' || catched instanceof String) {
-                        // IDE type hinting now available
-                        // properly handle e or...stop using libraries that throw naked strings
-                        return err(new Error(String(catched)))
-                    }
-                    else if(typeof catched === 'number' || catched instanceof Number) {
-                        // IDE type hinting now available
-                        // properly handle e or...stop using libraries that throw naked numbers
-                        return err(new Error(String(catched)))
-                    }
-                    else if(typeof catched === 'boolean' || catched instanceof Boolean) {
-                        // IDE type hinting now available
-                        // properly handle e or...stop using libraries that throw naked booleans
-                        return err(new Error(String(catched)))
-                    }
-                    else {
-                        // if we can't figure out what what we are dealing with then
-                        // probably cannot recover...therefore, rethrow
-                        // Note to Self: Rethink my life choices and choose better libraries to use.
-                        return err(new Error(String(catched)))
-                    }
-                    // tslint:enable: no-if-statement
-            }    
-       
-            
 
+            const unsafeEffect = () => effect(ok, err)
 
-        } )
-
+            Try(unsafeEffect)
+                .match({
+                    Left:    catched => err(catched),
+                    Right:   ()      => { },
+                })
+        })
     }
 
     const runE: _Future<A>['runE'] = matcher => {
@@ -243,5 +214,5 @@ const Test2 = () => {
 
 }
 
-
+//Test1()
 //Test2()
