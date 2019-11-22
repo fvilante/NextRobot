@@ -75,7 +75,6 @@ export type Either<A, B> = {
 
     readonly match: <R>(_: EitherMatcherFn<A,B,R>) => R
 
- 
 }
 
 export const Either = <A,B>(data: _Left<A> | _Right<B>): Either<A,B> => {
@@ -86,33 +85,41 @@ export const Either = <A,B>(data: _Left<A> | _Right<B>): Either<A,B> => {
     }
     
 
-    const main = (): Either<A,B> => ({
-
-        kind: 'Either',
-
-        map: <C>(f: (_:B) => C):Either<A,C> => 
-            _isLeft(data) ? Either<A,C>(data) : Either<A,C>(_Right(f(data.value))),
-
-        fmap: <C>(f: (_:B) => Either<A,C>): Either<A,C> =>
-            _isLeft(data) ? Either<A,C>(data) : f(data.value),
-
-            
-        mapLeft, 
-
-        isLeft: ():boolean => _isLeft(data),
-
-        isRight: ():boolean => _isRight(data),
-
-        fromLeft: (defaultValue: A): A => _isLeft(data) ? data.value : defaultValue,
-
-        fromRight: (defaultValue: B): B => _isRight(data) ? data.value : defaultValue,
-
-        getValue: (): A | B => _isLeft(data) ? data.value : data.value,
-
-        match: matcher => _isLeft(data) ? matcher.Left(data.value) : matcher.Right(data.value),
+    const main = (): Either<A,B> => {
 
 
-    })
+        const map = <C>(f: (_:B) => C):Either<A,C> => 
+            _isLeft(data) ? Either<A,C>(data) : Either<A,C>(_Right(f(data.value)))
+
+        const fmap = <C>(f: (_:B) => Either<A,C>): Either<A,C> =>
+            _isLeft(data) ? Either<A,C>(data) : f(data.value)
+
+        const isLeft = ():boolean => _isLeft(data)
+
+        const isRight = ():boolean => _isRight(data)
+
+        const fromLeft = (defaultValue: A): A => _isLeft(data) ? data.value : defaultValue
+
+        const fromRight = (defaultValue: B): B => _isRight(data) ? data.value : defaultValue
+
+        const getValue = (): A | B => _isLeft(data) ? data.value : data.value
+
+        const match: Either<A,B>['match'] = matcher => _isLeft(data) ? matcher.Left(data.value) : matcher.Right(data.value)
+
+        return { 
+            kind: 'Either',
+            map,
+            fmap,
+            mapLeft, 
+            isLeft,
+            isRight,
+            fromLeft,
+            fromRight,
+            getValue,
+            match,
+        }
+
+    }
 
     return main()
 
@@ -169,6 +176,28 @@ export const matchEither = <A,B,R>(e: Either<A,B>, matcher: EitherMatcherFn<A,B,
         : matcher.Right( (e.getValue() as B) )
 
 }
+
+
+// Static part
+
+const flatten = <A,B>(mma: Either<A, Either<A, B>>):Either<A,B> => {
+    return mma.match<Either<A,B>>({
+        Left:       a => Left(a),
+        Right:      eab => eab.match<Either<A,B>>({
+            Left:       a => Left(a),
+            Right:      b => Right(b),
+        }),
+    })
+}
+
+export type Either_ = {
+    readonly flatten: <A,B>(mma: Either<A, Either<A, B>>) => Either<A,B>
+} 
+
+export const Either_: Either_= {
+    flatten,
+} 
+
 
 
 // informal test
