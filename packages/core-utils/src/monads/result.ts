@@ -1,87 +1,87 @@
 import { foldLeftArray } from "../array/foldLeftArray"
 import { Maybe } from "./maybe"
+import { identity } from "./identity"
 
 
-export type ResultMatcher<A,R> = {
-    readonly Ok: (_:A) => R
-    readonly Error: (_: Error) => R 
-}
-
-
-/** Result A or Error. This type works like Either, buf left is setted to 'Error' while Right is setted to 'A' */
-export type Result<A> = {
+/** Results in a successful value of type A or an error of type E. This type works like Either, but the semantics enforces the Error Success reasoning */
+export type Result<E,A> = {
     readonly kind: 'Result'
 
-    readonly map: <B>(f: (_:A) => B) => Result<B>
-    readonly fmap: <B>(f: (_:A) => Result<B>) => Result<B>
+    readonly map: <B>(f: (_:A) => B) => Result<E,B>
+    readonly fmap: <B>(f: (_:A) => Result<E,B>) => Result<E,B>
+    readonly mapError: <E1>(f: (_:E) => E1) => Result<E1,A>
+    readonly bimap: <E1,B>(errorFn: (_:E) => E1, valueFn: (_:A) => B) => Result<E1,B>
     
     readonly fromValue: (_defaultValue: A) => A
-    readonly fromError: (_defaultError: Error) => Error
+    readonly fromError: (_defaultError: E) => E
 
     readonly isError: () => boolean
     readonly isValue: () => boolean //todo: Maybe 'isOk' should be a better method name
 
-    readonly match: <R>(m: ResultMatcher<A,R>) => R
+    readonly fold: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => R
 }
+ 
 
+const ResultConstructor = <E,A>( data: A | E, _isError: boolean ): Result<E,A> => {
 
-export const Result = <A>( data: A | Error ): Result<A> => {
+    const isError: Result<E,A>['isError'] = () => _isError
 
-    const isError: Result<A>['isError'] = () => {
-        return (data instanceof Error) ? true : false
-    }
+    const isValue: Result<E,A>['isValue'] = () => !isError()
 
-    const isValue: Result<A>['isValue'] = () => !isError()
-
-    const match: Result<A>['match'] = matcher => {
+    const fold: Result<E,A>['fold'] = (errorFn, valueFn) => {
         return isError()
-            ? matcher.Error(data as Error)
-            : matcher.Ok( data as A)
+            ? errorFn(data as E)
+            : valueFn(data as A)
     }
 
-
-    const map: Result<A>['map'] = f => {
-        type B = ReturnType<typeof f>
-        return match({
-            Ok:     val => Result(f(val)),
-            Error:  err => Result(err) as unknown as Result<B>,
-        })
+    const bimap: Result<E,A>['bimap'] = (errorFn, valueFn) => {
+        return fold(
+            err => Result.Error( errorFn(err) ),
+            val => Result.Value( valueFn(val) ),
+        )
     }
 
-    const fmap: Result<A>['fmap'] = f => {
-        type B = ReturnType<ReturnType<typeof f>['fromValue']>
-        return match({
-            Ok:     val => f(val),
-            Error:  err => Result(err) as unknown as Result<B>,
-        })
+    const map: Result<E,A>['map'] = f => {
+        return bimap( identity, f )
     }
 
-    const fromValue: Result<A>['fromValue'] = _default => {
-        return match({
-            Ok:     val => val,
-            Error:  err => _default,
-        }) 
+    const fmap: Result<E,A>['fmap'] = f => {
+        return fold(
+            err => Result.Error(err),
+            val => f(val),
+        )
     }
 
-    const fromError: Result<A>['fromError'] = _default => {
-        return match({
-            Ok:     val => _default,
-            Error:  err => err,
-        }) 
+    const mapError: Result<E,A>['mapError'] = f => {
+        return bimap( f, identity )
     }
+        
+    const fromValue: Result<E,A>['fromValue'] = _default => {
+        return fold(
+            err => _default,
+            val => val,
+        ) 
+    }
+
+    const fromError: Result<E,A>['fromError'] = _defaultError => {
+        return fold(
+            err => err,
+            val => _defaultError,
+        ) 
+    }
+
 
     return {
-
-        kind: 'Result',
-
+        kind: 'Result', //todo: verify if this `kind` property can be removed. Don't know if it is really necessary (logging/trace?). I dont know the speed cost impact of mantain this. All monads are using this pattern
         map,
         fmap,
+        mapError,
+        bimap,
         fromValue,
         fromError,
         isError,
         isValue,
-        match,
-
+        fold,
     }
 
 }
@@ -95,71 +95,70 @@ export const Result = <A>( data: A | Error ): Result<A> => {
 
 
 /** Static part of the 'Result' monad */
-export type Result_ = {
-    /** Ok construcor */
-    readonly Ok: <A>(val: A) => Result<A>
+type ResultStatic = {
+    /** Ok construcor. Note: You should inform also the Error type on construction*/
+    readonly Value: <E,A>(value: A) => Result<E,A>
 
-    /** Error constructor */
-    readonly Error: <A>(err: Error) => Result<A>
+    /** Error constructor. Note: You should inform also the Value type on construction */
+    readonly Error: <E,A>(err: E) => Result<E,A>
 
-    /** Extracts from a list of 'Result' all the 'Ok' elements. All elements are extracted in order */
-    readonly filterByOk: <A>(es: readonly Result<A>[]) => readonly A[]
+    /** Extracts from a list of 'Result' all the 'Value' (non-errors!) elements. All elements are extracted in order */
+    readonly filterByValue: <E,A>(es: readonly Result<E,A>[]) => readonly A[]
 
     /** Extracts from a list of 'Result' all the 'Error' elements. All elements are extracted in order */
-    readonly filterByError: <A>(es: readonly Result<A>[]) => readonly Error[]
+    readonly filterByError: <E,A>(es: readonly Result<E,A>[]) => readonly E[]
 
-    readonly fromMaybe: <A>(ma: Maybe<A>) => Result<A> 
-
-    //readonly fromLoading: <A>(ma: Loading<A>) => Result<A>
+    /** As maybe do not have Error details, error typ is mapped to undefined */
+    readonly fromMaybe: <A>(ma: Maybe<A>) => Result<undefined,A> 
 
 }
 
 
-// implemantations
+// --- implemantations ----
 
-const Result_Ok = <A>(val:A):Result<A> => Result(val)
+// vanilla constructors
 
-const Result_Error = <A>(err: Error):Result<A> => Result<A>(err)  
+const ResultValue = <E,A>(value:A): Result<E,A> => ResultConstructor<E,A>(value, false)
+
+const ResultError = <E,A>(err: E): Result<E,A> => ResultConstructor<E,A>(err, true)  
 
 
 // operations
 
 
-
-const filterByOk = <A>(es: readonly Result<A>[]): readonly A[] => {
+const filterByValue = <E,A>(es: readonly Result<E,A>[]): readonly A[] => {
     return foldLeftArray(es, [] as readonly A[], (acc, cur) => {
-        return cur.match({
-            Error:  _   => acc,
-            Ok:     val => [...acc, val]
-        })
+        return cur.fold(
+            err => acc,
+            val => [...acc, val],
+        )
     })
     
 }
 
 
-const filterByError = <A>(es: readonly Result<A>[]): readonly Error[] => {
-    return foldLeftArray(es, [] as readonly Error[], (acc, cur) => {
-        return cur.match({
-            Error:  err => [...acc, err],
-            Ok:     _   => acc,
-        })
+const filterByError = <E,A>(es: readonly Result<E,A>[]): readonly E[] => {
+    return foldLeftArray(es, [] as readonly E[], (acc, cur) => {
+        return cur.fold(
+            err => [...acc, err],
+            val => acc,
+        )
     })
     
 }
 
-const fromMaybe: Result_['fromMaybe'] = ma => {
-    type A = ReturnType<typeof ma._fromJust>
+const fromMaybe: ResultStatic['fromMaybe'] = ma => {
     return ma.match({
-        Just:       val =>  Result(val),
-        Nothing:            Result<A>(Error(`Unknown error. Note: An 'Result' monad was converted from an 'Maybe' monad, so there is no error description`))
+        Just:       val =>  Result.Value(val),
+        Nothing:            Result.Error(undefined)
     })
 }
 
 
-export const Result_: Result_ = {
-    Ok: Result_Ok,
-    Error: Result_Error,
-    filterByOk,
+export const Result: ResultStatic = {
+    Value: ResultValue, // value type constructor
+    Error: ResultError, // error type constructor
+    filterByValue,  
     filterByError,
     fromMaybe,
 }
@@ -171,20 +170,21 @@ export const Result_: Result_ = {
 
 const Test1 = () => {
 
-    const r1 = Result(10)
-    const r2 = Result(Error(`foo`))
-
+    const r1 = Result.Value<Error, number>(10)
+    const r2 = Result.Error<Error, string>(Error(`foo`))
 
     const a = r1
-        .map( n => String(n))
+        .map( n => n*2)
         //.fmap( _ => Result(Error(`Forcing an Error`)))
-        .match({
-            Ok:     val => Result(`valor: ${val}`),
-            Error:  err => Result(`Erro: ${err.message}`),
-        })
+        .bimap(
+            err => `Erro: ${err.message}`,
+            val => `valor: ${val}`,
+        )
         .fromValue(`Deu Zica`)
 
     console.log(a)
+
+    console.log(r2.mapError( e => `mas tbm deu Erro do tipo: ${e.message}`).fromError(`Ops zica de verdade!`))
 
 }
 
