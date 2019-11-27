@@ -1,165 +1,281 @@
 
-import { Result, ResultMatcher, Result_ } from './result' 
+import { Result } from './result' 
 import { Try } from './try'
+import { Either, Right, Left } from './either'
+import { identity } from './identity'
+import { Maybe } from './maybe'
 
 
-// tslint:disable: no-expression-statement 
+
 
 // ------------------------ FUTURE ----------------------------------------------
 
 
 // version 1 => 2 type parameters and runP returns a promisse 
 
-export type Future<A> = {
+export type Future<E,A> = {
 
     readonly kind: 'Future'
 
-    readonly runP: () => Promise<Result<A>>
+    readonly runR: () => Promise<Result<E,A>>
+    readonly runA: (_default: A) => Promise<A> // 'E' is discarded
+    readonly runE: (_default: E) => Promise<E> // 'A' is discarded
 
-    /** run and match an effectful result */
-    readonly runE: (m: ResultMatcher<A,void>) => void
+    // runs promisse then bimap result
+    readonly runRThen: <B,C>(errorFn: (_: E) => B, valueFn: (_:A) => C) => Promise<Result<B,C>>
 
-    readonly map: <B>(f: (_:A) => B) => Future<B>
+    // runs promisse then fold result
+    readonly runRThenF: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => Promise<R>
 
-    readonly fmap: <B>(f: (_:A) => Future<B>) => Future<B>
 
-    readonly match: <R>(m: ResultMatcher<A, R>) => Future<R>
+    /** fold right */
+    readonly fold: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => Future<void,R>
 
+    readonly foldLeft: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => Future<R,void>
+
+    readonly bimap:  <E1,B>(errorFn: (_:E) => E1, valueFn: (_:A) => B) => Future<E1,B>
+
+    readonly map: <B>(f: (_:A) => B) => Future<E,B>
+
+    readonly mapError: <E1>(f: (_:E) => E1) => Future<E1,A>
+
+    readonly fmap: <B>(f: (_:A) => Future<E,B>) => Future<E,B>
 
 }
 
 // interface only (not instantiate it)
-type _Future<A> = {
-    //readonly Resolver: (_:Either<Error,A>) => void
+type Future__<E,A> = {
     readonly OkResolver: (_: A) => void
-    readonly ErrorResolver: (_: Error) => void
-    readonly Callback: ( ok: _Future<A>['OkResolver'], err: _Future<A>['ErrorResolver']) => void
-} & Future<A>
+    readonly ErrorResolver: (_: E) => void
+    readonly Callback: ( ok: Future__<E,A>['OkResolver'], err: Future__<E,A>['ErrorResolver']) => void
+} & Future<E,A>
 
 
-export const join = <A>(ffa:Future<Future<A>>):Future<A> => {
 
-    return Future<A>( (ok, error) => {
-
-        ffa
-            .runE({
-                Error:  err => error(err),
-                Ok:     val => val.runE({
-                    Error:  err => error(err),
-                    Ok:     val => ok(val),
-                }),
-            })
-
-
-})}
-
-/** Same as Promise.all() */
-export const all = <A>(fas: readonly Future<A>[]): Future<readonly A[]> => {
-    
-    return Future<readonly A[]>( (ok, error) => {
-
-        const f0 = () => fas.map( fa => fa.runP())
-        const s1 = () => Promise.all(f0())
-            .then( ras => { 
-                const as = Result_.filterByOk(ras)
-                const es = Result_.filterByError(ras) // todo: probably'll be just one error. or not ? Check it.
-                return es.length === 0 
-                    ? ok(as)
-                    : error(es[0]) //takes first error -> ok, safe. //todo: what to do if it has more than just one errors ? What to do with other errors ?
-
-            })
-        s1() //run effect
-    })
-}
 
 
 /** Attention: It's Highly recommended to explicitly type your Future constructions  */
-export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
+export const Future = <E,A>(effect: Future__<E,A>['Callback']): Future<E,A> => {
 
-    /** runP aways resolves to a Promise<Result<A>> even if an error hapens it will be manipulated inside Result and not inside Promise ) */
-    const runP: _Future<A>['runP'] = async () => {
-        return new Promise<Result<A>>( (resolve, reject) => { 
-            
-            const ok: _Future<A>['OkResolver'] = value => { 
-                resolve(Result(value))     // resolve promise
+    /** runP aways resolves to a Promise<Result<E,A>> even if an error hapens it will be manipulated inside Result and not inside Promise. Promise.catch never runs! ) */
+    // tslint:disable: no-expression-statement
+    const runR: Future__<E,A>['runR'] = async () => {
+        return new Promise<Result<E,A>>( (resolve, reject) => { 
+            // resolvers
+            const ok: Future__<E,A>['OkResolver'] = _ => { 
+                resolve(Result.Value(_))   
             }
 
-            const err:  _Future<A>['ErrorResolver'] = err => {
-                resolve(Result(err as unknown as A))
+            const err: Future__<E,A>['ErrorResolver'] = _ => {
+                resolve(Result.Error(_))
             }
-
-            const unsafeEffect = () => effect(ok, err)
-
-            Try(unsafeEffect)
-                .match({
-                    Left:    catched => err(catched),
-                    Right:   ()      => { },
-                })
-        })
-    }
-
-    const runE: _Future<A>['runE'] = matcher => {
-        runP()
-            .then( ra => ra.match(matcher))
-    }
-
-    const map: _Future<A>['map'] = f => {
-        return Future( (ok, error) => { 
-            runP()
-                .then( r => r.match({
-                    Ok:     val => ok( f(val) ),
-                    Error:  err => error(err),
-                }))
-        })
-    }
-
-    const fmap: _Future<A>['fmap'] = <B>(f:(_: A) => Future<B>): Future<B> => {
-
-        return Future<B>( (ok, error) => {
-            runP()
-            .then( ra => ra.match({
-                            Ok:     valA => f(valA),
-                            Error:  err => Future<B>( (_,_e) => _e(err) ) ,
-                        }))
-            .then( fb => fb.runP()
-                .then( rb => 
-                    rb.match({
-                            Ok:     valB => ok(valB),
-                            Error:  err => error(err),
-                        })))
             
-       
+            // run effect
+            effect(ok, err) 
         })
+        
+    } // tslint:enable: no-expression-statement
 
+    const runRThen: Future__<E,A>['runRThen'] = (g,f) => {
+        return runR().then( r => r.bimap(g,f) )
     }
 
-    // todo: Test it! Not tested yet
-    const match: _Future<A>['match'] = <R>(matcher: ResultMatcher<A, R>) => {
-        return Future<R>( (ok, _) => {
-            runP()
-                .then( r => r.match({
-                    Ok:     val => ok( matcher.Ok(val) ),
-                    Error:  err => ok( matcher.Error(err) ),
-                }))
+    const runRThenF: Future__<E,A>['runRThenF'] = (g,f) => {
+        return runR().then( r => r.match(g,f) )
+    }
 
+    const runA: Future__<E,A>['runA'] = _default => {
+        return runRThenF( 
+            _err => _default,
+            _val => _val,
+        )
+    }
+
+    const runE: Future__<E,A>['runE'] = _default => {
+        return runRThenF( 
+            _err => _err,
+            _val => _default,
+        )
+    }
+   
+
+    const fold: Future__<E,A>['fold'] = (g,f) => {
+        return Future( (ok, err) => {
+            // tslint:disable-next-line: no-expression-statement
+            runRThen( 
+                _err => ok( g(_err) ) ,
+                _val => ok( f(_val) ),
+            )
         })
     }
 
+    const foldLeft: Future__<E,A>['foldLeft'] = (g,f) => {
+        return Future( (ok, err) => {
+            // tslint:disable-next-line: no-expression-statement
+            runRThen( 
+                _err => err( g(_err) ) ,
+                _val => err( f(_val) ),
+            )
+        })
+    }
+
+    const bimap: Future__<E,A>['bimap'] = (g, f) => {
+        return Future_.fromPromiseR( () => 
+            runRThen(
+                 _err => g(_err),
+                 _val => f(_val),
+            )
+        )
+    }
+
+    const map: Future__<E,A>['map'] = f => {
+        return bimap( identity, f )
+    }
+
+
+    const mapError: Future__<E,A>['mapError'] = g => {
+        return bimap( g, identity )
+    }
+
+  
+    const fmap: Future__<E,A>['fmap'] = f => {
+        return Future_.join(map(f))
+    }
 
 
     return { 
         kind: 'Future',
-        runP,
+        runR,
+        runA,
         runE,
+        runRThen,
+        runRThenF,
+        fold,
+        foldLeft,
+        bimap,
         map,
+        mapError,
         fmap,
-        match,
     }
 
 
 }
 
+// Static Part
 
+export type Future_ = {
+    // constructors
+    readonly ok: <E,A>(value: A) => Future<E,A>
+    readonly error: <E,A>(error: E) => Future<E,A>
+    readonly fromPromise: <A>(_: () => Promise<A>) => Future<Error,A>
+    readonly fromResult: <E,A>(_: () => Result<E,A>) => Future<E,A>
+    readonly fromPromiseR: <E,A>(_: () => Promise<Result<E,A>>) => Future<E,A>
+    readonly fromValue: <A>(f: () => A) => Future<void,A>
+    readonly fromMaybe: <A>(f: () => Maybe<A>) => Future<void,A>
+    readonly fromEither: <A,B>(f: () => Either<A,B>) => Future<A,B>
+
+    readonly join: <E,A>(ffa: Future<E,Future<E,A>>) => Future<E,A>
+
+    // array specialized
+    readonly allResults: <E,A>(fas: readonly Future<E,A>[]) => Future<void, readonly Result<E,A>[]>
+    readonly allValues: <E,A>(fas: readonly Future<E,A>[]) => Future<void, readonly A[]>
+    readonly allErrors: <E,A>(fas: readonly Future<E,A>[]) => Future<void, readonly E[]>
+}
+
+const Future_ok: Future_['ok'] = value => Future( ok => ok(value) )
+const Future_error: Future_['error'] = _err => Future( (_, err) => err(_err) )
+
+const fromPromise: Future_['fromPromise'] = p => {
+    return Future( (ok, err) => {
+        // tslint:disable-next-line: no-expression-statement
+        Try( () => { 
+            return p().then( value => ok(value)) 
+        }).mapError( _err => err(_err))
+    })
+}
+
+const fromResult: Future_['fromResult'] = r => {
+    return Future( (ok, err) => {
+        // tslint:disable-next-line: no-expression-statement
+        r().fold(
+            _err => err(_err),
+            _val => ok(_val), 
+        )
+    })
+}
+
+const fromPromiseR: Future_['fromPromiseR'] = p => {
+    return Future( (ok, err) => {
+        // tslint:disable-next-line: no-expression-statement
+        p().then( r => 
+            r.fold(
+                _err => err(_err),
+                _val => ok(_val),
+        ))  
+    })
+}
+
+const fromValue: Future_['fromValue'] = v => {
+    type A = ReturnType< typeof v>
+    return Future_.fromResult( () => Result.Value<void,A>(v()))
+}
+
+const fromMaybe: Future_['fromMaybe'] = ma => {
+    type A = Parameters<Parameters<ReturnType<typeof ma>['map']>[0]>[0]
+    return Future_.fromResult<void,A>( () => Result.fromMaybe(ma()))
+}
+
+const fromEither: Future_['fromEither'] = ma => {
+    return Future_.fromResult( () => Result.fromEither(ma()))
+}
+
+
+const join: Future_['join'] = ffa => {
+    return Future( (ok, err) => {
+        // tslint:disable-next-line: no-expression-statement
+        ffa.runRThen(
+            _err => err(_err),
+            fa => fa.runRThen(
+                _err => err(_err),
+                _a   => ok(_a),
+            ))
+    })
+}
+
+/** Same as Promise.all() */
+const allResults: Future_['allResults'] = fs => {
+    return Future( (ok, error) => {
+        const s0 = () => fs.map( fa => fa.runR())
+        const s1 = () => Promise.all(s0())
+            .then( results => ok(results))
+        // tslint:disable-next-line: no-expression-statement
+        s1() //run effect
+    })
+}
+
+const allValues: Future_['allValues'] = fs => {
+    return allResults(fs).map( rs => Result.allValues(rs))
+}
+
+const allErrors: Future_['allErrors'] = fs => {
+    return allResults(fs).map( rs => Result.allErrors(rs))
+}
+
+
+export const Future_: Future_ = {
+    ok: Future_ok,
+    error: Future_error,
+    fromPromise,
+    fromResult,
+    fromPromiseR,
+    fromValue,
+    fromMaybe,
+    fromEither,
+    join,
+    allResults,
+    allValues,
+    allErrors,
+}
 
 
 // ------------------
@@ -168,28 +284,31 @@ export const Future = <A>(effect: _Future<A>['Callback']): Future<A> => {
 
 const Test1 = async () => {
 
-    const f1 = Future<number>( (ok, error) => {
-        console.log(`--I'm inside the 'F1' the Future--`)
+    const f1 = Future<Error, number>( (ok, err) => {
+        console.log(`--I'm inside the 'F1' Future--`)
+        // tslint:disable-next-line: no-expression-statement
         ok(20)
     }).map( n => n * 100)
 
-    const f2 = (n:number) => Future<string>( (ok, error) => {
-        console.log(`--I'm inside the 'F2' the Future--`)
+    const f2 = (n:number) => Future<Error, string>( (ok, err) => {
+        console.log(`--I'm inside the 'F2' Future--`)
+        // tslint:disable-next-line: no-expression-statement
         ok(`Yey Mrs Number '${n}'. Hello `)
-        // error(Error(`ERROR:Yey Mrs Number '${n}'. Hello `))
+        // err(Error(`ERROR:Yey Mrs Number '${n}'. Hello `))
     }).map( s => s + ` World !`)
 
 
-    const f3 = f1.match({
-        Ok: err => `Finished: Throw this error --> ${err}`,
-        Error: value => `Finished: Successful, value --> ${ value }`,
-    })
+    const f3 = f1.fold(
+        err => `Finished: Throw this error --> ${err}`,
+        value => `Finished: Successful, value --> ${ value }`,
+    )
 
 
     const f4 = f1.fmap( n => f2(n))
 
-    const r1 = (await f3.runP()).fromValue(``)
-    const r2 = (await f4.runP()).fromValue(`If you're looking this an left happned`)
+    const defaultErrorMsg = `If you're looking this an left happned`
+    const r1 = await f3.runA(defaultErrorMsg)
+    const r2 = await f4.runA(defaultErrorMsg)
 
     console.log(r1)
     console.log(r2)
@@ -199,18 +318,14 @@ const Test1 = async () => {
 // join
 const Test2 = () => {
 
-    const fa = Future<number>( ok => ok(10))
-    const ffa = fa.map( num => Future<number>( ok => ok(num) ) )
+    const fa = Future<Error,number>( ok => ok(10))
+    const ffa = fa.map( num => Future<Error, number>( ok => ok(num) ) )
     const r = join(ffa)
 
-    //verbose
-    const x = r.runP().then( ma => ma.map( num => console.log(num) ) )
-
-    //better
-    r.runE({
-        Error:  err => console.log(`error happened: ${err}`),
-        Ok:     val => console.log(`Good value: ${val}`),
-    })
+    const a = r.runRThenF(
+        err => `error happened: ${err}`,
+        val => `Good value: ${val}`,
+    )
 
 }
 
