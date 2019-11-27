@@ -32,8 +32,8 @@ export { Lens, LensComposer } from './monads/lens'
 export { State } from './monads/state'
 export { Writer } from './monads/writer'
 export { IO } from './monads/IO'
-export { Future, join, all } from './monads/future'
-export { Result, Result_ } from './monads/result'
+export { Future, Future_ } from './monads/future'
+export { Result } from './monads/result'
 export { List, List_ } from './monads/list'
 
 // functional - tools
