@@ -57,7 +57,7 @@ const Test = () => {
     const b = Try(NeverThrow)  // ok b is type: Result<Error, string>
 
     const showResult = <T extends AnyResult>(data: T):string => {
-        return data.fold(
+        return data.match(
             err => `Peguei o erro: "${err.message}"`,
             val => `Valor chegou: "${val}"`
         )
