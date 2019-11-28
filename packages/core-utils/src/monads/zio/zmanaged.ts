@@ -1,6 +1,7 @@
 import { ZIO, ZIO_ } from "./zio";
 import { Either, Right, Left } from "../either";
 import values from "ramda/es/values";
+import { Result } from "../result";
 
 
 
@@ -29,10 +30,10 @@ const ZManaged = <R,E,A>(aquire: ZIO<R,E,A>, release: ZIO<A,void,undefined>) => 
     const uses = <B>(f: (resource: A) => ZIO<R,E,B>):ZIO<R,E,B> => {
          //identity + side-effect to close
         const useAndRelease = (resource: A) => ZIO( (env:R) => {
-            return f(resource).unsafeRunEither(env).match<Either<E, B>>({
-                Left:   err     => { release.unsafeRun(resource); return Left(err); },
-                Right:  val     => { release.unsafeRun(resource); return Right(val); },
-            })
+            return f(resource).unsafeRunResult(env).match<Result<E, B>>(
+                _err => { release.unsafeRun(resource); return Result.Error(_err); },
+                _val => { release.unsafeRun(resource); return Result.Value(_val); },
+            )
         } )
         
         //return aquire.fmap( useAndRelease)

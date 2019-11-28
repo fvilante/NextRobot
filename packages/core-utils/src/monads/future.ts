@@ -33,7 +33,7 @@ export type Future<E,A> = {
 
     readonly foldLeft: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => Future<R,void>
 
-    readonly bimap:  <E1,B>(errorFn: (_:E) => E1, valueFn: (_:A) => B) => Future<E1,B>
+    readonly bimap: <E1,B>(errorFn: (_:E) => E1, valueFn: (_:A) => B) => Future<E1,B>
 
     readonly map: <B>(f: (_:A) => B) => Future<E,B>
 
