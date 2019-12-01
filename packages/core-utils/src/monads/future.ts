@@ -27,16 +27,17 @@ export type Future<E,A> = {
     // runs promisse then fold result
     readonly runRThenF: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => Promise<R>
 
-
     /** fold right */
     readonly fold: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => Future<void,R>
-
     readonly foldLeft: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => Future<R,void>
 
+    //TODO: Develop bellow when posible: 
+    //readonly isError: () => Future<E,boolean>
+    //readonly isValue: () => Future<E,boolean> //todo: Maybe 'isOk' should be a better method name
+    //readonly match: <R>(errorFn: (_: E) => R, valueFn: (_:A) => R) => R
+
     readonly bimap: <E1,B>(errorFn: (_:E) => E1, valueFn: (_:A) => B) => Future<E1,B>
-
     readonly map: <B>(f: (_:A) => B) => Future<E,B>
-
     readonly mapError: <E1>(f: (_:E) => E1) => Future<E1,A>
 
     readonly fmap: <B>(f: (_:A) => Future<E,B>) => Future<E,B>
@@ -97,7 +98,8 @@ export const Future = <E,A>(effect: Future__<E,A>['Callback']): Future<E,A> => {
             _val => _default,
         )
     }
-   
+
+
 
     const fold: Future__<E,A>['fold'] = (g,f) => {
         return Future( (ok, err) => {
@@ -119,6 +121,24 @@ export const Future = <E,A>(effect: Future__<E,A>['Callback']): Future<E,A> => {
         })
     }
 
+/*
+    **********
+    *** TODO: I'll let to FINISH develop the match function later *****
+    *********
+
+    const isError: Future<E,A>['isError'] = () => {
+        const isError = () => runR().then( r => r.isError())
+        const a = Future_.fromPromise(isError)
+    }
+
+    const isValue: Future<E,A>['isValue'] = () => !isError()
+
+    const match: Future<E,A>['match'] = (errorFn, valueFn) => {
+        return isError()
+            ? errorFn(data as E)
+            : valueFn(data as A)
+    }
+*/
     const bimap: Future__<E,A>['bimap'] = (g, f) => {
         return Future_.fromPromiseR( () => 
             runRThen(
@@ -139,7 +159,7 @@ export const Future = <E,A>(effect: Future__<E,A>['Callback']): Future<E,A> => {
 
   
     const fmap: Future__<E,A>['fmap'] = f => {
-        return Future_.join(map(f))
+        return Future_.flatten(map(f))
     }
 
 
@@ -167,6 +187,7 @@ export type Future_ = {
     // constructors
     readonly ok: <E,A>(value: A) => Future<E,A>
     readonly error: <E,A>(error: E) => Future<E,A>
+    readonly fromFunction: <A,B>(f: (_:A) => B) => (_:A) => Future<void,B>
     readonly fromPromise: <A>(_: () => Promise<A>) => Future<Error,A>
     readonly fromResult: <E,A>(_: () => Result<E,A>) => Future<E,A>
     readonly fromPromiseR: <E,A>(_: () => Promise<Result<E,A>>) => Future<E,A>
@@ -174,7 +195,7 @@ export type Future_ = {
     readonly fromMaybe: <A>(f: () => Maybe<A>) => Future<void,A>
     readonly fromEither: <A,B>(f: () => Either<A,B>) => Future<A,B>
 
-    readonly join: <E,A>(ffa: Future<E,Future<E,A>>) => Future<E,A>
+    readonly flatten: <E,A>(ffa: Future<E,Future<E,A>>) => Future<E,A>
 
     // array specialized
     readonly allResults: <E,A>(fas: readonly Future<E,A>[]) => Future<void, readonly Result<E,A>[]>
@@ -184,6 +205,8 @@ export type Future_ = {
 
 const Future_ok: Future_['ok'] = value => Future( ok => ok(value) )
 const Future_error: Future_['error'] = _err => Future( (_, err) => err(_err) )
+
+const fromFunction: Future_['fromFunction'] = f => a => Future_.ok(f(a))
 
 const fromPromise: Future_['fromPromise'] = p => {
     return Future( (ok, err) => {
@@ -230,7 +253,7 @@ const fromEither: Future_['fromEither'] = ma => {
 }
 
 
-const join: Future_['join'] = ffa => {
+const flatten: Future_['flatten'] = ffa => {
     return Future( (ok, err) => {
         // tslint:disable-next-line: no-expression-statement
         ffa.runRThen(
@@ -265,13 +288,14 @@ const allErrors: Future_['allErrors'] = fs => {
 export const Future_: Future_ = {
     ok: Future_ok,
     error: Future_error,
+    fromFunction,
     fromPromise,
     fromResult,
     fromPromiseR,
     fromValue,
     fromMaybe,
     fromEither,
-    join,
+    flatten,
     allResults,
     allValues,
     allErrors,
@@ -320,7 +344,7 @@ const Test2 = () => {
 
     const fa = Future<Error,number>( ok => ok(10))
     const ffa = fa.map( num => Future<Error, number>( ok => ok(num) ) )
-    const r = join(ffa)
+    const r = flatten(ffa)
 
     const a = r.runRThenF(
         err => `error happened: ${err}`,

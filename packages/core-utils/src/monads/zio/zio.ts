@@ -3,7 +3,6 @@ import { Maybe, Nothing, Just } from "../maybe"
 import { Future, Future_ } from "../future"
 import { Try } from "../try"
 import { Result } from "../result"
-import { A } from "ts-toolbelt"
 
 // inspired in scala zio library
 // see: https://zio.dev/
@@ -15,39 +14,35 @@ import { A } from "ts-toolbelt"
 //      3. Any -> any           --> for any particuar type that exists
 //      Note: I'm not using TS 'null' type in any case. 
 
-export type ZIOMatcherFn<E,A,B> = {
-    readonly Error: (_: E) => B
-    readonly Value: (_: A) => B 
-}
 
-export type ZIOMatcherFnM<R,E,A,B> = {
-    readonly Error: (_: E) => ZIO<R,E,B> 
-    readonly Value: (_: A) => ZIO<R,E,B> 
-}
 
 export type ZIO<R, E, A> = {
     readonly kind: 'ZIO'
 
-    readonly unsafeRunResult: (_:R) => Result<E,A>
-    readonly unsafeRunMaybe: (_:R) => Maybe<A>
-    readonly unsafeRun: (_:R) => E extends void ? A : A | E
-    readonly unsafeRunAOrElse: (_default: A) => (_:R) => A
+    readonly unsafeRun: (_:R) => Promise< A | E > //todo: Should I benefit from use a way to extract void if A or/and E are void ?
+    readonly unsafeRunResult: (_:R) => Promise<Result<E,A>>
+    readonly unsafeRunMaybe: (_:R) => Promise<Maybe<A>>
+    readonly unsafeRunAOrElse: (_default: A) => (_:R) => Promise<A>
+    readonly unsafeRunFuture: (_:R) => Future<E,A> //ATTENTION: This execution is unsafe! Because it runs the ZIO to next step
 
     readonly map: <B>(f: (_:A) => B) => ZIO<R,E,B>
+    readonly bimap: <E1,B>(errFn: (_: E) => E1, valueFn: (_: A) => B) => ZIO<R,E1,B> 
     readonly fmap: <B>(f: (_:A) => ZIO<R,E,B>) => ZIO<R,E,B>
     readonly mapError: <E0>(f: (_:E) => E0) => ZIO<R,E0,A>
-    readonly fold: <B>(errFn: (_:E) => B, valueFn: (_:A) => B) => ZIO<R,void,B>
-    readonly foldM: <B>(m: ZIOMatcherFnM<R,E,A,B>) => ZIO<R,E,B>
+    readonly fold: <B>(errFn: (_:E) => B, valueFn: (_:A) => B) => ZIO<R,void,B> 
+    readonly matchM: <B>(errFnM: (_: E) => ZIO<R,E,B>, valueFnM: (_: A) => ZIO<R,E,B>) => ZIO<R,E,B>
 
     readonly provide: (enviroment: R) => ZIO<any,E,A>
     readonly provideM: (enviroment: ZIO<any, E, R>) => ZIO<any, E, A> //todo: In Scala Zio E can be changed to a sub-type of E. I dont understand the use-case so I'm ommiting until further insight
     readonly contramap: <R0>(f: (_:R0) => R) => ZIO<R0,E,A>
 
+    readonly enviroment: () => ZIO<R,void,R> //todo: see what name zio uses to this structure
+
     /**
      * In the callback passed to catchAll, you may return an effect with a different error type (or perhaps Nothing), which will be reflected in the type of effect returned by catchAll.
      */
-    readonly catchAll: (f: (_:E) => ZIO<R,E,A> ) => ZIO<R,E,A>
-    readonly result: () => ZIO<R, void, Result<E,A>> //see also 'absolve' which is the inverse operation
+    readonly catchAll: (f: (_:E) => ZIO<R,E,A>) => ZIO<R,E,A> 
+    readonly pullout: () => ZIO<R, void, Future<E,A>> //see also 'absolve' which is the inverse operation //todo: I invented this name (because otherwise call it either (official zio) or future is implementation dependent). Is there a better name ?
 
 }
 
@@ -59,118 +54,119 @@ const __ZIO = <R,E,A>(effect: SyncEffect<R,E,A> | AsyncEffect<R,E,A>, isAsync: b
 
 }
 
+export const ZIO = <R,E,A>(effect: (_:R) => Future<E,A>): ZIO<R,E,A> => {
 
-
-export const ZIO = <R,E,A>(effect: (_:R) => Result<E,A>): ZIO<R,E,A> => {
+    // this is not very performant. Todo: When possible do not transform sync into async effect
 
     const unsafeRun: ZIO<R,E,A>['unsafeRun'] = enviroment => {
         type _Return = ReturnType<ZIO<R, E, A>['unsafeRun']>
-        return effect(enviroment).match<_Return>(
-            err => err as _Return,
-            val => val as _Return,
+        return effect(enviroment).runRThenF<E | A>(
+            err => err, 
+            val => val,
         )
     }
 
-    const unsafeRunResult: ZIO<R,E,A>['unsafeRunResult'] = enviroment => effect(enviroment)
+    const unsafeRunResult: ZIO<R,E,A>['unsafeRunResult'] = enviroment => effect(enviroment).runR()
 
-    const unsafeRunMaybe: ZIO<R,E,A>['unsafeRunMaybe'] = enviroment => effect(enviroment).match(
+    const unsafeRunMaybe: ZIO<R,E,A>['unsafeRunMaybe'] = enviroment => effect(enviroment).runRThenF(
         err => Nothing(),
         val => Just(val),
     )
 
 
-    const unsafeRunAOrElse: ZIO<R,E,A>['unsafeRunAOrElse'] = _default => enviroment => 
-        effect(enviroment).match<A>(
+    const unsafeRunAOrElse: ZIO<R,E,A>['unsafeRunAOrElse'] = _default => enviroment => { 
+        return effect(enviroment).runRThenF(
             err => _default,
             val => val,
         )
+    }
+
+    const unsafeRunFuture: ZIO<R,E,A>['unsafeRunFuture'] = enviroment => effect(enviroment)
         
 
-    const map: ZIO<R,E,A>['map'] = f => 
-        ZIO( env => effect(env).map(f) )
+    const map: ZIO<R,E,A>['map'] = f => {
+        return ZIO( env => effect(env).map(f) )
+    }
 
+    const bimap: ZIO<R,E,A>['bimap'] = (g,f) => {
+        return ZIO( (env:R) => effect(env).bimap(g,f))
+    }
 
     const fmap: ZIO<R,E,A>['fmap'] = f => {
-        type B = Parameters<Parameters<ReturnType<typeof f>['map']>[0]>[0]
-        return ZIO( (enviroment:R) => unsafeRunResult(enviroment).match(
-            err => ZIO_.fail(err) as unknown as ZIO<R,E,B>,
-            val => f(val),
-        ).unsafeRunResult(enviroment) )
+        return ZIO_.flatten(map(f))
     }
 
-    const mapError: ZIO<R,E,A>['mapError'] = f => 
-        ZIO( (enviroment: R) => effect(enviroment).mapError(f) )
+    const mapError: ZIO<R,E,A>['mapError'] = f => {
+        return ZIO( (enviroment: R) => effect(enviroment).mapError(f) )
+    }
 
+    const fold: ZIO<R,E,A>['fold'] = ( g, f) => {
+        return ZIO( (enviroment: R) => unsafeRunFuture(enviroment).fold(g,f) )
+    }
 
-    const provide: ZIO<R,E,A>['provide'] = enviroment => 
-        ZIO( (_: R) => effect(enviroment) )
+    const matchM: ZIO<R,E,A>['matchM'] = (g, f) => {
+        const a = ZIO( (enviroment:R) => {
+            const b = unsafeRunFuture(enviroment).runRThenF(
+                err => g(err),
+                val => f(val),
+            )
+            const c = b.then( z => z.unsafeRunFuture(enviroment).runR() )
+            const d = Future_.fromPromiseR( () => c )
+            return d
+        })
+        return a
+    }
+
+    const provide: ZIO<R,E,A>['provide'] = enviroment => {
+        return ZIO( (_: R) => effect(enviroment) )
+    }
 
     const provideM: ZIO<R,E,A>['provideM'] = enviroment => {
-        return enviroment.fmap( env => provide(env))
-            
+        return enviroment.fmap( env => provide(env))   
     }
 
-    
-    const fold: ZIO<R,E,A>['fold'] = ( g, f) => {
-        type B = ReturnType<typeof g>
-        return ZIO( (enviroment: R) => unsafeRunResult(enviroment).match(
-            err => Result.Value(g(err)),
-            val => Result.Value(f(val)),
-        ))
-    }
-
-    const foldM: ZIO<R,E,A>['foldM'] = matcherM => {
-        return ZIO( (env:R) => unsafeRunResult(env).match(
-            err => matcherM.Error(err),
-            val => matcherM.Value(val),
-        ).unsafeRunResult(env) )
-    }
+ 
 
     const contramap: ZIO<R,E,A>['contramap'] = f => {
         type R0 = Parameters<typeof f>[0]
-        return ZIO( (_: R0) => unsafeRunResult(f(_)))
+        return ZIO( (_: R0) => unsafeRunFuture(f(_)))
+    }
+
+    const enviroment: ZIO<R,E,A>['enviroment'] = () => {
+        return ZIO( (_: R) => Future_.ok(_))
     }
 
     const catchAll: ZIO<R,E,A>['catchAll'] = f => {
-        const a = ZIO( (env:R) => Result.Value<E,R>(env) ) 
-        const b = a.fmap( r => { 
-            const a = result()
-            const b = a.map( e => e.match(
-                err => f(err),
-                val => ZIO( (env:R) => Result.Value<E,A>(val) ).provide(r),
-            ))
-            const c = b.provide(r).unsafeRunResult(undefined)
-            const d = c.unsafeRun() 
-            return d
-        })
-        return b
-        
+        return ZIO_.flattenError(mapError(f))
     }
 
-    const result: ZIO<R,E,A>['result'] = () => {
-        return ZIO( (env => {
-            const a = unsafeRunResult(env)
-            return Result.Value(a)
-        }))
+    const pullout: ZIO<R,E,A>['pullout'] = () => {
+        return ZIO( (env => Future_.ok(unsafeRunFuture(env))) )
     }
 
 
     return {
         kind: 'ZIO',
         unsafeRun,
-        unsafeRunAOrElse,
         unsafeRunResult,
         unsafeRunMaybe,
+        unsafeRunAOrElse,
+        unsafeRunFuture,
+
         map,
+        bimap,
         fmap,
         mapError,
         fold,
-        foldM,
+        matchM,
+
         provide,
         provideM,
         contramap,
+
+        enviroment,
         catchAll,
-        result,
+        pullout,
     }
 
 }
@@ -180,9 +176,11 @@ export const ZIO = <R,E,A>(effect: (_:R) => Result<E,A>): ZIO<R,E,A> => {
 
 export type ZIO_ = {
 
-    readonly absolve: <R,E,A>(z: ZIO<R, E, Result<E,A>>) => ZIO<R,E,A>
+    readonly absolve: <R,E,A>(z: ZIO<R, E, Future<E,A>>) => ZIO<R,E,A>
 
     readonly flatten: <R,E,A>(mma: ZIO<R,E,ZIO<R,E,A>>) => ZIO<R,E,A>
+
+    readonly flattenError: <R,E,A>(mma: ZIO<R,ZIO<R,E,A>,A>) => ZIO<R,E,A>
 
     readonly fail: <E>(err: E) => ZIO<any, E, void>
     // eager constructor, use it to construct pure values
@@ -197,45 +195,76 @@ export type ZIO_ = {
 
     readonly fromFunction: <A,B>(f: (_:A) => B) => ZIO<A,void,B>
 
+    readonly fromFuture: <E,A>(m: Future<E,A>) => ZIO<any,E,A>
+
+    readonly fromAsync: <R,E,A>(f: (_:R) => Future<E,A>) => ZIO<R,E,A>
+
     readonly __fmap: typeof __fmap //todo: see function Note!
 
-    //readonly fromAsync: <R,E,A>(f: (_:R) => Future<E,A>) => ZIO<R,E,A>
 }
 
 const absolve: ZIO_['absolve'] = mma => {
     type R = Parameters<(typeof mma)['provide']>[0]
     return ZIO( (env:R) => {
-        const r = mma.unsafeRunResult(env)
-        return Result.flatten(r)
+        const r = mma.unsafeRunFuture(env)
+        return Future_.flatten(r)
     })
 }
 
-const fromEither: ZIO_['fromEither'] = ma => ZIO( env => Result.fromEither(ma) )
-
-const fromFunction: ZIO_['fromFunction'] = f => ZIO( env => Result.Value(f(env)))
-
-
-
-
 const flatten: ZIO_['flatten'] = mma => {
-    return ZIO( enviroment => 
-        mma.unsafeRunResult(enviroment).match(
-            _err => Result.Error(_err),
-            _val => _val.unsafeRunResult(enviroment),
-        ))
+    type R = Parameters<(typeof mma)['provide']>[0]
+    type _Z = Parameters<typeof mma['unsafeRunAOrElse']>[0]
+    type A = Parameters<_Z['unsafeRunAOrElse']>[0]
+    type E = Parameters<Parameters<_Z['mapError']>[0]>[0]
+    const a = ZIO( (enviroment:R) => {
+        const b = mma.unsafeRunFuture(enviroment)
+        const c = b.runRThenF(
+            _err => Future_.error(_err) as Future<E, A>,
+            _val => _val.unsafeRunFuture(enviroment),
+        )
+        const d = c.then( f => f.runR())
+        const e = Future_.fromPromiseR(() => d)
+        return e
+    })
+    return a
 }
 
 
-const fail: ZIO_['fail'] = err => ZIO( env => Result.Error(err) )
+const flattenError: ZIO_['flattenError'] = mma => {
+    type R = Parameters<(typeof mma)['provide']>[0]
+    type _Z = Parameters<Parameters<typeof mma['mapError']>[0]>[0]
+    type A = Parameters<_Z['unsafeRunAOrElse']>[0]
+    type E = Parameters<Parameters<_Z['mapError']>[0]>[0]
+    const a = ZIO( (enviroment:R) => {
+        const b = mma.unsafeRunFuture(enviroment)
+        const c = b.runRThenF(
+            _err => _err.unsafeRunFuture(enviroment),
+            _val => Future_.ok(_val),
+        )
+        const d = c.then( f => f.runR())
+        const e = Future_.fromPromiseR(() => d)
+        return e
+    })
+    return a
+}
 
-const succeed: ZIO_['succeed'] = val => ZIO( env => Result.Value(val) )
+const fail: ZIO_['fail'] = err => ZIO( env => Future_.error(err) )
 
-const effectTotal: ZIO_['effectTotal'] = effect => ZIO( env => Result.Value( effect() )) 
+const succeed: ZIO_['succeed'] = val => ZIO( env => Future_.ok(val) ) //todo: normalize name convention choose or '.succed' or '.ok'
+
+const effectTotal: ZIO_['effectTotal'] = effect => ZIO( env => Future_.ok( effect() )) 
 
 const effect: ZIO_['effect'] = effect => ZIO( env => { 
-    return Try(effect)
+    return Future_.fromResult(() => Try(effect))
 })
 
+const fromEither: ZIO_['fromEither'] = ma => ZIO( env => Future_.fromEither(() => ma) )
+
+const fromFunction: ZIO_['fromFunction'] = f => ZIO( env => Future_.ok(f(env)) )
+
+const fromFuture: ZIO_['fromFuture'] = ma => ZIO( env => ma)
+
+const fromAsync: ZIO_['fromAsync'] = ma => ZIO( env => ma(env))
 
 // TODO: This special fmap should be applied to normal itens of the interface
 const __fmap = <R1 extends R0,E1,B,R0,E0 extends E1,A0>(m: ZIO<R0,E0,A0>, f: (_:A0) => ZIO<R1,E1,B>):ZIO<R1,E1,B> => {
@@ -248,15 +277,24 @@ const __fmap = <R1 extends R0,E1,B,R0,E0 extends E1,A0>(m: ZIO<R0,E0,A0>, f: (_:
 
 
 
+
+
+
+
+
+
 export const ZIO_: ZIO_ = {
     absolve,
     flatten,
+    flattenError,
     fail,
     succeed,
     effectTotal,
     effect,
     fromEither,
     fromFunction,
+    fromFuture,
+    fromAsync,
     __fmap, //todo: provisory solution, see func impl note
 }
 
@@ -266,14 +304,14 @@ export const ZIO_: ZIO_ = {
 // informal test
 
 // Tests:  1. general 'control-flow' events, 2. using a effect from enviroment
-const Test = () => {
+const Test1 = async () => {
 
     type Enviroment = {
         readonly logger: (msg: string) => void
     }
 
     const enviroment: Enviroment = {
-        logger: msg => { console.log(`Logando Mensagem em dentro do enviroment ->: `); console.log(msg); } 
+        logger: msg => { console.log(`Logando Mensagem em dentro do enviroment ->: ${msg} <-`)} 
     }
 
 
@@ -284,11 +322,11 @@ const Test = () => {
         // tslint:disable-next-line: no-expression-statement
         env.logger(`esta msg foi enviada para o logger do enviroment`)
         console.log(`vou sair de dentro do efeito retornando 77, bye!`)
-        return Result.Value(77)
+        return Future_.ok(77)
     })
     console.log(`Efeito criado!`)
     console.log(`Rodando efeito...`)
-    const r = a.unsafeRunAOrElse(66)(enviroment)
+    const r = await a.unsafeRunAOrElse(66)(enviroment)
     console.log(`O retorno do efeito foi o número ${r}`)
 
 
@@ -296,23 +334,23 @@ const Test = () => {
 }
 
 // tests: 1. map, 2. fmap, 3. using a effect from enviroment
-const Test2 = () => {
+const Test2 = async () => {
 
     type Enviroment = {
         readonly logger: (msg: string) => void
     }
     const enviroment: Enviroment = {
-        logger: msg => { console.log(`Logando Mensagem em dentro do enviroment ->: `); console.log(msg); } 
+        logger: msg => { console.log(`Logando Mensagem em dentro do enviroment ->: ${msg} <-`) } 
     }
     
-    const a = ZIO<Enviroment, undefined, number>( env => Result.Value(77)) 
+    const a = ZIO<Enviroment, undefined, number>( env => Future_.ok(77)) 
 
     const mapped = a.map( x => `Hello __${String(x)}__ World!` )
-    console.log(`tem que ter 'Hello __77__ World!' agora aqui -> `, mapped.unsafeRun(enviroment) )
+    console.log(`tem que ter 'Hello __77__ World!' agora aqui -> `, await mapped.unsafeRun(enviroment) )
 
-    const fmapped = a.map( x => `Hello __${String(x)}__ World!` )
-    const effect = fmapped.provide(enviroment).fmap( s => ZIO( () => Result.Value(`Balas juquinha: ${s}`)))
-    console.log(`tem que 'Balas juquinha:' na frente do texto anterior -> `, effect.unsafeRun(undefined))
+    const fmapped = a.fmap( x => ZIO( env => Future_.ok(`Hello __${String(x)}__ World!`) ))
+    const effect = fmapped.provide(enviroment).fmap( s => ZIO( () => Future_.ok(`Balas juquinha: ${s}`)))
+    console.log(`tem que ter 'Balas juquinha:' na frente do texto anterior -> `, await effect.unsafeRun(undefined))
 
 }
 
@@ -346,7 +384,7 @@ const Test5 = () => {
     // initial -> zio -> output
     const ia = 1
     var ib = 1
-    const effect = () => { ib += 1}
+    const effect = () => { ib += 1 }
 
     const za = ZIO_.succeed(ia)
     const zb = ZIO_.effectTotal(() => effect())
@@ -372,7 +410,7 @@ const Test6 = () => {
         }).map( n => `numero obtido no futuro foi ${n}`)
         const r = f.runR()
         console.log(`Exiting effect`) 
-        return Result.Value('Result Right!')
+        return Future_.ok('Result Right!')
    
     })
 
@@ -386,4 +424,9 @@ const Test6 = () => {
 }
 
 // tslint:disable-next-line: no-expression-statement
-//Test6()
+// Test1()
+// Test2()
+// Test3()
+// Test4()
+// Test5()
+// Test6()
