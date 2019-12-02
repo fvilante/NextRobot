@@ -54,9 +54,12 @@ const __ZIO = <R,E,A>(effect: SyncEffect<R,E,A> | AsyncEffect<R,E,A>, isAsync: b
 
 }
 
+// Todo: Use Async for all calculations may not be very performant.  
+//       When possible optimize to use sync calc every when possible.
+// Note: For now you may use 'ZIO_.fromSync' constructor if you want to 
+//       take advantage of future optimizations 
+//       realated to sync Calls.
 export const ZIO = <R,E,A>(effect: (_:R) => Future<E,A>): ZIO<R,E,A> => {
-
-    // this is not very performant. Todo: When possible do not transform sync into async effect
 
     const unsafeRun: ZIO<R,E,A>['unsafeRun'] = enviroment => {
         type _Return = ReturnType<ZIO<R, E, A>['unsafeRun']>
@@ -198,6 +201,8 @@ export type ZIO_ = {
     readonly fromFuture: <E,A>(m: Future<E,A>) => ZIO<any,E,A>
 
     readonly fromAsync: <R,E,A>(f: (_:R) => Future<E,A>) => ZIO<R,E,A>
+    readonly fromSync: <R,E,A>(f: (_:R) => Result<E,A>) => ZIO<R,E,A>
+
 
     readonly __fmap: typeof __fmap //todo: see function Note!
 
@@ -266,6 +271,8 @@ const fromFuture: ZIO_['fromFuture'] = ma => ZIO( env => ma)
 
 const fromAsync: ZIO_['fromAsync'] = ma => ZIO( env => ma(env))
 
+const fromSync: ZIO_['fromSync'] = ma => ZIO( env => Future_.fromResult( () => ma(env) ) )
+
 // TODO: This special fmap should be applied to normal itens of the interface
 const __fmap = <R1 extends R0,E1,B,R0,E0 extends E1,A0>(m: ZIO<R0,E0,A0>, f: (_:A0) => ZIO<R1,E1,B>):ZIO<R1,E1,B> => {
     const m0 = m.contramap( (_:R1) => _)
@@ -273,13 +280,6 @@ const __fmap = <R1 extends R0,E1,B,R0,E0 extends E1,A0>(m: ZIO<R0,E0,A0>, f: (_:
     const m2 = m1.fmap(f)
     return m2
 }
-
-
-
-
-
-
-
 
 
 
@@ -295,6 +295,7 @@ export const ZIO_: ZIO_ = {
     fromFunction,
     fromFuture,
     fromAsync,
+    fromSync,
     __fmap, //todo: provisory solution, see func impl note
 }
 
