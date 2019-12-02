@@ -85,8 +85,7 @@ export const ZIO = <R,E,A>(effect: (_:R) => Future<E,A>): ZIO<R,E,A> => {
     }
 
     const unsafeRunFuture: ZIO<R,E,A>['unsafeRunFuture'] = enviroment => effect(enviroment)
-        
-
+    
     const map: ZIO<R,E,A>['map'] = f => {
         return ZIO( env => effect(env).map(f) )
     }
@@ -255,8 +254,8 @@ const flattenError: ZIO_['flattenError'] = mma => {
 
 const fail: ZIO_['fail'] = err => ZIO( env => Future_.error(err) )
 
-const succeed: ZIO_['succeed'] = val => ZIO( env => Future_.ok(val) ) //todo: normalize name convention choose or '.succed' or '.ok'
-
+const succeed: ZIO_['succeed'] = val => ZIO( env => Future_.ok(val) ) //todo: normalize name convention choose or '.succed' or '.ok'. 'Succed' is Scala ZIO Standard
+ 
 const effectTotal: ZIO_['effectTotal'] = effect => ZIO( env => Future_.ok( effect() )) 
 
 const effect: ZIO_['effect'] = effect => ZIO( env => { 
