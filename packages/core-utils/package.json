@@ -46,6 +46,7 @@
   },
   "dependencies": {
     "@types/ramda": "^0.26.19",
-    "ramda": "^0.26.1"
+    "ramda": "^0.26.1",
+    "ts-node": "^8.5.4"
   }
 }
