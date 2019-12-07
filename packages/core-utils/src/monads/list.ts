@@ -16,12 +16,17 @@ export type List<A> = {
     readonly every: (predicate: (_:A) => boolean ) => boolean
 
     readonly mapMaybe: <B>(f: (_:A) => Maybe<B>) => List<B> //do not transfer if 'nothing'
+
+    readonly head: () => Maybe<A> 
+
 }
 
 
 
 /** Similar to ReadonlyArray<T> but more type constrained and functional (but not lazy)
- * todo: make construction less dependent from JS array implementation. */
+ * todo: make construction less dependent from JS array implementation. 
+ * todo: verify if would have positive side to have a Lazy list. What pros and cons evolved?
+ * ATTENTION: Eager evaluation here!*/
 export const List = <A>(arr: readonly A[]): List<A> => {
 
     const map: List<A>['map'] = f => {
@@ -60,6 +65,8 @@ export const List = <A>(arr: readonly A[]): List<A> => {
         return List(r)
     }
 
+    const head: List<A>['head'] = () => List_.head(List(arr)) //Todo: can be optimized ? many wraps beeing performed here
+
     return {
         kind: 'List',
         map,
@@ -71,6 +78,7 @@ export const List = <A>(arr: readonly A[]): List<A> => {
         toArray,
         every,
         mapMaybe,
+        head,
 
     }
 }
@@ -78,7 +86,8 @@ export const List = <A>(arr: readonly A[]): List<A> => {
 // static part
 
 export type List_ = {
-    readonly flatten: <A>(mma: List<List<A>>) => List<A> 
+    readonly flatten: <A>(mma: List<List<A>>) => List<A>
+    readonly head: <A>(_: List<A>) => Maybe<A> // inspired in Elm language (Note: Check, don't think is it so performant)
 }
 
 
@@ -87,11 +96,15 @@ const flatten: List_['flatten'] = mma => {
     const arrarr = mma.toArray().map( x => x.toArray())
     const arr = flattenDeep<readonly A[],A>(arrarr)
     return List(arr)
+}
 
+const head: List_['head'] = li => { 
+    return li.pickByIndex(0)
 }
 
 export const List_: List_ = {
     flatten,
+    head,
 }
 
 
