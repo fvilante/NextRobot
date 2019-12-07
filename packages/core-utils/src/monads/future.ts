@@ -198,6 +198,7 @@ export type Future_ = {
     readonly flatten: <E,A>(ffa: Future<E,Future<E,A>>) => Future<E,A>
 
     // array specialized
+    readonly all: <E,A>(fas: readonly Future<E,A>[]) => Future<E, readonly A[]>
     readonly allResults: <E,A>(fas: readonly Future<E,A>[]) => Future<void, readonly Result<E,A>[]>
     readonly allValues: <E,A>(fas: readonly Future<E,A>[]) => Future<void, readonly A[]>
     readonly allErrors: <E,A>(fas: readonly Future<E,A>[]) => Future<void, readonly E[]>
@@ -266,6 +267,20 @@ const flatten: Future_['flatten'] = ffa => {
 }
 
 /** Same as Promise.all() */
+// TODO: should be optimized. Perhaphs algorithm should stop at the first error encontered
+const all: Future_['all'] = fs => {
+    type A = Parameters<typeof fs[0]['runA']>[0]
+    type E = Parameters<typeof fs[0]['runE']>[0]
+    return Future( (ok, err) => {
+        return Promise.all( fs.map( f => f.runR())).then( re => {
+            const b = Result.allValues(re)
+            // tslint:disable-next-line: no-expression-statement
+            ok(b)
+        })     
+    } )
+}
+
+
 const allResults: Future_['allResults'] = fs => {
     return Future( (ok, error) => {
         const s0 = () => fs.map( fa => fa.runR())
@@ -296,6 +311,7 @@ export const Future_: Future_ = {
     fromMaybe,
     fromEither,
     flatten,
+    all,
     allResults,
     allValues,
     allErrors,
