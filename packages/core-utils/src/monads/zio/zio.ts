@@ -19,7 +19,7 @@ import { Result } from "../result"
 export type ZIO<R, E, A> = {
     readonly kind: 'ZIO'
 
-    readonly unsafeRun: (_:R) => Promise< A | E > //todo: Should I benefit from use a way to extract void if A or/and E are void ?
+    readonly unsafeRun: (_:R) => Promise< (E|A) extends void ? void : E extends void ? A : A | E > //todo: Should I benefit from use a way to extract void if A or/and E are void ?
     readonly unsafeRunResult: (_:R) => Promise<Result<E,A>>
     readonly unsafeRunMaybe: (_:R) => Promise<Maybe<A>>
     readonly unsafeRunAOrElse: (_default: A) => (_:R) => Promise<A>
@@ -62,10 +62,10 @@ const __ZIO = <R,E,A>(effect: SyncEffect<R,E,A> | AsyncEffect<R,E,A>, isAsync: b
 export const ZIO = <R,E,A>(effect: (_:R) => Future<E,A>): ZIO<R,E,A> => {
 
     const unsafeRun: ZIO<R,E,A>['unsafeRun'] = enviroment => {
-        type _Return = ReturnType<ZIO<R, E, A>['unsafeRun']>
-        return effect(enviroment).runRThenF<E | A>(
-            err => err, 
-            val => val,
+        type _Return = (E|A) extends void ? void : E extends void ? A : A | E 
+        return effect(enviroment).runRThenF(
+            err => err as _Return, 
+            val => val as _Return,
         )
     }
 
@@ -202,6 +202,9 @@ export type ZIO_ = {
     readonly fromAsync: <R,E,A>(f: (_:R) => Future<E,A>) => ZIO<R,E,A>
     readonly fromSync: <R,E,A>(f: (_:R) => Result<E,A>) => ZIO<R,E,A>
 
+    // array specialized
+    readonly allValues: <R,E,A>(zas: readonly ZIO<R,E,A>[]) => ZIO<R, E, readonly A[]>
+    //readonly allErrors: <R,E,A>(zas: readonly ZIO<R,E,A>[]) => ZIO<R,void, readonly E[]>
 
     readonly __fmap: typeof __fmap //todo: see function Note!
 
@@ -272,6 +275,16 @@ const fromAsync: ZIO_['fromAsync'] = ma => ZIO( env => ma(env))
 
 const fromSync: ZIO_['fromSync'] = ma => ZIO( env => Future_.fromResult( () => ma(env) ) )
 
+
+const allValues: ZIO_['allValues'] = zs => {
+    type R = Parameters<typeof zs[0]['provide']>[0]
+    return ZIO( (env:R) => {
+        const fs = zs.map( z => z.unsafeRunFuture(env)) 
+        return Future_.all(fs)
+    })
+}
+   
+
 // TODO: This special fmap should be applied to normal itens of the interface
 const __fmap = <R1 extends R0,E1,B,R0,E0 extends E1,A0>(m: ZIO<R0,E0,A0>, f: (_:A0) => ZIO<R1,E1,B>):ZIO<R1,E1,B> => {
     const m0 = m.contramap( (_:R1) => _)
@@ -295,6 +308,7 @@ export const ZIO_: ZIO_ = {
     fromFuture,
     fromAsync,
     fromSync,
+    allValues,
     __fmap, //todo: provisory solution, see func impl note
 }
 
