@@ -7,7 +7,7 @@ import { Either } from "./either"
 export type Result<E,A> = {
     readonly kind: 'Result'
 
-    readonly unsafeRun: () => A extends void ? E : E extends void ? A : A | E
+    readonly unsafeRun: () => (E|A) extends void ? void : E extends void ? A : A | E 
 
     readonly map: <B>(f: (_:A) => B) => Result<E,B>
     readonly fmap: <B>(f: (_:A) => Result<E,B>) => Result<E,B>
@@ -228,4 +228,4 @@ const Test1 = () => {
 
 
 // tslint:disable-next-line: no-expression-statement
-Test1()
+//Test1()
